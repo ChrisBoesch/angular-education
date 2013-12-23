@@ -152,7 +152,9 @@ module.exports = function(grunt) {
   });
 
   //single run tests
-  grunt.registerTask('test', ['jshint','test:unit', 'test:e2e']);
+  // Removing this initially until protractor approach better understood
+  //grunt.registerTask('test', ['jshint','test:unit', 'test:e2e']);
+  grunt.registerTask('test', ['jshint','test:unit']);
   grunt.registerTask('test:unit', ['karma:unit']);
   grunt.registerTask('test:e2e', ['connect:testserver','protractor:singlerun']);
 
