@@ -1,6 +1,6 @@
-# Yearofmoo AngularJS Seed Repo
+# Angular Education GUI
 
-A starter AngularJS repository for getting started with AngularJS. Includes helpful unit testing tools, Protractor integration and coverage testing.
+An AngularJS-based user interface for an eduction webstie to serve videos and ask questions about the video content
 
 ## Installation
 
