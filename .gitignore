@@ -5,3 +5,6 @@ bower_components
 /selenium
 /coverage
 /app/assets
+
+# ignore IDE Specific files
+/.idea

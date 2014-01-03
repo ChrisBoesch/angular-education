@@ -1,9 +1,13 @@
 {
-  "name": "yearofmoo-angularjs-seed-repo",
+  "name": "angular-education",
   "version": "0.0.1",
   "scripts": {
     "postinstall": "node ./node_modules/bower/bin/bower install",
      "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ChrisBoesch/angular-education.git"
   },
   "devDependencies": {
     "matchdep": "~0.1.2",
