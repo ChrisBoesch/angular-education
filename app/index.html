@@ -14,7 +14,7 @@
 </head>
 <body>
 
-<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<header class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -34,10 +34,38 @@
         </div>
         <!--/.nav-collapse -->
     </div>
-</div>
+</header>
 
 <div class="container">
-    <div class="jumbotron" ng-view></div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="edu-sidebar">
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active">
+                        <a href="#">
+                            <span class="badge pull-right">42</span>
+                            Problems
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="badge pull-right">30</span>
+                            Unsolved
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="badge pull-right">14</span>
+                            Solved
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div ng-view></div>
+        </div>
+    </div>
 </div>
 <!-- /.container -->
 

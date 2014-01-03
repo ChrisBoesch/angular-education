@@ -1,1 +1,15 @@
-{{ welcome_message }}
+<div class="page-header edu-top-header">
+    <h1>{{ welcome_message }} <small>Subtext for header</small></h1>
+</div>
+
+<div class="row">
+    <div class="col-sm-6 col-md-4" ng-repeat="video in videos">
+        <div class="thumbnail">
+            <img src="http://placehold.it/300x200" alt="...">
+            <div class="caption">
+                <h4>Thumbnail label</h4>
+                <p>...</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,9 @@
 body {
-    padding-top: 50px;
+    padding-top: 70px;
 }
-.jumbotron {
-    background: transparent;
+.edu-sidebar {
+    margin-top: 20px;
+}
+.edu-top-header {
+    margin-top: 0;
 }

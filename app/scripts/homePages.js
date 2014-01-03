@@ -8,4 +8,7 @@ angular.module('app.homePages', [])
 
   .controller('HomeCtrl', function($scope, welcomeMessage) {
     $scope.welcome_message = welcomeMessage();
+    $scope.videos = [
+      {}, {}, {}, {}, {}, {}, {}, {}
+    ]
   });
