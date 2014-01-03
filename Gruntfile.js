@@ -106,6 +106,15 @@ module.exports = function (grunt) {
       }
     },
 
+    copy: {
+      fontAwesome: {
+        src: 'bower_components/bootstrap/dist/fonts/*',
+        dest: 'app/fonts/',
+        expand: true,
+        flatten: true
+      }
+    },
+
     watch: {
       options: {
         livereload: 7777
@@ -174,7 +183,7 @@ module.exports = function (grunt) {
 
   //installation-related
   grunt.registerTask('install', ['update', 'shell:protractor_install']);
-  grunt.registerTask('update', ['shell:npm_install', 'concat']);
+  grunt.registerTask('update', ['shell:npm_install', 'concat', 'copy']);
 
   //defaults
   grunt.registerTask('default', ['dev']);
