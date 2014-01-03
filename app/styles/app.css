@@ -1,9 +1,15 @@
 body {
     padding-top: 70px;
 }
+/* Style Nav bar*/
+.edu-navbar {}
+/* End Style Nav bar*/
 .edu-sidebar {
     margin-top: 20px;
 }
 .edu-top-header {
     margin-top: 0;
+}
+.edu-sidebar .glyphicon {
+    margin-right: 10px;
 }
