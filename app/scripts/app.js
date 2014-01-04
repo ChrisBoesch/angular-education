@@ -1,7 +1,4 @@
-angular.module('myApp', ['ngRoute', 'app.homePages'])
-
-  .constant('TPL_PATH', '/templates')
-  .constant('API_BASE', '/api/v1')
+angular.module('myApp', ['app.config', 'ngRoute', 'app.homePages'])
 
   .config(function($routeProvider, TPL_PATH) {
     $routeProvider.when('/', {

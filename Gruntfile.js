@@ -141,6 +141,7 @@ module.exports = function(grunt) {
           'bower_components/bootstrap/dist/js/bootstrap.js',
           'bower_components/spin.js/spin.js',
           'bower_components/spin.js/jquery.spin.js',
+          'app/scripts/config.js',
           'app/scripts/homePages.js',
           'app/scripts/app.js'
           //place your JavaScript files here

@@ -1,4 +1,4 @@
-angular.module('app.homePages', ['ngResource', 'ngAnimate'])
+angular.module('app.homePages', ['app.config', 'ngResource', 'ngAnimate'])
 
   .factory('welcomeMessage', function() {
     return function() {
