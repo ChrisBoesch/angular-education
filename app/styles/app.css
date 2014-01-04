@@ -13,3 +13,15 @@ body {
 .edu-sidebar .glyphicon {
     margin-right: 10px;
 }
+.spinner {
+    padding: 20px 0;
+}
+/* ngAnimation */
+.animate-enter {
+    -webkit-transition: 1s linear all; /* Chrome */
+    transition: 1s linear all;
+    opacity: 0;
+}
+.animate-enter.animate-enter-active {
+    opacity: 1;
+}
