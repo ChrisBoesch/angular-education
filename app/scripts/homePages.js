@@ -22,10 +22,10 @@ angular.module('app.homePages', ['ngResource', 'ngAnimate'])
         data: '='
       },
       templateUrl: TPL_PATH + '/spinner.html',
-      link: function(scope, element, attrs) {
+      link: function(scope, element) {
         $(element).find('.spinner').spin();
 
-        var unbind = scope.$watch('data', function(newVal, oldVal) {
+        var unbind = scope.$watch('data', function(newVal) {
           if (newVal) {
             element.remove();
             // unbind the watch
@@ -33,7 +33,7 @@ angular.module('app.homePages', ['ngResource', 'ngAnimate'])
           }
         });
       }
-    }
+    };
   })
 
   .controller('HomeCtrl', function($scope, videos) {
