@@ -1,4 +1,4 @@
-module.exports = function (grunt) {
+module.exports = function(grunt) {
 
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
@@ -34,8 +34,37 @@ module.exports = function (grunt) {
       },
       devserver: {
         options: {
-          port: 8888
-        }
+          port: 8888,
+          middleware: function(connect, options) {
+            var middlewares = [];
+            var directory = options.directory || options.base[options.base.length - 1];
+            if (!Array.isArray(options.base)) {
+              options.base = [options.base];
+            }
+            // Setup the proxy
+            middlewares.push(require('grunt-connect-proxy/lib/utils').proxyRequest);
+
+            options.base.forEach(function(base) {
+              // Serve static files.
+              middlewares.push(connect.static(base));
+            });
+
+            // Make directory browse-able.
+            middlewares.push(connect.directory(directory));
+
+            return middlewares;
+          }
+        },
+        proxies: [
+          {
+            context: '/api/v1',
+            host: '127.0.0.1',
+            port: 9090,
+            rewrite: {
+              '^/api/v1': ''
+            }
+          }
+        ]
       },
       testserver: {
         options: {
@@ -47,6 +76,17 @@ module.exports = function (grunt) {
           base: 'coverage/',
           port: 5555,
           keepalive: true
+        }
+      }
+    },
+
+    express: {
+      options: {
+        // Override defaults here
+      },
+      api: {
+        options: {
+          script: 'api/server.js'
         }
       }
     },
@@ -189,7 +229,7 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['dev']);
 
   //development
-  grunt.registerTask('dev', ['update', 'connect:devserver', 'open:devserver', 'watch:assets']);
+  grunt.registerTask('dev', ['update', 'express:api', 'configureProxies:devserver', 'connect:devserver', 'open:devserver', 'watch:assets']);
 
   //server daemon
   grunt.registerTask('serve', ['connect:webserver']);

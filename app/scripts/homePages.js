@@ -10,5 +10,5 @@ angular.module('app.homePages', [])
     $scope.welcome_message = welcomeMessage();
     $scope.videos = [
       {}, {}, {}, {}, {}, {}, {}, {}
-    ]
+    ];
   });
