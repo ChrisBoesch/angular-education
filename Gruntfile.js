@@ -34,6 +34,7 @@ module.exports = function(grunt) {
       },
       devserver: {
         options: {
+          host: '0.0.0.0',
           port: 8888,
           middleware: function(connect, options) {
             var middlewares = [];
@@ -58,7 +59,7 @@ module.exports = function(grunt) {
         proxies: [
           {
             context: '/api/v1',
-            host: '127.0.0.1',
+            host: '0.0.0.0',
             port: 9090,
             rewrite: {
               '^/api/v1': ''
@@ -177,10 +178,10 @@ module.exports = function(grunt) {
 
     open: {
       devserver: {
-        path: 'http://localhost:8888'
+        path: 'http://0.0.0.0:8888'
       },
       coverage: {
-        path: 'http://localhost:5555'
+        path: 'http://0.0.0.0:5555'
       }
     },
 
@@ -236,7 +237,7 @@ module.exports = function(grunt) {
 
   //development
   grunt.registerTask('dev', ['update', 'express:api', 'configureProxies:devserver',
-    'connect:devserver', 'open:devserver', 'watch:assets', 'watch:templates']);
+    'connect:devserver', 'watch:assets', 'watch:templates']);
 
   //server daemon
   grunt.registerTask('serve', ['connect:webserver']);
