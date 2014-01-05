@@ -1,16 +1,27 @@
+/*global describe, beforeEach, it, inject, expect*/
+
 describe('Home Pages', function() {
+
+  var ctrl, scope;
 
   beforeEach(module('app.homePages'));
 
-  it('should test the homePages controller', inject(function($controller, $rootScope) {
-    var ctrl = $controller('HomeCtrl', {
-      $scope : $rootScope
+  beforeEach(inject(function($controller, $rootScope) {
+    scope = $rootScope.$new();
+    ctrl = $controller('HomeCtrl', {
+      $scope: scope
     });
-    expect($rootScope.welcome_message.length).toBeGreaterThan(0);
   }));
 
-  it('should properly provide a welcome message', inject(function(welcomeMessage) {
-    expect(welcomeMessage()).toMatch(/welcome/i);
-  }));
+  describe('Home Controller', function() {
 
+    describe('Initialization', function() {
+
+      it('should instantiate videos to null', function() {
+        expect(scope.videos).toBeNull();
+      });
+
+    });
+
+  });
 });

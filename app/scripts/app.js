@@ -1,10 +1,8 @@
-angular.module('myApp', ['ngRoute', 'app.homePages'])
-
-  .constant('TPL_PATH', '/templates')
+angular.module('myApp', ['app.config', 'ngRoute', 'app.homePages'])
 
   .config(function($routeProvider, TPL_PATH) {
-    $routeProvider.when('/',{
-      controller : 'HomeCtrl',
-      templateUrl : TPL_PATH + '/home.html'
+    $routeProvider.when('/', {
+      controller: 'HomeCtrl',
+      templateUrl: TPL_PATH + '/home.html'
     });
   });
