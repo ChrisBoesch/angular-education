@@ -2,18 +2,26 @@
 
 describe('Home Pages', function() {
 
-  var ctrl;
+  var ctrl, scope;
 
   beforeEach(module('app.homePages'));
 
   beforeEach(inject(function($controller, $rootScope) {
+    scope = $rootScope.$new();
     ctrl = $controller('HomeCtrl', {
-      $scope: $rootScope.$new()
+      $scope: scope
     });
   }));
 
-  it('should properly provide a welcome message', inject(function() {
-    expect(true).toBeTruthy();
-  }));
+  describe('Home Controller', function() {
 
+    describe('Initialization', function() {
+
+      it('should instantiate videos to null', function() {
+        expect(scope.videos).toBeNull();
+      });
+
+    });
+
+  });
 });

@@ -139,9 +139,9 @@ module.exports = function(grunt) {
           'bower_components/angular-resource/angular-resource.js',
           'bower_components/angular-animate/angular-animate.js',
           'bower_components/bootstrap/dist/js/bootstrap.js',
-          'bower_components/spin.js/spin.js',
-          'bower_components/spin.js/jquery.spin.js',
+          'bower_components/angular-spinkit/build/angular-spinkit.js',
           'app/scripts/config.js',
+          'app/scripts/directives.js',
           'app/scripts/homePages.js',
           'app/scripts/app.js'
           //place your JavaScript files here
@@ -165,6 +165,9 @@ module.exports = function(grunt) {
       assets: {
         files: ['app/styles/**/*.css', 'app/scripts/**/*.js'],
         tasks: ['concat']
+      },
+      templates: {
+        files: ['app/templates/**/*.html']
       },
       protractor: {
         files: ['app/scripts/**/*.js', 'test/e2e/**/*.js'],
@@ -232,7 +235,8 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['dev']);
 
   //development
-  grunt.registerTask('dev', ['update', 'express:api', 'configureProxies:devserver', 'connect:devserver', 'open:devserver', 'watch:assets']);
+  grunt.registerTask('dev', ['update', 'express:api', 'configureProxies:devserver',
+    'connect:devserver', 'open:devserver', 'watch:assets', 'watch:templates']);
 
   //server daemon
   grunt.registerTask('serve', ['connect:webserver']);

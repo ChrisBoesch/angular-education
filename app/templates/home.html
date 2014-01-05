@@ -19,7 +19,9 @@
 </div>
 
 <div class="row">
-    <spinner data="videos"></spinner>
+    <div ng-if="!videos">
+        <wave-spinner></wave-spinner>
+    </div>
     <div class="col-sm-6 col-md-4" ng-repeat="video in videos | filter:search" ng-animate="'animate'">
         <div class="thumbnail">
             <img ng-src="{{video.thumbnail}}" alt="{{video.title}}">
