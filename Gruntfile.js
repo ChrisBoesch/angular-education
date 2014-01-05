@@ -34,7 +34,7 @@ module.exports = function(grunt) {
       },
       devserver: {
         options: {
-          host: '0.0.0.0',
+          hostname: '0.0.0.0',
           port: 8888,
           middleware: function(connect, options) {
             var middlewares = [];
