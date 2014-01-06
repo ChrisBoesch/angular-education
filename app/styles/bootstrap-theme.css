@@ -1,0 +1,51 @@
+.palette {
+    background:
+        #08405c
+        #f4e3db
+        #f7a700
+        #f57900
+        #de5600
+}
+
+a {
+    color: #f57900;
+}
+
+a:hover,
+a:focus {
+    color: #de5600;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+    color: #08405c;
+}
+
+.nav > li > a:hover,
+.nav > li > a:focus {
+    background-color: #f4e3db;
+}
+
+
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus {
+    color: #ffffff;
+    background-color: #f57900;
+}
+
+a.list-group-item.active > .badge,
+.nav-pills > .active > a > .badge {
+    color: #de5600;
+    background-color: #ffffff;
+}

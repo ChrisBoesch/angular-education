@@ -124,8 +124,9 @@ module.exports = function(grunt) {
         src: [
           'bower_components/bootstrap/dist/css/bootstrap.css',
           'bower_components/bootstrap/dist/css/bootstrap-theme.css',
-          'app/styles/app.css'
+          'app/styles/app.css',
           //place your Stylesheet files here
+          'app/styles/bootstrap-theme.css'
         ]
       },
       scripts: {
