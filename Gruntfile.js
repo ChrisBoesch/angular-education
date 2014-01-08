@@ -142,6 +142,7 @@ module.exports = function(grunt) {
           'bower_components/angular-animate/angular-animate.js',
           'bower_components/bootstrap/dist/js/bootstrap.js',
           'bower_components/angular-spinkit/build/angular-spinkit.js',
+          'bower_components/angular-modal/modal.js',
           'app/scripts/config.js',
           'app/scripts/directives.js',
           'app/scripts/homePages.js',
