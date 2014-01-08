@@ -12,14 +12,14 @@ app.get('/', function(req, res) {
 });
 
 app.get('/videos', function(req, res) {
-  setTimeout((function() {
+  setTimeout(function() {
     res.send(
       [
         {
           title: 'Introduction to JavaScript',
           description: 'Basics of the awesome JavaScript programming language',
-          thumbnail: 'http://placehold.it/320x180',
-          url: 'http://'
+          thumbnail: 'http://localhost/poster.jpg',
+          url: 'http://localhost/oceans.mp4'
         },
         {
           title: 'Egghead.io - Bower - Intro to Bower',
@@ -29,7 +29,7 @@ app.get('/videos', function(req, res) {
         }
       ]
     );
-  }), DELAY);
+  }, DELAY);
 });
 
 app.listen(9090);

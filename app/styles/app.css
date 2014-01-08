@@ -50,3 +50,22 @@ body {
 .animate.ng-enter.ng-enter-active {
     opacity: 1;
 }
+
+/* Video JS */
+.modal-dialog.video-dialog {
+    width: 90%;
+    max-width: 1000px;
+}
+video {
+    display: none;
+}
+video.vjs-tech {
+    display: block;
+}
+.vjs-default-skin .vjs-big-play-button {
+    left:0;
+    right:0;
+    top: 0;
+    bottom: 0;
+    margin:auto;
+}

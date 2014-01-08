@@ -124,6 +124,7 @@ module.exports = function(grunt) {
         src: [
           'bower_components/bootstrap/dist/css/bootstrap.css',
           'bower_components/bootstrap/dist/css/bootstrap-theme.css',
+          'bower_components/video.js/video-js.css',
           'app/styles/app.css',
           //place your Stylesheet files here
           'app/styles/bootstrap-theme.css'
@@ -143,6 +144,8 @@ module.exports = function(grunt) {
           'bower_components/bootstrap/dist/js/bootstrap.js',
           'bower_components/angular-spinkit/build/angular-spinkit.js',
           'bower_components/angular-modal/modal.js',
+          'bower_components/video.js/video.dev.js',
+          'bower_components/videojs-youtube/src/media.youtube.js',
           'app/scripts/config.js',
           'app/scripts/directives.js',
           'app/scripts/homePages.js',
@@ -156,6 +159,12 @@ module.exports = function(grunt) {
       fontAwesome: {
         src: 'bower_components/bootstrap/dist/fonts/*',
         dest: 'app/fonts/',
+        expand: true,
+        flatten: true
+      },
+      videoJS: {
+        src: 'bower_components/video.js/font/*',
+        dest: 'app/assets/font/',
         expand: true,
         flatten: true
       }
