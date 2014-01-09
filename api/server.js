@@ -15,7 +15,7 @@ var videos = [
     title: 'Introduction to JavaScript',
     description: 'Basics of the awesome JavaScript programming language',
     thumbnail: null,
-    url: 'http://localhost/oceans.mp4'
+    url: 'http://vjs.zencdn.net/v/oceans.mp4'
   },
   {
     id: 2,
@@ -29,7 +29,7 @@ var videos = [
     title: 'Introduction to JavaScript',
     description: 'Basics of the awesome JavaScript programming language',
     thumbnail: null,
-    url: 'http://localhost/oceans.mp4'
+    url: 'http://vjs.zencdn.net/v/oceans.mp4'
   },
   {
     id: 4,
@@ -43,7 +43,7 @@ var videos = [
     title: 'Introduction to JavaScript',
     description: 'Basics of the awesome JavaScript programming language',
     thumbnail: null,
-    url: 'http://localhost/oceans.mp4'
+    url: 'http://vjs.zencdn.net/v/oceans.mp4'
   },
   {
     id: 6,
@@ -57,7 +57,7 @@ var videos = [
     title: 'Introduction to JavaScript',
     description: 'Basics of the awesome JavaScript programming language',
     thumbnail: null,
-    url: 'http://localhost/oceans.mp4'
+    url: 'http://vjs.zencdn.net/v/oceans.mp4'
   },
   {
     id: 8,
@@ -71,7 +71,7 @@ var videos = [
     title: 'Introduction to JavaScript',
     description: 'Basics of the awesome JavaScript programming language',
     thumbnail: null,
-    url: 'http://localhost/oceans.mp4'
+    url: 'http://vjs.zencdn.net/v/oceans.mp4'
   },
   {
     id: 10,
@@ -89,6 +89,12 @@ app.get('/', function(req, res) {
 app.get('/videos', function(req, res) {
   setTimeout(function() {
     res.send(videos);
+  }, DELAY);
+});
+
+app.get('/videos/:id', function(req, res) {
+  setTimeout(function() {
+    res.send(videos[req.params.id - 1]);
   }, DELAY);
 });
 

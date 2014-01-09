@@ -1,5 +1,5 @@
 <div class="page-header edu-top-header">
-    <h1>Problems
+    <h2>Videos
         <small>Subtext for header</small>
         <form class="form-inline col-sm-4 col-md-4 pull-right" role="search">
             <div class="right-inner-addon">
@@ -15,7 +15,7 @@
             </div>
             -->
         </form>
-    </h1>
+    </h2>
 </div>
 
 <div class="row">
@@ -24,12 +24,12 @@
     </div>
     <div class="col-sm-6 col-md-4 animate video-list-item" ng-repeat="video in videos | filter:search">
         <div class="thumbnail">
-            <img ng-src="{{video.thumbnail || 'http://placehold.it/320x180'}}" alt="{{video.title}}">
+            <img class="img-responsive" ng-src="{{video.thumbnail || 'http://placehold.it/320x180'}}" alt="{{video.title}}">
 
             <div class="caption">
                 <h4>{{video.title}}</h4>
                 <p>
-                    <a href="#/problem/{{video.id}}" class="btn btn-block btn-success">Watch &amp; Solve</a>
+                    <a href="#/video/{{video.id}}" class="btn btn-block btn-success">Watch &amp; Solve</a>
                 </p>
             </div>
         </div>

@@ -8,9 +8,9 @@ angular.module('myApp', ['app.config', 'ngRoute', 'ngAnimate', 'ngResource',
         controller: 'HomeCtrl',
         templateUrl: TPL_PATH + '/home.html'
       })
-      .when('/problem/:id', {
-        controller: 'ProblemCtrl',
-        templateUrl: TPL_PATH + '/problem.html'
+      .when('/video/:id', {
+        controller: 'VideoCtrl',
+        templateUrl: TPL_PATH + '/video.html'
       })
     ;
 
