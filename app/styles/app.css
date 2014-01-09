@@ -1,9 +1,33 @@
+html,
 body {
-    padding-top: 70px;
+    height: 100%;
 }
-/* Style Nav bar*/
-.edu-navbar {}
-/* End Style Nav bar*/
+#wrap {
+    min-height: 100%;
+    height: auto;
+    margin: 0 auto -60px;
+    padding: 0 0 60px;
+}
+#wrap > .container {
+    padding: 60px 0 20px;
+}
+footer {
+    border-top: 1px solid #f4e3db;
+    height: 60px;
+    background-color: #f5f5f5;
+}
+footer .container .text-muted {
+    margin: 20px 0;
+}
+footer > .container {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.wave-spinner > div {
+    background-color: #f7a700 !important;
+}
+
 .edu-sidebar {
     margin-top: 20px;
 }
@@ -15,6 +39,13 @@ body {
 }
 .spinnerContainer {
     padding: 20px 0;
+}
+.video-list-item h4 {
+    height: 20px;
+    overflow: hidden;
+}
+.video-wrapper {
+    overflow: hidden;
 }
 
 /* Generic */
@@ -31,14 +62,39 @@ body {
     pointer-events: none;
     font-size: 14px;
     line-height: 45px;
+    top: -5px;
 }
 
 /* ngAnimation */
-.animate-enter {
-    -webkit-transition: 1s linear all; /* Chrome */
-    transition: 1s linear all;
+.animate.ng-enter,
+.animate.ng-leave {
+    -webkit-transition: 0.5s linear all;
+    transition: 0.5s linear all;
+}
+
+.animate.ng-enter,
+.animate.ng-leave.ng-leave-active {
     opacity: 0;
 }
-.animate-enter.animate-enter-active {
+.animate.ng-leave,
+.animate.ng-enter.ng-enter-active {
     opacity: 1;
+}
+
+/* Video JS */
+.vjs-youtube {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+    padding-top: 25px;
+    height: 0;
+}
+.vjs-youtube .vjs-big-play-button {
+    display: none;
+}
+.vjs-big-play-button {
+    left:0;
+    right:0;
+    top: 0;
+    bottom: 0;
+    margin:auto;
 }

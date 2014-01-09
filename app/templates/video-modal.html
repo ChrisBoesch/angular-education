@@ -1,0 +1,40 @@
+<!-- Modal -->
+<div class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="Video" aria-hidden="false" style="display: block;">
+    <div class="modal-dialog video-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="closeMe()">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">{{title}}</h4>
+            </div>
+            <div class="modal-body">
+                <video id="edu-video" class="video-js vjs-default-skin" controls
+                       preload="auto" width="auto" height="auto" poster="poster.jpg"
+                       data-setup='{{dataSetup()}}'>
+                    <source ng-if="!isYouTube" src="{{url}}" type='video/mp4'>
+                </video>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="closeMe()">Close</button>
+                <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal-backdrop fade in"></div>
+
+<script>
+    videojs('edu-video', {height:'auto', width:'auto'}).ready(function(){
+        var myPlayer = this;    // Store the video object
+        var aspectRatio = 5/12; // Make up an aspect ratio
+
+        function resizeVideoJS(){
+            // Get the parent element's actual width
+            var width = $('#' + myPlayer.id()).parent().width();
+            // Set width to fill parent element, Set height
+            myPlayer.width(width).height( width * aspectRatio );
+        }
+
+        resizeVideoJS(); // Initialize the function
+        window.onresize = resizeVideoJS; // Call the function on resize
+    });
+</script>
