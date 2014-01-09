@@ -62,6 +62,7 @@ footer > .container {
     pointer-events: none;
     font-size: 14px;
     line-height: 45px;
+    top: -5px;
 }
 
 /* ngAnimation */
