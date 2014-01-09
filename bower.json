@@ -11,7 +11,6 @@
     "angular-mocks": "1.2.7",
     "bootstrap": "3.0.3",
     "angular-spinkit": "~0.0.2",
-    "angular-modal": "~0.0.3",
     "video.js": "~4.3.0",
     "videojs-youtube": "~1.0.0"
   },

@@ -1,5 +1,5 @@
 <div class="page-header edu-top-header">
-    <h1>Videos
+    <h1>Problems
         <small>Subtext for header</small>
         <form class="form-inline col-sm-4 col-md-4 pull-right" role="search">
             <div class="right-inner-addon">
@@ -22,16 +22,14 @@
     <div ng-if="!videos">
         <wave-spinner></wave-spinner>
     </div>
-    <div class="col-sm-6 col-md-4 animate" ng-repeat="video in videos | filter:search">
+    <div class="col-sm-6 col-md-4 animate video-list-item" ng-repeat="video in videos | filter:search">
         <div class="thumbnail">
-            <img ng-src="{{video.thumbnail}}" alt="{{video.title}}">
+            <img ng-src="{{video.thumbnail || 'http://placehold.it/320x180'}}" alt="{{video.title}}">
 
             <div class="caption">
                 <h4>{{video.title}}</h4>
-                <p>{{video.description}}</p>
                 <p>
-                    <a class="btn btn-success" ng-click="showModal(video)">Play</a>
-                    <a class="btn btn-primary">Download</a>
+                    <a href="#/problem/{{video.id}}" class="btn btn-block btn-success">Watch &amp; Solve</a>
                 </p>
             </div>
         </div>

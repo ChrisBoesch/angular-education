@@ -18,6 +18,10 @@ body {
 .spinnerContainer {
     padding: 20px 0;
 }
+.video-list-item h4 {
+    height: 20px;
+    overflow: hidden;
+}
 
 /* Generic */
 .right-inner-addon {

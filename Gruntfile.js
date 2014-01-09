@@ -148,6 +148,7 @@ module.exports = function(grunt) {
           'bower_components/videojs-youtube/src/media.youtube.js',
           'app/scripts/config.js',
           'app/scripts/directives.js',
+          'app/scripts/sidebar_controller.js',
           'app/scripts/homePages.js',
           'app/scripts/app.js'
           //place your JavaScript files here

@@ -38,30 +38,32 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-md-3">
+        <!--Sidebar-->
+        <div class="col-md-3" ng-controller="SidebarCtrl">
             <div class="edu-sidebar">
                 <ul class="nav nav-pills nav-stacked">
                     <li class="active">
                         <a href="#">
-                            <span class="badge pull-right">42</span>
-                            <span class="glyphicon glyphicon-film"></span> Videos
+                            <span class="badge pull-right">{{problemsCount}}</span>
+                            <span class="glyphicon glyphicon-film"></span>Problems
                         </a>
                     </li>
                     <li>
                         <a href="#">
-                            <span class="badge pull-right">30</span>
+                            <span class="badge pull-right">{{unsolvedCount}}</span>
                             <span class="glyphicon glyphicon-play"></span>Unsolved
                         </a>
                     </li>
                     <li>
                         <a href="#">
-                            <span class="badge pull-right">14</span>
+                            <span class="badge pull-right">{{solvedCount}}</span>
                             <span class="glyphicon glyphicon-ok"></span>Solved
                         </a>
                     </li>
                 </ul>
             </div>
         </div>
+        <!--/Sidebar-->
         <div class="col-md-9">
             <div ng-view></div>
         </div>

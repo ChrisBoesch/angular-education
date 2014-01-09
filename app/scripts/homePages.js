@@ -1,5 +1,4 @@
-/* global videojs*/
-angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit', 'btford.modal']).
+angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit']).
 
   factory('videos',function(API_BASE, $resource) {
     var res = $resource(API_BASE + '/videos');
@@ -10,38 +9,44 @@ angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit', '
     };
   }).
 
-  factory('videoModal',function(btfModal, TPL_PATH) {
-    return btfModal({
-      controller: 'VideoModalCtrl',
-      templateUrl: TPL_PATH + '/video-modal.html'
-    });
+  directive('videoJs',function() {
+    var linker = function(scope, element, attrs) {
+      attrs.type = attrs.type || 'video/mp4';
+
+      var setup = {
+        'techOrder': ['html5', 'flash'],
+        'controls': true,
+        'preload': 'auto',
+        'autoplay': false,
+        'height': 'auto',
+        'width': 'auto'
+      };
+
+      attrs.id = 'video-js' + id;
+      element.attr('id', attrs.id);
+      // element.attr('poster', 'http://10.1.21.36:8080/Testube/media/' + videoid + '.jpg');
+      var player = _V_(attrs.id, setup, function() {
+        var source = ([
+          {type: 'video/mp4', src: 'http://testube:8080/Testube/media/' + videoid + '.mp4'}
+        ]);
+        this.src({type: attrs.type, src: source });
+      });
+    };
+    return {
+      restrict: 'A',
+      link: linker
+    };
   }).
 
-  controller('VideoModalCtrl',function($scope, videoModal) {
-    $scope.isYouTube = ($scope.url.indexOf('www.youtube.com/watch') > -1);
-
-    $scope.closeMe = function() {
-      // TODO: Make this a directive
-      videojs('edu-video').dispose();
-      videoModal.deactivate();
-    };
-
-    $scope.dataSetup = function() {
-      if (this.isYouTube) {
-        return '{ "techOrder": ["youtube"], "src": "' + this.url + '" }';
-      }
-      return '{}';
-    };
-  }).
-
-  controller('HomeCtrl', function($scope, videos, videoModal) {
-    $scope.showModal = function(video) {
-      videoModal.activate(video);
-    };
+  controller('HomeCtrl',function($scope, videos) {
     $scope.videos = null;
 
     videos.all().then(function(data) {
       $scope.videos = data;
     });
+  }).
 
-  });
+  controller('ProblemCtrl', function($scope) {
+    $scope.problem = null;
+  })
+;
