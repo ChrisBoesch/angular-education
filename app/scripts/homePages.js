@@ -60,18 +60,16 @@ angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit'])
             ]);
             this.src({type: attrs.type, src: source });
 
-            // Store the video object
-            var myPlayer = this;
-            // Make up an aspect ratio
-            var aspectRatio = 9 / 16;
+            var myPlayer = this,
+              aspectRatio = 9 / 16;
 
-            function resizeVideoJS() {
+            var resizeVideoJS = function() {
               // Get the parent element's actual width
               var width = element.parent().parent().width();
 
               // Set width to fill parent element, Set height
               myPlayer.width(width).height(width * aspectRatio);
-            }
+            };
 
             // Initialize the function
             resizeVideoJS();
