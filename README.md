@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/ChrisBoesch/angular-education.png?branch=master)](https://travis-ci.org/ChrisBoesch/angular-education)
 # Angular Education GUI
 
 An AngularJS-based user interface for an eduction webstie to serve videos and ask questions about the video content
