@@ -8,17 +8,35 @@ describe('Home Pages', function() {
 
     describe('Videos Factory', function() {
 
-      var $httpBackend;
+      var $httpBackend, videos, API_BASE;
 
-      beforeEach(inject(function(API_BASE, _$httpBackend_) {
+      beforeEach(inject(function(_$httpBackend_, _videos_, _API_BASE_) {
         $httpBackend = _$httpBackend_;
+        videos = _videos_;
+        API_BASE = _API_BASE_;
       }));
 
-      it('should return an array of objects when the all get called', inject(function(API_BASE, videos) {
-        $httpBackend.whenGET(API_BASE + '/videos').respond([1, 2, 3]);
-        console.log(videos.all());
-        // expect(mockVideosFactory.all())
-      }));
+      it('should return an array of objects when the all get called', function() {
+        var ret, arr = [{one: 1}, {two: 2}];
+        $httpBackend.whenGET(API_BASE + '/videos').respond(arr);
+        videos.all().then(function(data) {
+          ret = data;
+        });
+        $httpBackend.flush();
+        expect(ret.length).toEqual(arr.length);
+        expect(ret[0].one).toEqual(1);
+        expect(ret[1].two).toEqual(2);
+      });
+
+      it('should return an array of objects when the all get called', function() {
+        var ret, obj = {id: 1};
+        $httpBackend.whenGET(API_BASE + '/videos/' + obj.id).respond(obj);
+        videos.getById(obj.id).then(function(data) {
+          ret = data;
+        });
+        $httpBackend.flush();
+        expect(ret.id).toEqual(1);
+      });
 
     });
 
@@ -62,7 +80,7 @@ describe('Home Pages', function() {
           var videos = [1, 2, 3];
           deferred.resolve(videos);
           $scope.$apply();
-          expect($scope.videos).toBe(videos);
+          expect($scope.videos).toEqual(videos);
         });
 
       });
@@ -86,7 +104,7 @@ describe('Home Pages', function() {
       describe('Initialization', function() {
 
         it('should instantiate id to the given routeParam id', function() {
-          expect($scope.id).toBe(routeParamId);
+          expect($scope.id).toEqual(routeParamId);
         });
 
         it('should instantiate title to null', function() {
@@ -109,14 +127,14 @@ describe('Home Pages', function() {
           var title = 'awesome video';
           deferred.resolve({title: title});
           $scope.$apply();
-          expect($scope.title).toBe(title);
+          expect($scope.title).toEqual(title);
         });
 
         it('should update the url with content from factory', function() {
           var url = 'http://example.com/superman.mp4';
           deferred.resolve({url: url});
           $scope.$apply();
-          expect($scope.url).toBe(url);
+          expect($scope.url).toEqual(url);
         });
 
       });
