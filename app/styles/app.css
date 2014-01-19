@@ -47,6 +47,9 @@ footer > .container {
 .video-wrapper {
     overflow: hidden;
 }
+.caption p {
+    margin-bottom: 0;
+}
 
 /* Generic */
 .right-inner-addon {

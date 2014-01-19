@@ -3,6 +3,7 @@ angular.module('myApp', ['app.config', 'ngRoute', 'ngAnimate', 'ngResource',
     'app.sidebar', 'app.homePages'])
 
   .config(function($routeProvider, $sceDelegateProvider, TPL_PATH) {
+    // $locationProvider.html5Mode(true);
     $routeProvider
       .when('/', {
         controller: 'HomeCtrl',
