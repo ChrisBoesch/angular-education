@@ -100,7 +100,7 @@ app.get('/videos/:id', function(req, res) {
 
 app.get('/stats', function(req, res) {
   setTimeout(function() {
-    res.send({problemsCount: 10, unsolvedCount: 7, solvedCount: 3});
+    res.send({videosCount: 10, problemsCount: 10, unsolvedCount: 7, solvedCount: 3});
   }, DELAY);
 });
 

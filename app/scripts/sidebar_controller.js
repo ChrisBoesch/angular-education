@@ -10,13 +10,13 @@ angular.module('app.sidebar', ['app.config']).
   }).
 
   controller('SidebarCtrl', function($scope, stats) {
+    $scope.videosCount = '?';
     $scope.problemsCount = '?';
     $scope.unsolvedCount = '?';
     $scope.solvedCount = '?';
 
     stats.get().then(function(res) {
-      $scope.problemsCount = res.problemsCount;
-      $scope.unsolvedCount = res.unsolvedCount;
-      $scope.solvedCount = res.solvedCount;
+      // inject all the return variables to scope
+      angular.extend($scope, res);
     });
   });
