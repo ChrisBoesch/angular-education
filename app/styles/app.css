@@ -47,6 +47,16 @@ footer > .container {
 .video-wrapper {
     overflow: hidden;
 }
+.video-wrapper .panel {
+    border-radius: 0  0 4px 4px;
+}
+.video-wrapper .panel .panel-heading {
+    border-radius: 0;
+    text-align: right;
+}
+.video-js {
+    border-radius: 4px 4px 0  0;
+}
 .caption p {
     margin-bottom: 0;
 }
