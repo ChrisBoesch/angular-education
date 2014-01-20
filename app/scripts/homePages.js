@@ -1,135 +1,142 @@
 /*global videojs, _*/
-angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit'])
 
-  .factory('videos', function(API_BASE, $resource) {
-    return commonAPIs($resource(API_BASE + '/videos/:id'));
-  })
+(function() {
+  'use strict';
 
-  .factory('problems', function(API_BASE, $resource) {
-    return commonAPIs($resource(API_BASE + '/problems/:id'));
-  })
-
-  .directive('videoJs', function() {
-    var linker = function(scope, element, attrs) {
-      var player;
-
-      var guard = scope.$watch('url', function(url) {
-        if (!url) {
-          return;
-        }
-
-        var setup, isYouTube = scope.url.indexOf('www.youtube.com/watch?') > -1;;
-
-        // YouTube
-        if (isYouTube) {
-          setup = {
-            techOrder: ['youtube'],
-            src: url,
-            controls: true,
-            preload: 'auto',
-            autoplay: false,
-            ytcontrols: false,
-            width: '100%',
-            height: 0
-          };
-        } else {
-          setup = {
-            techOrder: ['html5'],
-            controls: true,
-            preload: 'auto',
-            autoplay: false,
-            width: 'auto',
-            height: 'auto'
-          };
-          attrs.type = attrs.type || 'video/mp4';
-        }
-
-        attrs.id = 'video-js' + scope.id;
-        element.attr('id', attrs.id);
-        // element.attr('poster', 'thumb');
-
-        player = videojs(attrs.id, setup).ready(function() {
-          if (!isYouTube) {
-            var source = ([
-              {type: 'video/mp4', src: url}
-            ]);
-            this.src({type: attrs.type, src: source });
-
-            var myPlayer = this,
-              aspectRatio = 9 / 16;
-
-            var resizeVideoJS = function() {
-              // Get the parent element's actual width
-              var width = element.parent().parent().width();
-
-              // Set width to fill parent element, Set height
-              myPlayer.width(width).height(width * aspectRatio);
-            };
-
-            // Initialize the function
-            resizeVideoJS();
-
-            // Call the function on resize
-            $(window).on('resize', _.debounce(function() {
-              resizeVideoJS();
-            }, 50));
-          }
-        });
-
-        player.on('ended', function() {
-          console.log('ended');
-        });
-
-        // remove the watch
-        guard();
-      });
-
-      scope.$on('$destroy', function() {
-        player.dispose();
-      });
-    };
+  // Common function on top to comply with JSHint
+  function commonAPIs(res) {
     return {
-      restrict: 'A',
-      link: linker
+      all: function() {
+        return res.query().$promise;
+      },
+      getById: function(id) {
+        return res.get({id: id}).$promise;
+      }
     };
-  })
+  }
 
-  .controller('HomeCtrl', function($scope, videos) {
-    $scope.videos = null;
+  angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit'])
 
-    videos.all().then(function(res) {
-      $scope.videos = res;
-    });
-  })
+    .factory('videos', function(API_BASE, $resource) {
+      return commonAPIs($resource(API_BASE + '/videos/:id'));
+    })
 
-  .controller('VideoCtrl', function($scope, $routeParams, videos) {
-    $scope.id = $routeParams.id;
-    $scope.title = null;
-    $scope.url = null;
-    $scope.isYouTube = false;
+    .factory('problems', function(API_BASE, $resource) {
+      return commonAPIs($resource(API_BASE + '/problems/:id'));
+    })
 
-    videos.getById($scope.id).then(function(res) {
-      angular.extend($scope, res);
-      $scope.isYouTube = res.url && res.url.indexOf('www.youtube.com/watch?') > -1;
-    });
-  })
+    .directive('videoJs', function() {
+      var linker = function(scope, element, attrs) {
+        var player;
 
-  .controller('ProblemListCtrl', function($scope, problems) {
-    $scope.problems = null;
+        var guard = scope.$watch('url', function(url) {
+          if (!url) {
+            return;
+          }
 
-    problems.all().then(function(res) {
-      $scope.problems = res;
-    });
-  })
-;
+          var setup, isYouTube = scope.url.indexOf('www.youtube.com/watch?') > -1;
 
-function commonAPIs(res) {
-  return {
-    all: function() {
-      return res.query().$promise;
-    },
-    getById: function(id) {
-      return res.get({id: id}).$promise;
-    }
-  };
-}
+          // YouTube
+          if (isYouTube) {
+            setup = {
+              techOrder: ['youtube'],
+              src: url,
+              controls: true,
+              preload: 'auto',
+              autoplay: false,
+              ytcontrols: false,
+              width: '100%',
+              height: 0
+            };
+          } else {
+            setup = {
+              techOrder: ['html5'],
+              controls: true,
+              preload: 'auto',
+              autoplay: false,
+              width: 'auto',
+              height: 'auto'
+            };
+            attrs.type = attrs.type || 'video/mp4';
+          }
+
+          attrs.id = 'video-js' + scope.id;
+          element.attr('id', attrs.id);
+          // element.attr('poster', 'thumb');
+
+          player = videojs(attrs.id, setup).ready(function() {
+            if (!isYouTube) {
+              var source = ([
+                {type: 'video/mp4', src: url}
+              ]);
+              this.src({type: attrs.type, src: source });
+
+              var myPlayer = this,
+                aspectRatio = 9 / 16;
+
+              var resizeVideoJS = function() {
+                // Get the parent element's actual width
+                var width = element.parent().parent().width();
+
+                // Set width to fill parent element, Set height
+                myPlayer.width(width).height(width * aspectRatio);
+              };
+
+              // Initialize the function
+              resizeVideoJS();
+
+              // Call the function on resize
+              $(window).on('resize', _.debounce(function() {
+                resizeVideoJS();
+              }, 50));
+            }
+          });
+
+          player.on('ended', function() {
+            console.log('ended');
+          });
+
+          // remove the watch
+          guard();
+        });
+
+        scope.$on('$destroy', function() {
+          player.dispose();
+        });
+      };
+      return {
+        restrict: 'A',
+        link: linker
+      };
+    })
+
+    .controller('HomeCtrl', function($scope, videos) {
+      $scope.videos = null;
+
+      videos.all().then(function(res) {
+        $scope.videos = res;
+      });
+    })
+
+    .controller('VideoCtrl', function($scope, $routeParams, videos) {
+      $scope.id = $routeParams.id;
+      $scope.title = null;
+      $scope.url = null;
+      $scope.isYouTube = false;
+
+      videos.getById($scope.id).then(function(res) {
+        angular.extend($scope, res);
+        $scope.isYouTube = res.url && res.url.indexOf('www.youtube.com/watch?') > -1;
+      });
+    })
+
+    .controller('ProblemListCtrl', function($scope, problems) {
+      $scope.problems = null;
+
+      problems.all().then(function(res) {
+        $scope.problems = res;
+      });
+    })
+  ;
+
+}());

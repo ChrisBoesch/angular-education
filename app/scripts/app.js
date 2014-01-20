@@ -2,7 +2,7 @@ angular.module('myApp', ['app.config', 'ngRoute', 'ngAnimate', 'ngResource',
     'angularSpinkit',
     'app.sidebar', 'app.homePages'])
 
-  .config(function($routeProvider, $sceDelegateProvider, TPL_PATH) {
+  .config(function($routeProvider, TPL_PATH) {
     // $locationProvider.html5Mode(true);
     $routeProvider
       .when('/', {
@@ -18,11 +18,4 @@ angular.module('myApp', ['app.config', 'ngRoute', 'ngAnimate', 'ngResource',
         templateUrl: TPL_PATH + '/video.html'
       })
     ;
-
-    $sceDelegateProvider.resourceUrlWhitelist([
-      // Allow same origin resource loads.
-      'self',
-      'http://localhost/**',
-      'http*://www.youtube.com/watch**'
-    ]);
   });
