@@ -16,7 +16,10 @@ angular.module('app.sidebar', ['app.config'])
       compile: function(element, attrs) {
         var location = $location,
           clazz = attrs.activeLink,
-          path = '/' + attrs.href;
+          path = element.find('a').attr('href');
+        // Remove the hash
+        path = path.substring(1);
+
         return function link(scope, element) {
           scope.$watch(function() {
             return location.path();

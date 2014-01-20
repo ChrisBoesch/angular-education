@@ -44,7 +44,7 @@ describe('Sidebar', function() {
         $scope = _$rootScope_.$new();
         $location = _$location_;
         $browser = _$browser_;
-        element = angular.element('<a href="#/one" active-link="active">One</a>');
+        element = angular.element('<li active-link="active"><a href="#/one">One</a></li>');
         _$compile_(element)($scope);
         $scope.$apply();
       }));
@@ -54,13 +54,13 @@ describe('Sidebar', function() {
       });
 
       it('should set active class for matching href url', function() {
-        $location.path('#/one');
+        $location.path('/one');
         $scope.$apply();
         expect(element.hasClass('active')).toBeTruthy();
       });
 
       it('should remove the active class for non matching href url', function() {
-        $location.path('#/two');
+        $location.path('/two');
         $scope.$apply();
         expect(element.hasClass('active')).toBeFalsy();
       });
