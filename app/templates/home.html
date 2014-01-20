@@ -20,7 +20,7 @@
     <div ng-if="!videos">
         <wave-spinner></wave-spinner>
     </div>
-    <div class="col-sm-6 col-md-4 animate video-list-item" ng-repeat="video in videos | filter:search">
+    <div class="col-sm-6 col-md-4 animate video-list-item" ng-repeat="video in videos | filter:search track by $index">
         <div class="thumbnail">
             <img class="img-responsive" ng-src="{{video.thumbnail || 'http://placehold.it/320x180'}}"
                  alt="{{video.title}}">

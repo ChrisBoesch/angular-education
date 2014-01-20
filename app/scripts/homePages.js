@@ -2,15 +2,11 @@
 angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit'])
 
   .factory('videos', function(API_BASE, $resource) {
-    var res = $resource(API_BASE + '/videos/:id');
-    return {
-      all: function() {
-        return res.query().$promise;
-      },
-      getById: function(id) {
-        return res.get({id: id}).$promise;
-      }
-    };
+    return commonAPIs($resource(API_BASE + '/videos/:id'));
+  })
+
+  .factory('problems', function(API_BASE, $resource) {
+    return commonAPIs($resource(API_BASE + '/problems/:id'));
   })
 
   .directive('videoJs', function() {
@@ -22,8 +18,7 @@ angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit'])
           return;
         }
 
-        var setup,
-          isYouTube = url.indexOf('www.youtube.com/watch?') > -1;
+        var setup, isYouTube = scope.url.indexOf('www.youtube.com/watch?') > -1;;
 
         // YouTube
         if (isYouTube) {
@@ -81,6 +76,10 @@ angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit'])
           }
         });
 
+        player.on('ended', function() {
+          console.log('ended');
+        });
+
         // remove the watch
         guard();
       });
@@ -107,10 +106,30 @@ angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit'])
     $scope.id = $routeParams.id;
     $scope.title = null;
     $scope.url = null;
+    $scope.isYouTube = false;
 
     videos.getById($scope.id).then(function(res) {
-      $scope.title = res.title;
-      $scope.url = res.url;
+      angular.extend($scope, res);
+      $scope.isYouTube = res.url && res.url.indexOf('www.youtube.com/watch?') > -1;
+    });
+  })
+
+  .controller('ProblemListCtrl', function($scope, problems) {
+    $scope.problems = null;
+
+    problems.all().then(function(res) {
+      $scope.problems = res;
     });
   })
 ;
+
+function commonAPIs(res) {
+  return {
+    all: function() {
+      return res.query().$promise;
+    },
+    getById: function(id) {
+      return res.get({id: id}).$promise;
+    }
+  };
+}

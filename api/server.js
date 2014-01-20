@@ -92,6 +92,14 @@ var videos = [
   }
 ];
 
+var problems = [
+  {
+    id: 1,
+    title: 'Introduction to JavaScript Problem Set',
+    description: 'Instruction or some useful hints'
+  }
+];
+
 app.get('/', function(req, res) {
   res.send('welcome to fake api provider');
 });
@@ -99,6 +107,12 @@ app.get('/', function(req, res) {
 app.get('/videos', function(req, res) {
   setTimeout(function() {
     res.send(videos);
+  }, DELAY);
+});
+
+app.get('/problems', function(req, res) {
+  setTimeout(function() {
+    res.send(problems);
   }, DELAY);
 });
 

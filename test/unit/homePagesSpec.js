@@ -54,7 +54,7 @@ describe('Home Pages', function() {
       beforeEach(inject(function(_$compile_, _$rootScope_) {
         $scope = _$rootScope_.$new();
         $scope.url = null;
-        element = angular.element('<video video-js class="video-js vjs-default-skin"></video><');
+        element = angular.element('<video video-js class="video-js vjs-default-skin"></video>');
         _$compile_(element)($scope);
         angular.element(document.body).append(element);
         $scope.$apply();
@@ -104,7 +104,6 @@ describe('Home Pages', function() {
         };
         expect(window.videojs).toHaveBeenCalledWith('video-js' + $scope.id, config);
       });
-
 
     });
 
@@ -183,6 +182,10 @@ describe('Home Pages', function() {
           expect($scope.url).toBeNull();
         });
 
+        it('should instantiate isYouTube to false', function() {
+          expect($scope.url).toBeFalsy();
+        });
+
         it('should call the getById function in factory', function() {
           expect(videos.getById).toHaveBeenCalledWith(routeParamId);
         });
@@ -203,6 +206,20 @@ describe('Home Pages', function() {
           deferred.resolve({url: url});
           $scope.$apply();
           expect($scope.url).toEqual(url);
+        });
+
+        it('should set isYouTube to true for YouTube urls', function() {
+          var url = 'http://www.youtube.com/watch?v=vO_Ie3kMXbY';
+          deferred.resolve({url: url});
+          $scope.$apply();
+          expect($scope.isYouTube).toBeTruthy();
+        });
+
+        it('should set isYouTube to false for non YouTube urls', function() {
+          var url = 'http://example.com/superman.mp4';
+          deferred.resolve({url: url});
+          $scope.$apply();
+          expect($scope.isYouTube).toBeFalsy();
         });
 
       });
