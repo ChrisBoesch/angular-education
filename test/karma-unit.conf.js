@@ -14,7 +14,7 @@ module.exports = function(config) {
       'bower_components/videojs-youtube/src/media.youtube.js',
       'app/scripts/config.js',
       'app/scripts/directives.js',
-      'app/scripts/sidebar_controller.js',
+      'app/scripts/sidebar.js',
       'app/scripts/homePages.js',
       'app/scripts/app.js',
       'test/unit/**/*.js',

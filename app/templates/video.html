@@ -7,9 +7,22 @@
         <h2>{{title}}</h2>
     </div>
 
-    <div class="row">
-        <div class="col-sm-12 col-md-12 animate">
-            <video video-js class="video-js vjs-default-skin"></video>
+    <div class="animate">
+        <video video-js class="video-js vjs-default-skin"></video>
+    </div>
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <button type="button" class="btn btn-danger">
+                <span class="glyphicon glyphicon-time"></span> Skip to Problem
+            </button>
+            <button ng-if="!isYouTube" type="button" class="btn btn-success">
+                <span class="glyphicon glyphicon-download"></span> Download
+            </button>
+        </div>
+        <div class="panel-body">
+            <h3 class="text-muted lead">Instructions</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium ad at cum dolorem eveniet fugiat impedit laudantium nam neque obcaecati quaerat repudiandae sequi sunt tempora ullam, ut veniam vitae voluptates?</p>
         </div>
     </div>
 </div>

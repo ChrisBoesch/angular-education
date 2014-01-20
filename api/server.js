@@ -15,70 +15,88 @@ var videos = [
     title: 'Introduction to JavaScript',
     description: 'Basics of the awesome JavaScript programming language',
     thumbnail: null,
-    url: 'http://vjs.zencdn.net/v/oceans.mp4'
+    url: 'http://vjs.zencdn.net/v/oceans.mp4',
+    watched: true
   },
   {
     id: 2,
     title: 'Egghead.io - Bower - Intro to Bower',
     description: 'More great videos at http://egghead.io',
     thumbnail: 'http://i1.ytimg.com/vi/vO_Ie3kMXbY/mqdefault.jpg',
-    url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY'
+    url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY',
+    watched: false
   },
   {
     id: 3,
     title: 'Introduction to JavaScript',
     description: 'Basics of the awesome JavaScript programming language',
     thumbnail: null,
-    url: 'http://vjs.zencdn.net/v/oceans.mp4'
+    url: 'http://vjs.zencdn.net/v/oceans.mp4',
+    watched: false
   },
   {
     id: 4,
     title: 'Egghead.io - Bower - Intro to Bower',
     description: 'More great videos at http://egghead.io',
     thumbnail: 'http://i1.ytimg.com/vi/vO_Ie3kMXbY/mqdefault.jpg',
-    url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY'
+    url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY',
+    watched: true
   },
   {
     id: 5,
     title: 'Introduction to JavaScript',
     description: 'Basics of the awesome JavaScript programming language',
     thumbnail: null,
-    url: 'http://vjs.zencdn.net/v/oceans.mp4'
+    url: 'http://vjs.zencdn.net/v/oceans.mp4',
+    watched: false
   },
   {
     id: 6,
     title: 'Egghead.io - Bower - Intro to Bower',
     description: 'More great videos at http://egghead.io',
     thumbnail: 'http://i1.ytimg.com/vi/vO_Ie3kMXbY/mqdefault.jpg',
-    url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY'
+    url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY',
+    watched: false
   },
   {
     id: 7,
     title: 'Introduction to JavaScript',
     description: 'Basics of the awesome JavaScript programming language',
     thumbnail: null,
-    url: 'http://vjs.zencdn.net/v/oceans.mp4'
+    url: 'http://vjs.zencdn.net/v/oceans.mp4',
+    watched: true
   },
   {
     id: 8,
     title: 'Egghead.io - Bower - Intro to Bower',
     description: 'More great videos at http://egghead.io',
     thumbnail: 'http://i1.ytimg.com/vi/vO_Ie3kMXbY/mqdefault.jpg',
-    url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY'
+    url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY',
+    watched: false
   },
   {
     id: 9,
     title: 'Introduction to JavaScript',
     description: 'Basics of the awesome JavaScript programming language',
     thumbnail: null,
-    url: 'http://vjs.zencdn.net/v/oceans.mp4'
+    url: 'http://vjs.zencdn.net/v/oceans.mp4',
+    watched: false
   },
   {
     id: 10,
     title: 'Egghead.io - Bower - Intro to Bower',
     description: 'More great videos at http://egghead.io',
     thumbnail: 'http://i1.ytimg.com/vi/vO_Ie3kMXbY/mqdefault.jpg',
-    url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY'
+    url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY',
+    watched: false
+  }
+];
+
+var problems = [
+  {
+    id: 1,
+    title: 'Introduction to JavaScript Problem Set',
+    description: 'Instruction or some useful hints'
   }
 ];
 
@@ -92,6 +110,12 @@ app.get('/videos', function(req, res) {
   }, DELAY);
 });
 
+app.get('/problems', function(req, res) {
+  setTimeout(function() {
+    res.send(problems);
+  }, DELAY);
+});
+
 app.get('/videos/:id', function(req, res) {
   setTimeout(function() {
     res.send(videos[req.params.id - 1]);
@@ -100,7 +124,12 @@ app.get('/videos/:id', function(req, res) {
 
 app.get('/stats', function(req, res) {
   setTimeout(function() {
-    res.send({videosCount: 10, problemsCount: 10, unsolvedCount: 7, solvedCount: 3});
+    res.send({
+      videosCount: videos.length,
+      problemsCount: 10,
+      unsolvedCount: 7,
+      solvedCount: 3
+    });
   }, DELAY);
 });
 

@@ -6,35 +6,71 @@ describe('Home Pages', function() {
 
   describe('Factories', function() {
 
+    var $httpBackend, API_BASE;
+
+    beforeEach(inject(function(_$httpBackend_, _API_BASE_) {
+      $httpBackend = _$httpBackend_;
+      API_BASE = _API_BASE_;
+    }));
+
+    afterEach(function() {
+      $httpBackend.verifyNoOutstandingRequest();
+      $httpBackend.verifyNoOutstandingExpectation();
+    });
+
+
     describe('Videos Factory', function() {
 
-      var $httpBackend, videos, API_BASE;
+      var videos;
 
-      beforeEach(inject(function(_$httpBackend_, _videos_, _API_BASE_) {
-        $httpBackend = _$httpBackend_;
+      beforeEach(inject(function(_videos_) {
         videos = _videos_;
-        API_BASE = _API_BASE_;
       }));
 
       it('should return an array of objects when the all get called', function() {
-        var ret, arr = [
-          {one: 1},
-          {two: 2}
-        ];
-        $httpBackend.whenGET(API_BASE + '/videos').respond(arr);
+        var ret;
+        $httpBackend.whenGET(API_BASE + '/videos').respond([]);
         videos.all().then(function(data) {
           ret = data;
         });
         $httpBackend.flush();
-        expect(ret.length).toEqual(arr.length);
-        expect(ret[0].one).toEqual(1);
-        expect(ret[1].two).toEqual(2);
+        expect(ret.length).toBeDefined();
       });
 
-      it('should return an array of objects when the all get called', function() {
+      it('should return an objects when getById is called', function() {
         var ret, obj = {id: 1};
         $httpBackend.whenGET(API_BASE + '/videos/' + obj.id).respond(obj);
         videos.getById(obj.id).then(function(data) {
+          ret = data;
+        });
+        $httpBackend.flush();
+        expect(ret.id).toEqual(1);
+      });
+
+    });
+
+    describe('Problems Factory', function() {
+
+      var problems;
+
+      beforeEach(inject(function(_problems_) {
+        problems = _problems_;
+      }));
+
+      it('should return an array of objects when the all get called', function() {
+        var ret;
+        $httpBackend.whenGET(API_BASE + '/problems').respond([]);
+        problems.all().then(function(data) {
+          ret = data;
+        });
+        $httpBackend.flush();
+        expect(ret.length).toBeDefined();
+      });
+
+      it('should return an objects when getById is called', function() {
+        var ret, obj = {id: 1};
+        $httpBackend.whenGET(API_BASE + '/problems/' + obj.id).respond(obj);
+        problems.getById(obj.id).then(function(data) {
           ret = data;
         });
         $httpBackend.flush();
@@ -54,7 +90,7 @@ describe('Home Pages', function() {
       beforeEach(inject(function(_$compile_, _$rootScope_) {
         $scope = _$rootScope_.$new();
         $scope.url = null;
-        element = angular.element('<video video-js class="video-js vjs-default-skin"></video><');
+        element = angular.element('<video video-js class="video-js vjs-default-skin"></video>');
         _$compile_(element)($scope);
         angular.element(document.body).append(element);
         $scope.$apply();
@@ -105,20 +141,22 @@ describe('Home Pages', function() {
         expect(window.videojs).toHaveBeenCalledWith('video-js' + $scope.id, config);
       });
 
-
     });
 
   });
 
   describe('Controllers', function() {
 
-    var ctrl, $scope, deferred, videos;
+    var ctrl, $scope, deferred, videos, problems;
 
-    beforeEach(inject(function(_$q_, _videos_) {
+    beforeEach(inject(function(_$q_, _videos_, _problems_) {
       deferred = _$q_.defer();
       videos = _videos_;
+      problems = _problems_;
       spyOn(videos, 'all').andReturn(deferred.promise);
       spyOn(videos, 'getById').andReturn(deferred.promise);
+      spyOn(problems, 'all').andReturn(deferred.promise);
+      spyOn(problems, 'getById').andReturn(deferred.promise);
     }));
 
     describe('Home Controller', function() {
@@ -183,6 +221,10 @@ describe('Home Pages', function() {
           expect($scope.url).toBeNull();
         });
 
+        it('should instantiate isYouTube to false', function() {
+          expect($scope.url).toBeFalsy();
+        });
+
         it('should call the getById function in factory', function() {
           expect(videos.getById).toHaveBeenCalledWith(routeParamId);
         });
@@ -203,6 +245,54 @@ describe('Home Pages', function() {
           deferred.resolve({url: url});
           $scope.$apply();
           expect($scope.url).toEqual(url);
+        });
+
+        it('should set isYouTube to true for YouTube urls', function() {
+          var url = 'http://www.youtube.com/watch?v=vO_Ie3kMXbY';
+          deferred.resolve({url: url});
+          $scope.$apply();
+          expect($scope.isYouTube).toBeTruthy();
+        });
+
+        it('should set isYouTube to false for non YouTube urls', function() {
+          var url = 'http://example.com/superman.mp4';
+          deferred.resolve({url: url});
+          $scope.$apply();
+          expect($scope.isYouTube).toBeFalsy();
+        });
+
+      });
+
+    });
+
+    describe('Problem List Controller', function() {
+
+      beforeEach(inject(function(_$controller_, _$rootScope_) {
+        $scope = _$rootScope_.$new();
+        ctrl = _$controller_('ProblemListCtrl', {
+          $scope: $scope
+        });
+      }));
+
+      describe('Initialization', function() {
+
+        it('should instantiate problems to null', function() {
+          expect($scope.problems).toBeNull();
+        });
+
+        it('should call the all function in factory', function() {
+          expect(problems.all).toHaveBeenCalled();
+        });
+
+      });
+
+      describe('After factory resolved', function() {
+
+        it('should update the problems with content from factory', function() {
+          var problems = [1, 2, 3];
+          deferred.resolve(problems);
+          $scope.$apply();
+          expect($scope.problems).toEqual(problems);
         });
 
       });
