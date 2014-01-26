@@ -1,1 +1,6 @@
-angular.module('app.directives', ['app.config']);
+(function() {
+  'use strict';
+
+  angular.module('app.directives', ['app.config']);
+
+}());

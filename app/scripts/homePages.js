@@ -15,7 +15,7 @@
     };
   }
 
-  angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit'])
+  angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit', 'app.services'])
 
     .factory('videos', function(API_BASE, $resource) {
       return commonAPIs($resource(API_BASE + '/videos/:id'));
@@ -25,12 +25,11 @@
       return commonAPIs($resource(API_BASE + '/problems/:id'));
     })
 
-    .factory('question', function() {
+    .factory('question', function(event) {
       var qs = [],
-        idx = 0,
-        cache = [];
+        idx = 0;
 
-      return {
+      var question = {
         // will have id, title, options
         current: function() {
           return qs.length ? qs[idx] : null;
@@ -50,20 +49,11 @@
 
         position: function() {
           return Math.min(idx + 1, qs.length);
-        },
-
-        // Simple event bus implementation
-        on: function(event, fn) {
-          cache[event] = fn;
-        },
-
-        trigger: function(event, data) {
-          var fn = cache[event];
-          if (fn) {
-            fn.call(null, data);
-          }
         }
       };
+
+      // Mixing the event
+      return angular.extend(question, event);
     })
 
     .directive('videoJs', function() {
@@ -133,6 +123,7 @@
             }
           });
 
+          // TODO: Implement
           player.on('ended', function() {
             console.log('ended');
           });

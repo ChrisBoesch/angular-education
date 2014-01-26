@@ -88,7 +88,17 @@ describe('Home Pages', function() {
         spyOn(question, 'trigger').andCallThrough();
       }));
 
+      describe('set', function() {
+
+        it('should invoke the trigger function', function() {
+          question.set([1]);
+          expect(question.trigger).toHaveBeenCalledWith('update', [1]);
+        });
+
+      });
+
       describe('current', function() {
+
         it('should return null', function() {
           expect(question.current()).toBeNull();
         });
@@ -97,9 +107,11 @@ describe('Home Pages', function() {
           question.set([1, 2, 3]);
           expect(question.current()).toEqual(1);
         });
+
       });
 
       describe('next', function() {
+
         it('should return the next item', function() {
           question.set([1, 2, 3]);
           question.next();
@@ -118,9 +130,17 @@ describe('Home Pages', function() {
           question.next();
           expect(question.current()).toEqual(1);
         });
+
+        it('should invoke the trigger function', function() {
+          question.set([1]);
+          question.next();
+          expect(question.trigger).toHaveBeenCalledWith('update', [1]);
+        });
+
       });
 
       describe('position', function() {
+
         it('should return 0 initially if empty', function() {
           expect(question.position()).toEqual(0);
         });
@@ -129,15 +149,7 @@ describe('Home Pages', function() {
           question.set([1]);
           expect(question.position()).toEqual(1);
         });
-      });
 
-      describe('callback', function() {
-        it('should trigger the callback when updated', function() {
-          var cb = jasmine.createSpy(), data = [1, 2, 3];
-          question.on('update', cb);
-          question.set(data);
-          expect(cb).toHaveBeenCalledWith(data);
-        });
       });
 
     });
