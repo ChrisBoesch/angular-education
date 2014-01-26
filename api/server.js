@@ -111,7 +111,7 @@ var problems = [
           'null === false',
           'null == undefined',
           'null === undefined',
-          'NaN === Nan'
+          'NaN === NaN'
         ]
       }
     ]
