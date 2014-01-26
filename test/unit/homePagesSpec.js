@@ -85,17 +85,7 @@ describe('Home Pages', function() {
 
       beforeEach(inject(function(_question_) {
         question = _question_;
-        spyOn(question, 'trigger').andCallThrough();
       }));
-
-      describe('set', function() {
-
-        it('should invoke the trigger function', function() {
-          question.set([1]);
-          expect(question.trigger).toHaveBeenCalledWith('update', [1]);
-        });
-
-      });
 
       describe('current', function() {
 
@@ -131,12 +121,6 @@ describe('Home Pages', function() {
           expect(question.current()).toEqual(1);
         });
 
-        it('should invoke the trigger function', function() {
-          question.set([1]);
-          question.next();
-          expect(question.trigger).toHaveBeenCalledWith('update', [1]);
-        });
-
       });
 
       describe('position', function() {
@@ -148,6 +132,20 @@ describe('Home Pages', function() {
         it('should return 1 initially if non-empty', function() {
           question.set([1]);
           expect(question.position()).toEqual(1);
+        });
+
+      });
+
+      describe('total', function() {
+
+        it('should return 0 initially if empty', function() {
+          expect(question.total()).toEqual(0);
+        });
+
+        it('should return 1 initially if non-empty', function() {
+          var data = [1, 2, 3];
+          question.set(data);
+          expect(question.total()).toEqual(data.length);
         });
 
       });

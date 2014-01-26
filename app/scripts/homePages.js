@@ -15,7 +15,7 @@
     };
   }
 
-  angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit', 'app.services'])
+  angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit'])
 
     .factory('videos', function(API_BASE, $resource) {
       return commonAPIs($resource(API_BASE + '/videos/:id'));
@@ -25,11 +25,11 @@
       return commonAPIs($resource(API_BASE + '/problems/:id'));
     })
 
-    .factory('question', function(event) {
+    .factory('question', function() {
       var qs = [],
         idx = 0;
 
-      var question = {
+      return {
         // will have id, title, options
         current: function() {
           return qs.length ? qs[idx] : null;
@@ -37,23 +37,22 @@
 
         set: function(questions) {
           qs = questions;
-          this.trigger('update', qs);
         },
 
         next: function() {
           if ((idx + 1) < qs.length) {
             ++idx;
-            this.trigger('update', qs);
           }
         },
 
         position: function() {
           return Math.min(idx + 1, qs.length);
+        },
+
+        total: function() {
+          return qs.length;
         }
       };
-
-      // Mixing the event
-      return angular.extend(question, event);
     })
 
     .directive('videoJs', function() {
@@ -123,7 +122,7 @@
             }
           });
 
-          // TODO: Implement
+
           player.on('ended', function() {
             console.log('ended');
           });
@@ -190,11 +189,12 @@
         question.next();
       };
 
-      // Event Bus
-      question.on('update', function(data) {
-        $scope.question = question.current();
-        $scope.total = data.length;
-        $scope.position = question.position();
+      $scope.$watch(question.current, function(newVal) {
+        if (newVal) {
+          $scope.question = question.current();
+          $scope.total = question.total();
+          $scope.position = question.position();
+        }
       });
 
       problems.getById($scope.id).then(function(res) {

@@ -12,6 +12,13 @@ describe('Services', function() {
       event = _event_;
     }));
 
+    it('should do nothing for unknown calls', function() {
+      var cb = jasmine.createSpy(), data = Math.random();
+      event.on('event1', cb);
+      event.trigger('event2', data);
+      expect(cb).not.toHaveBeenCalled();
+    });
+
     it('should invoke the callback when triggered', function() {
       var cb = jasmine.createSpy(), data = Math.random();
       event.on('event1', cb);
