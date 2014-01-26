@@ -25,6 +25,47 @@
       return commonAPIs($resource(API_BASE + '/problems/:id'));
     })
 
+    .factory('question', function() {
+      var qs = [],
+        idx = 0,
+        cache = [];
+
+      return {
+        // will have id, title, options
+        current: function() {
+          return qs.length ? qs[idx] : null;
+        },
+
+        set: function(questions) {
+          qs = questions;
+          this.trigger('update', qs);
+        },
+
+        next: function() {
+          if ((idx + 1) < qs.length) {
+            ++idx;
+            this.trigger('update', qs);
+          }
+        },
+
+        position: function() {
+          return Math.min(idx + 1, qs.length);
+        },
+
+        // Simple event bus implementation
+        on: function(event, fn) {
+          cache[event] = fn;
+        },
+
+        trigger: function(event, data) {
+          var fn = cache[event];
+          if (fn) {
+            fn.call(null, data);
+          }
+        }
+      };
+    })
+
     .directive('videoJs', function() {
       var linker = function(scope, element, attrs) {
         var player;
@@ -110,6 +151,16 @@
       };
     })
 
+    .directive('tooltip', function() {
+      return {
+        restrict: 'A',
+        scope: true,
+        link: function(scope, element) {
+          element.tooltip();
+        }
+      };
+    })
+
     .controller('HomeCtrl', function($scope, videos) {
       $scope.videos = null;
 
@@ -137,6 +188,31 @@
         $scope.problems = res;
       });
     })
+
+    .controller('ProblemCtrl', function($scope, $routeParams, problems, question) {
+      $scope.id = $routeParams.id;
+      $scope.title = null;
+
+      // Answer logged in server
+      $scope.logged = false;
+      $scope.next = function() {
+        question.next();
+      };
+
+      // Event Bus
+      question.on('update', function(data) {
+        $scope.question = question.current();
+        $scope.total = data.length;
+        $scope.position = question.position();
+      });
+
+      problems.getById($scope.id).then(function(res) {
+        $scope.title = res.title;
+        question.set(res.questions);
+      });
+
+    })
+
   ;
 
 }());

@@ -1,4 +1,4 @@
-/*global describe, beforeEach, afterEach, it, inject, expect, spyOn, document*/
+/*global describe, beforeEach, afterEach, it, inject, expect, spyOn, document, jasmine*/
 
 describe('Home Pages', function() {
 
@@ -79,6 +79,69 @@ describe('Home Pages', function() {
 
     });
 
+    describe('Question Factory', function() {
+
+      var question;
+
+      beforeEach(inject(function(_question_) {
+        question = _question_;
+        spyOn(question, 'trigger').andCallThrough();
+      }));
+
+      describe('current', function() {
+        it('should return null', function() {
+          expect(question.current()).toBeNull();
+        });
+
+        it('should return the first item initially if non-empty', function() {
+          question.set([1, 2, 3]);
+          expect(question.current()).toEqual(1);
+        });
+      });
+
+      describe('next', function() {
+        it('should return the next item', function() {
+          question.set([1, 2, 3]);
+          question.next();
+          expect(question.current()).toEqual(2);
+        });
+
+        it('should return the next, next item', function() {
+          question.set([1, 2, 3]);
+          question.next();
+          question.next();
+          expect(question.current()).toEqual(3);
+        });
+
+        it('shouldn\'t get out of bound', function() {
+          question.set([1]);
+          question.next();
+          expect(question.current()).toEqual(1);
+        });
+      });
+
+      describe('position', function() {
+        it('should return 0 initially if empty', function() {
+          expect(question.position()).toEqual(0);
+        });
+
+        it('should return 1 initially if non-empty', function() {
+          question.set([1]);
+          expect(question.position()).toEqual(1);
+        });
+      });
+
+      describe('callback', function() {
+        it('should trigger the callback when updated', function() {
+          var cb = jasmine.createSpy(), data = [1, 2, 3];
+          question.on('update', cb);
+          question.set(data);
+          expect(cb).toHaveBeenCalledWith(data);
+        });
+      });
+
+    });
+
   });
 
   describe('Directives', function() {
@@ -143,16 +206,33 @@ describe('Home Pages', function() {
 
     });
 
+    describe('tooltip Directive', function() {
+      var element, $scope;
+
+      beforeEach(inject(function(_$compile_, _$rootScope_) {
+        $scope = _$rootScope_.$new();
+        element = angular.element('<a tooltip href="#" title="Test"></a>');
+        _$compile_(element)($scope);
+        $scope.$apply();
+      }));
+
+      it('should contain contain bs.tooltip', function() {
+        expect(angular.isObject(element.data('bs.tooltip'))).toBeTruthy();
+      });
+
+    });
+
   });
 
   describe('Controllers', function() {
 
-    var ctrl, $scope, deferred, videos, problems;
+    var ctrl, $scope, deferred, videos, problems, question;
 
-    beforeEach(inject(function(_$q_, _videos_, _problems_) {
+    beforeEach(inject(function(_$q_, _videos_, _problems_, _question_) {
       deferred = _$q_.defer();
       videos = _videos_;
       problems = _problems_;
+      question = _question_;
       spyOn(videos, 'all').andReturn(deferred.promise);
       spyOn(videos, 'getById').andReturn(deferred.promise);
       spyOn(problems, 'all').andReturn(deferred.promise);
@@ -222,7 +302,7 @@ describe('Home Pages', function() {
         });
 
         it('should instantiate isYouTube to false', function() {
-          expect($scope.url).toBeFalsy();
+          expect($scope.isYouTube).toBeFalsy();
         });
 
         it('should call the getById function in factory', function() {
@@ -293,6 +373,80 @@ describe('Home Pages', function() {
           deferred.resolve(problems);
           $scope.$apply();
           expect($scope.problems).toEqual(problems);
+        });
+
+      });
+
+    });
+
+    describe('Problem Controller', function() {
+      // Generate a random id between 0~100
+      var routeParamId = (Math.random() * 100).toFixed(0);
+
+      beforeEach(inject(function(_$controller_, _$rootScope_) {
+        $scope = _$rootScope_.$new();
+        ctrl = _$controller_('ProblemCtrl', {
+          $scope: $scope,
+          $routeParams: {
+            id: routeParamId
+          }
+        });
+      }));
+
+      describe('Initialization', function() {
+
+        it('should instantiate id to the given routeParam id', function() {
+          expect($scope.id).toEqual(routeParamId);
+        });
+
+        it('should instantiate title to null', function() {
+          expect($scope.title).toBeNull();
+        });
+
+        it('should call the getById function in factory', function() {
+          expect(problems.getById).toHaveBeenCalledWith(routeParamId);
+        });
+
+      });
+
+      describe('After factory resolved', function() {
+
+        it('should update the title with content from factory', function() {
+          var title = 'awesome video';
+          deferred.resolve({title: title, questions: []});
+          $scope.$apply();
+          expect($scope.title).toEqual(title);
+        });
+
+        it('should call the set function on question factory', function() {
+          var data = [1, 2, 3];
+          spyOn(question, 'set').andCallThrough();
+          deferred.resolve({questions: data});
+          $scope.$apply();
+          expect(question.set).toHaveBeenCalledWith(data);
+        });
+
+        it('should invoke the callback after the data has been set', function() {
+          var data = [1, 2, 3];
+          deferred.resolve({questions: data});
+          $scope.$apply();
+          expect($scope.question).toEqual(data[0]);
+          expect($scope.total).toEqual(data.length);
+          expect($scope.position).toEqual(1);
+        });
+
+      });
+
+      describe('Methods', function() {
+
+        describe('next', function() {
+
+          it('should invoke the next function on question', function() {
+            spyOn(question, 'next').andCallThrough();
+            $scope.next();
+            expect(question.next).toHaveBeenCalled();
+          });
+
         });
 
       });
