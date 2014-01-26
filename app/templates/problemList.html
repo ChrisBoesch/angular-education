@@ -33,7 +33,10 @@
             <td>{{problem.id}}</td>
             <td>{{problem.title}}</td>
             <td>{{problem.description}}</td>
-            <td></td>
+            <td>
+                <a href="#/problems/{{problem.id}}" title="Solve" tooltip><span class="glyphicon glyphicon-time"></span></a>
+                <a href="#/videos/{{problem.id}}" title="Watch Again" tooltip><span class="glyphicon glyphicon-play-circle"></span></a>
+            </td>
         </tr>
     </tbody>
 </table>

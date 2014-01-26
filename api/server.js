@@ -1,5 +1,7 @@
+/*global setTimeout*/
 var express = require('express'),
-  app = express();
+  app = express(),
+  _ = require('lodash');
 
 // Simulate slow network with a delay
 var DELAY = process.env.DELAY || 0;
@@ -8,7 +10,6 @@ var DELAY = process.env.DELAY || 0;
 DELAY = 1000;
 
 // Global Data
-
 var videos = [
   {
     id: 1,
@@ -95,7 +96,29 @@ var videos = [
 var problems = [
   {
     id: 1,
-    title: 'Introduction to JavaScript Problem Set',
+    title: 'Introduction to JavaScript',
+    description: 'Instruction or some useful hints',
+    questions: [
+      {
+        id: 1,
+        title: 'Undefined is ___',
+        options: ['Truthy', 'Falsy']
+      },
+      {
+        id: 2,
+        title: 'Please choose the correct answer?',
+        options: [
+          'null === false',
+          'null == undefined',
+          'null === undefined',
+          'NaN === Nan'
+        ]
+      }
+    ]
+  },
+  {
+    id: 2,
+    title: 'Introduction to AngularJS',
     description: 'Instruction or some useful hints'
   }
 ];
@@ -110,17 +133,26 @@ app.get('/videos', function(req, res) {
   }, DELAY);
 });
 
-app.get('/problems', function(req, res) {
-  setTimeout(function() {
-    res.send(problems);
-  }, DELAY);
-});
-
 app.get('/videos/:id', function(req, res) {
   setTimeout(function() {
     res.send(videos[req.params.id - 1]);
   }, DELAY);
 });
+
+app.get('/problems', function(req, res) {
+  setTimeout(function() {
+    res.send(_.map(problems, function(problem){
+      return _.pick(problem, ['id', 'title', 'description']);
+    }));
+  }, DELAY);
+});
+
+app.get('/problems/:id', function(req, res) {
+  setTimeout(function() {
+    res.send(problems[req.params.id - 1]);
+  }, DELAY);
+});
+
 
 app.get('/stats', function(req, res) {
   setTimeout(function() {
