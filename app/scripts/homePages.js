@@ -27,8 +27,7 @@
 
     .factory('question', function() {
       var qs = [],
-        idx = 0,
-        cache = [];
+        idx = 0;
 
       return {
         // will have id, title, options
@@ -38,13 +37,11 @@
 
         set: function(questions) {
           qs = questions;
-          this.trigger('update', qs);
         },
 
         next: function() {
           if ((idx + 1) < qs.length) {
             ++idx;
-            this.trigger('update', qs);
           }
         },
 
@@ -52,16 +49,8 @@
           return Math.min(idx + 1, qs.length);
         },
 
-        // Simple event bus implementation
-        on: function(event, fn) {
-          cache[event] = fn;
-        },
-
-        trigger: function(event, data) {
-          var fn = cache[event];
-          if (fn) {
-            fn.call(null, data);
-          }
+        total: function() {
+          return qs.length;
         }
       };
     })
@@ -133,6 +122,7 @@
             }
           });
 
+
           player.on('ended', function() {
             console.log('ended');
           });
@@ -199,11 +189,12 @@
         question.next();
       };
 
-      // Event Bus
-      question.on('update', function(data) {
-        $scope.question = question.current();
-        $scope.total = data.length;
-        $scope.position = question.position();
+      $scope.$watch(question.current, function(newVal) {
+        if (newVal) {
+          $scope.question = question.current();
+          $scope.total = question.total();
+          $scope.position = question.position();
+        }
       });
 
       problems.getById($scope.id).then(function(res) {
