@@ -9,6 +9,8 @@ var DELAY = process.env.DELAY || 0;
 // One second delay
 DELAY = 1000;
 
+app.use(express.bodyParser());
+
 // Global Data
 var videos = [
   {
@@ -93,6 +95,7 @@ var videos = [
   }
 ];
 
+// Contain data from user relation
 var problems = [
   {
     id: 1,
@@ -102,7 +105,9 @@ var problems = [
       {
         id: 1,
         title: 'Undefined is ___',
-        options: ['Truthy', 'Falsy']
+        options: ['Truthy', 'Falsy'],
+        //answer: 1,
+        //isCorrect: true
       },
       {
         id: 2,
@@ -141,7 +146,7 @@ app.get('/videos/:id', function(req, res) {
 
 app.get('/problems', function(req, res) {
   setTimeout(function() {
-    res.send(_.map(problems, function(problem){
+    res.send(_.map(problems, function(problem) {
       return _.pick(problem, ['id', 'title', 'description']);
     }));
   }, DELAY);
@@ -150,6 +155,17 @@ app.get('/problems', function(req, res) {
 app.get('/problems/:id', function(req, res) {
   setTimeout(function() {
     res.send(problems[req.params.id - 1]);
+  }, DELAY);
+});
+
+app.post('/problems/:id', function(req, res) {
+  setTimeout(function() {
+    var payload = req.body,
+      question = problems[req.params.id - 1].questions[payload.id - 1];
+    question.answer = payload.answer;
+    // Random answer
+    question.isCorrect = !!Math.floor(Math.random() * 2);
+    res.send({isCorrect: question.isCorrect});
   }, DELAY);
 });
 

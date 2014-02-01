@@ -22,17 +22,25 @@
     })
 
     .factory('problems', function(API_BASE, $resource) {
-      return commonAPIs($resource(API_BASE + '/problems/:id'));
+      var res = $resource(API_BASE + '/problems/:id'),
+        api = {
+          answer: function(id, data) {
+            return res.save({id: id}, data).$promise;
+          }
+        };
+      return angular.extend(api, commonAPIs(res));
     })
 
     .factory('question', function() {
       var qs = [],
-        idx = 0;
+        idx = 0,
+        cur = null;
 
       return {
         // will have id, title, options
         current: function() {
-          return qs.length ? qs[idx] : null;
+          cur = (qs && qs.length) ? qs[idx] : null;
+          return cur;
         },
 
         set: function(questions) {
@@ -45,12 +53,20 @@
           }
         },
 
+        hasNext: function() {
+          return (idx + 1) < qs.length;
+        },
+
         position: function() {
           return Math.min(idx + 1, qs.length);
         },
 
         total: function() {
           return qs.length;
+        },
+
+        isAnswered: function() {
+          return angular.isDefined(cur.answer);
         }
       };
     })
@@ -92,14 +108,14 @@
 
           attrs.id = 'video-js' + scope.id;
           element.attr('id', attrs.id);
-          // element.attr('poster', 'thumb');
 
-          player = videojs(attrs.id, setup).ready(function() {
+          player = videojs(element.get(0), setup).ready(function() {
             if (!isYouTube) {
               var source = ([
-                {type: 'video/mp4', src: url}
+                {type: attrs.type, src: url}
               ]);
-              this.src({type: attrs.type, src: source });
+
+              this.src(source);
 
               var myPlayer = this,
                 aspectRatio = 9 / 16;
@@ -122,7 +138,6 @@
             }
           });
 
-
           player.on('ended', function() {
             console.log('ended');
           });
@@ -132,7 +147,9 @@
         });
 
         scope.$on('$destroy', function() {
-          player.dispose();
+          if (player) {
+            player.dispose();
+          }
         });
       };
       return {
@@ -182,25 +199,65 @@
     .controller('ProblemCtrl', function($scope, $routeParams, problems, question) {
       $scope.id = $routeParams.id;
       $scope.title = null;
-
-      // Answer logged in server
-      $scope.logged = false;
-      $scope.next = function() {
-        question.next();
-      };
+      $scope.canProceed = false;
 
       $scope.$watch(question.current, function(newVal) {
         if (newVal) {
           $scope.question = question.current();
           $scope.total = question.total();
           $scope.position = question.position();
+          $scope.isAnswered = question.isAnswered();
+          $scope.hasNext = question.hasNext();
         }
       });
 
       problems.getById($scope.id).then(function(res) {
         $scope.title = res.title;
         question.set(res.questions);
+        // TODO: Make it better
+        $scope.questions = res.questions;
       });
+
+      $scope.currentClass = function(prefix, question) {
+        var q = angular.isDefined(question) ? question : $scope.question;
+        if (q) {
+          switch (q.isCorrect) {
+            case undefined:
+              return prefix + '-warning';
+            case true:
+              return prefix + '-success';
+            case false:
+              return prefix + '-danger';
+          }
+        }
+      };
+
+      $scope.next = function() {
+        question.next();
+      };
+
+      $scope.submit = function() {
+        if (angular.isDefined($scope.question.answer)) {
+          $scope.isAnswered = true;
+          $scope.canProceed = true;
+          // Problem ID
+          problems.answer($scope.id, {
+            // Question ID
+            id: $scope.question.id,
+            answer: $scope.question.answer
+          }).then(
+            // Success
+            function(ret) {
+              $scope.question.isCorrect = ret.isCorrect;
+              $scope.canProceed = false;
+            },
+            // Error
+            function() {
+              $scope.isAnswered = false;
+              $scope.canProceed = false;
+            });
+        }
+      };
 
     })
 
