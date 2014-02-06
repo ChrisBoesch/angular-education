@@ -11,18 +11,21 @@ function writeResponse(res, data) {
 
 // the description will be picked up in the resource listing
 exports.findAll = {
-  'spec': {
+  spec: {
     description: 'Operations about videos',
     path: '/videos',
     method: 'GET',
     summary: 'Find all videos',
     notes: 'Returns all videos',
-    type: 'Video',
+    type: 'array',
+    items: {
+      $ref: 'Video'
+    },
     nickname: 'getAllVideos',
     produces: ['application/json'],
     responseMessages: [swe.notFound('videos')]
   },
-  'action': function(req, res) {
+  action: function(req, res) {
     var videos = videosData.getAll();
 
     if (videos) {
@@ -35,7 +38,7 @@ exports.findAll = {
 };
 
 exports.findById = {
-  'spec': {
+  spec: {
     description: 'Operations about videos',
     path: '/videos/{videoId}',
     method: 'GET',
@@ -47,7 +50,7 @@ exports.findById = {
     parameters: [params.path('videoId', 'ID of video that needs to be fetched', 'string')],
     responseMessages: [swe.invalid('id'), swe.notFound('video')]
   },
-  'action': function(req, res) {
+  action: function(req, res) {
     if (!req.params.videoId) {
       throw swe.invalid('id');
     }

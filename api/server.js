@@ -70,3 +70,5 @@ app.get(/^\/docs(\/.*)?$/, function(req, res, next) {
 
 // Start the server on port 9090
 app.listen(9090);
+
+console.log('Listening on port 9090');

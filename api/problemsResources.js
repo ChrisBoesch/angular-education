@@ -11,18 +11,21 @@ function writeResponse(res, data) {
 
 // the description will be picked up in the resource listing
 exports.findAll = {
-  'spec': {
+  spec: {
     description: 'Operations about problems',
     path: '/problems',
     method: 'GET',
     summary: 'Find all problems',
     notes: 'Returns all problems',
-    type: 'Problem',
+    type: 'array',
+    items: {
+      $ref: 'Problem'
+    },
     nickname: 'getAllProblems',
     produces: ['application/json'],
     responseMessages: [swe.notFound('problems')]
   },
-  'action': function(req, res) {
+  action: function(req, res) {
     var problems = problemsData.getAll();
 
     if (problems) {
@@ -35,7 +38,7 @@ exports.findAll = {
 };
 
 exports.findById = {
-  'spec': {
+  spec: {
     description: 'Operations about problems',
     path: '/problems/{problemId}',
     method: 'GET',
@@ -47,7 +50,7 @@ exports.findById = {
     parameters: [params.path('problemId', 'ID of problem that needs to be fetched', 'string')],
     responseMessages: [swe.invalid('id'), swe.notFound('problem')]
   },
-  'action': function(req, res) {
+  action: function(req, res) {
     if (!req.params.problemId) {
       throw swe.invalid('id');
     }
@@ -64,7 +67,7 @@ exports.findById = {
 };
 
 exports.findAllQuestions = {
-  'spec': {
+  spec: {
     description: 'Operations about problems',
     path: '/problems/{problemId}/questions',
     method: 'GET',
@@ -76,7 +79,7 @@ exports.findAllQuestions = {
     parameters: [params.path('problemId', 'ID of problem for which the questions need to be fetched', 'string')],
     responseMessages: [swe.invalid('id'), swe.notFound('questions')]
   },
-  'action': function(req, res) {
+  action: function(req, res) {
     if (!req.params.problemId) {
       throw swe.invalid('id');
     }

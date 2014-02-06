@@ -25,9 +25,9 @@ module.exports = {
         type: 'string',
         description: 'URL of the video'
       },
-      watched: {
+      isWatched: {
         type: 'boolean',
-        description: 'If this videos has already been watched by the logged in user'
+        description: 'If this videos has already been watched by the logged in user?'
       }
     }
   },
@@ -68,10 +68,35 @@ module.exports = {
       options: {
         type: 'array',
         items: {
-          type: 'string'
+          $ref: 'Option'
         },
         uniqueItems: true,
         description: 'Options available for the question'
+      },
+      answer: {
+        type: 'integer',
+        format: 'int64',
+        description: 'ID of the option answered by the logged in user'
+      },
+      isCorrect: {
+        type: 'boolean',
+        description: 'Is the answer provided by the user is correct or not?'
+      }
+    }
+  },
+  Option: {
+    id: 'Option',
+    required: ['id', 'value'],
+    properties: {
+      id: {
+        type: 'integer',
+        format: 'int64',
+        description: 'Unique identifier for the option',
+        minimum: '0'
+      },
+      value: {
+        type: 'string',
+        description: 'content of the option'
       }
     }
   }

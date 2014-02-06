@@ -9,19 +9,40 @@ var problems = [
       {
         id: 1,
         title: 'Undefined is ___',
-        options: ['Truthy', 'Falsy']
-        //answer: 1,
-        //isCorrect: true
+        options: [
+          {
+            id: 1,
+            value: 'Truthy'
+          },
+          {
+            id: 2,
+            value: 'Falsy'
+          }
+        ],
+        validAnswer: 2
       },
       {
         id: 2,
         title: 'Please choose the correct answer?',
         options: [
-          'null === false',
-          'null == undefined',
-          'null === undefined',
-          'NaN === NaN'
-        ]
+          {
+            id: 3,
+            value: 'null === false'
+          },
+          {
+            id: 4,
+            value: 'null == undefined'
+          },
+          {
+            id: 5,
+            value: 'null === undefined'
+          },
+          {
+            id: 6,
+            value: 'NaN === NaN'
+          }
+        ],
+        validAnswer: 4
       }
     ]
   },
