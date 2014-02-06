@@ -10,16 +10,27 @@ app.use(express.json());
 
 swagger.setAppHandler(app);
 
-var videosResources = require('./videosResources');
+var videosResources = require('./videosResources'),
+  problemsResources = require('./problemsResources');
 
 swagger.addModels(models)
   .addGet(videosResources.findAll)
-  .addGet(videosResources.findById);
+  .addGet(videosResources.findById)
+
+  .addGet(problemsResources.findAll)
+  .addGet(problemsResources.findById)
+  .addGet(problemsResources.findAllQuestions);
 
 
 swagger.configureDeclaration('videos', {
-  description : 'Operations about Videos',
-  authorizations : ['oauth2'],
+  description: 'Operations about Videos',
+  authorizations: ['oauth2'],
+  produces: ['application/json']
+});
+
+swagger.configureDeclaration('problems', {
+  description: 'Operations about Problems',
+  authorizations: ['oauth2'],
   produces: ['application/json']
 });
 

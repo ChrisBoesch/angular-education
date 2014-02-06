@@ -87,6 +87,6 @@ exports.getAll = function() {
   return videos;
 };
 
-exports.getById = function getById(id) {
+exports.getById = function(id) {
   return _.find(videos, {id: id});
 };
