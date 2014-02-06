@@ -71,7 +71,7 @@
       };
     })
 
-    .directive('videoJs', function() {
+    .directive('videoJs', function($window) {
       var linker = function(scope, element, attrs) {
         var player;
 
@@ -109,7 +109,7 @@
           attrs.id = 'video-js' + scope.id;
           element.attr('id', attrs.id);
 
-          player = videojs(element.get(0), setup).ready(function() {
+          player = videojs(element.get(0), setup, function() {
             if (!isYouTube) {
               var source = ([
                 {type: attrs.type, src: url}
@@ -132,15 +132,13 @@
               resizeVideoJS();
 
               // Call the function on resize
-              $(window).on('resize', _.debounce(function() {
+              $($window).on('resize', _.debounce(function() {
                 resizeVideoJS();
               }, 50));
             }
           });
 
-          player.on('ended', function() {
-            console.log('ended');
-          });
+          // player.on('ended', $.noop);
 
           // remove the watch
           guard();
@@ -150,6 +148,7 @@
           if (player) {
             player.dispose();
           }
+          $($window).off('resize');
         });
       };
       return {

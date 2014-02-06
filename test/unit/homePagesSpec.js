@@ -50,14 +50,13 @@ describe('Home Pages', function() {
 
     describe('Problems Factory', function() {
 
-      var problems;
+      var problems, ret;
 
       beforeEach(inject(function(_problems_) {
         problems = _problems_;
       }));
 
       it('should return an array of objects when the all get called', function() {
-        var ret;
         $httpBackend.whenGET(API_BASE + '/problems').respond([]);
         problems.all().then(function(data) {
           ret = data;
@@ -67,13 +66,23 @@ describe('Home Pages', function() {
       });
 
       it('should return an objects when getById is called', function() {
-        var ret, obj = {id: 1};
+        var obj = {id: 1};
         $httpBackend.whenGET(API_BASE + '/problems/' + obj.id).respond(obj);
         problems.getById(obj.id).then(function(data) {
           ret = data;
         });
         $httpBackend.flush();
         expect(ret.id).toEqual(1);
+      });
+
+      it('should return an objects when answer is posted', function() {
+        var obj = {id: 1}, ans = !!Math.floor(Math.random() * 2);
+        $httpBackend.whenPOST(API_BASE + '/problems/' + obj.id).respond({isCorrect: ans});
+        problems.answer(obj.id, {}).then(function(data) {
+          ret = data.isCorrect;
+        });
+        $httpBackend.flush();
+        expect(ret).toEqual(ans);
       });
 
     });
@@ -157,9 +166,10 @@ describe('Home Pages', function() {
 
     // TODO: Fix the videojs issue
     describe('videoJs Directive', function() {
-      var element, $scope;
+      var element, $scope, $window;
 
-      beforeEach(inject(function(_$compile_, _$rootScope_) {
+      beforeEach(inject(function(_$compile_, _$rootScope_, _$window_) {
+        $window = _$window_;
         $scope = _$rootScope_.$new();
         element = angular.element('<video video-js class="video-js vjs-default-skin"></video>');
         _$compile_(element)($scope);
@@ -250,6 +260,7 @@ describe('Home Pages', function() {
       spyOn(videos, 'getById').andReturn(deferred.promise);
       spyOn(problems, 'all').andReturn(deferred.promise);
       spyOn(problems, 'getById').andReturn(deferred.promise);
+      spyOn(problems, 'answer').andReturn(deferred.promise);
     }));
 
     describe('Home Controller', function() {
@@ -453,12 +464,86 @@ describe('Home Pages', function() {
 
       describe('Methods', function() {
 
+        describe('currentClass', function() {
+
+          it('should return warning on undefined', function() {
+            var question = {};
+            expect($scope.currentClass('test', question)).toEqual('test-warning');
+          });
+
+          it('should return warning on undefined', function() {
+            $scope.question = {};
+            expect($scope.currentClass('test')).toEqual('test-warning');
+          });
+
+          it('should return success on true', function() {
+            var question = {isCorrect: true};
+            expect($scope.currentClass('test', question)).toEqual('test-success');
+          });
+
+          it('should return success on true', function() {
+            $scope.question = {isCorrect: true};
+            expect($scope.currentClass('test')).toEqual('test-success');
+          });
+
+          it('should return danger on false', function() {
+            var question = {isCorrect: false};
+            expect($scope.currentClass('test', question)).toEqual('test-danger');
+          });
+
+          it('should return danger on false', function() {
+            $scope.question = {isCorrect: false};
+            expect($scope.currentClass('test')).toEqual('test-danger');
+          });
+
+        });
+
         describe('next', function() {
 
           it('should invoke the next function on question', function() {
             spyOn(question, 'next').andCallThrough();
             $scope.next();
             expect(question.next).toHaveBeenCalled();
+          });
+
+        });
+
+        describe('submit', function() {
+
+          var answer = 6;
+
+          it('should expect isAnswered to true', function() {
+            $scope.question = {answer: answer};
+            $scope.submit();
+            expect($scope.isAnswered).toBeTruthy();
+          });
+
+          it('should expect canProceed to true', function() {
+            $scope.question = {answer: answer};
+            $scope.submit();
+            expect($scope.canProceed).toBeTruthy();
+          });
+
+          it('should invoke the answer function on problems', function() {
+            $scope.question = {id: 5, answer: answer};
+            $scope.submit();
+            expect(problems.answer).toHaveBeenCalledWith($scope.id, $scope.question);
+          });
+
+          it('shouldn\'t invoke the answer function on problems if answer is not defined', function() {
+            $scope.question = {};
+            $scope.submit();
+            expect(problems.answer).not.toHaveBeenCalled();
+          });
+
+          it('should invoke the success callback on successful request', function() {
+            var ans = !!Math.floor(Math.random() * 2);
+            $scope.question = {id: 5, answer: answer};
+            $scope.$apply();
+            deferred.resolve({isCorrect: ans});
+            $scope.submit();
+            expect($scope.question.isCorrect).toEqual(ans);
+            expect($scope.canProceed).toBeFalsy();
           });
 
         });

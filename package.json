@@ -38,6 +38,7 @@
     "express": "~3.4.7",
     "grunt-express-server": "~0.4.11",
     "grunt-connect-proxy": "~0.1.7",
-    "lodash": "~2.4.1"
+    "lodash": "~2.4.1",
+    "swagger-node-express": "~2.0.1"
   }
 }
