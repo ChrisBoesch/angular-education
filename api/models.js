@@ -101,7 +101,7 @@ module.exports = {
         uniqueItems: true,
         description: 'Options available for the question'
       },
-      answer: {
+      answered: {
         type: 'integer',
         format: 'int64',
         description: 'ID of the option answered by the logged in user'
@@ -127,5 +127,26 @@ module.exports = {
         description: 'content of the option'
       }
     }
+  },
+  Answer: {
+    id: 'Answer',
+    required: ['isCorrect'],
+    properties: {
+      isCorrect: {
+        type: 'boolean',
+        description: 'If the answer posted was correct or not?'
+      }
+    }
+  },
+  AnswerPayload: {
+    id: 'Answer',
+    required: ['answer'],
+    properties: {
+      answer: {
+        type: 'integer',
+        description: 'ID of the option that needs to be matched'
+      }
+    }
   }
+
 };

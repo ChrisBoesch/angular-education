@@ -1,4 +1,3 @@
-/*global setTimeout*/
 var express = require('express'),
   swagger = require('swagger-node-express'),
   models = require('./models');
@@ -19,6 +18,7 @@ swagger.addModels(models)
 
   .addGet(problemsResources.findAll)
   .addGet(problemsResources.findById)
+  .addPost(problemsResources.postAnswer)
 ;
 
 
@@ -53,13 +53,22 @@ swagger.setAuthorizations({
 
 // Configures the app's base path and api version.
 swagger.configureSwaggerPaths('', '/api-docs', '');
+// TODO: Make it dynamic
 swagger.configure('http://localhost:9090', '1.0.0');
+
+swagger.setHeaders = function setHeaders(res) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, api_key');
+  res.header('Content-Type', 'application/json; charset=utf-8');
+};
 
 // Serve up swagger ui at /docs via static route
 var docs_handler = express.static(__dirname + '/swagger-ui/');
 app.get(/^\/docs(\/.*)?$/, function(req, res, next) {
   if (req.url === '/docs') { // express static barfs on root url w/o trailing slash
     // Check for proxy
+    // TODO: Make it dynamic
     if (req.headers.host.indexOf('9090') < 0) {
       res.writeHead(302, { 'Location': 'http://' + req.headers.host + '/api/v1/docs/' });
     }

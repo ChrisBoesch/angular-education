@@ -47,7 +47,7 @@ exports.findById = {
     type: 'Video',
     nickname: 'getVideoById',
     produces: ['application/json'],
-    parameters: [params.path('videoId', 'ID of video that needs to be fetched', 'string')],
+    parameters: [params.path('videoId', 'ID of video that needs to be fetched', 'integer')],
     responseMessages: [swe.invalid('id'), swe.notFound('video')]
   },
   action: function(req, res) {
