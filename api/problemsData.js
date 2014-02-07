@@ -60,9 +60,9 @@ exports.getAll = function() {
 };
 
 exports.getById = function(id) {
-  return _.pick(_.find(problems, {id: id}), ['id', 'title', 'description']);
-};
-
-exports.getAllQuestionsById = function(id) {
-  return _.find(problems, {id: id}).questions;
+  var problem = _.find(problems, {id: id});
+  problem.questions = _.map(problem.questions, function(question) {
+    return _.pick(question, ['id', 'title', 'options']);
+  });
+  return problem;
 };

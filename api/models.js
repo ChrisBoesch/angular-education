@@ -31,9 +31,10 @@ module.exports = {
       }
     }
   },
-  Problem: {
+  Problems: {
     id: 'Problem',
     required: ['id', 'title'],
+    type: 'array',
     properties: {
       id: {
         type: 'integer',
@@ -48,6 +49,33 @@ module.exports = {
       description: {
         type: 'string',
         description: 'Description of the problem'
+      }
+    }
+  },
+  Problem: {
+    id: 'Problem',
+    required: ['id', 'title', 'questions'],
+    properties: {
+      id: {
+        type: 'integer',
+        format: 'int64',
+        description: 'Unique identifier for the problem',
+        minimum: '0'
+      },
+      title: {
+        type: 'string',
+        description: 'Friendly name of the problem'
+      },
+      description: {
+        type: 'string',
+        description: 'Description of the problem'
+      },
+      questions: {
+        type: 'array',
+        items: {
+          $ref: 'Question'
+        },
+        description: 'Questions available for the problem'
       }
     }
   },

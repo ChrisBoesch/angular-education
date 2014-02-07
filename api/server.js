@@ -19,7 +19,7 @@ swagger.addModels(models)
 
   .addGet(problemsResources.findAll)
   .addGet(problemsResources.findById)
-  .addGet(problemsResources.findAllQuestions);
+;
 
 
 swagger.configureDeclaration('videos', {
@@ -59,7 +59,13 @@ swagger.configure('http://localhost:9090', '1.0.0');
 var docs_handler = express.static(__dirname + '/swagger-ui/');
 app.get(/^\/docs(\/.*)?$/, function(req, res, next) {
   if (req.url === '/docs') { // express static barfs on root url w/o trailing slash
-    res.writeHead(302, { 'Location': req.url + '/' });
+    // Check for proxy
+    if (req.headers.host.indexOf('9090') < 0) {
+      res.writeHead(302, { 'Location': 'http://' + req.headers.host + '/api/v1/docs/' });
+    }
+    else {
+      res.writeHead(302, { 'Location': req.url + '/' });
+    }
     res.end();
     return;
   }

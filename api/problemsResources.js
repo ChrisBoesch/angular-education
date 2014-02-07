@@ -19,7 +19,7 @@ exports.findAll = {
     notes: 'Returns all problems',
     type: 'array',
     items: {
-      $ref: 'Problem'
+      $ref: 'Problems'
     },
     nickname: 'getAllProblems',
     produces: ['application/json'],
@@ -66,31 +66,3 @@ exports.findById = {
   }
 };
 
-exports.findAllQuestions = {
-  spec: {
-    description: 'Operations about problems',
-    path: '/problems/{problemId}/questions',
-    method: 'GET',
-    summary: 'Find all the questions of a problem by ID',
-    notes: 'Returns questions of a problem based on ID',
-    type: 'Question',
-    nickname: 'getAllQuestions',
-    produces: ['application/json'],
-    parameters: [params.path('problemId', 'ID of problem for which the questions need to be fetched', 'string')],
-    responseMessages: [swe.invalid('id'), swe.notFound('questions')]
-  },
-  action: function(req, res) {
-    if (!req.params.problemId) {
-      throw swe.invalid('id');
-    }
-    var id = parseInt(req.params.problemId);
-    var questions = problemsData.getAllQuestionsById(id);
-
-    if (questions) {
-      writeResponse(res, questions);
-    }
-    else {
-      throw swe.notFound('questions');
-    }
-  }
-};
