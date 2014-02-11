@@ -1,186 +1,115 @@
-/*global setTimeout*/
 var express = require('express'),
-  app = express(),
-  _ = require('lodash');
+  swagger = require('swagger-node-express'),
+  cors = require('cors'),
+  models = require('./models');
 
-// Simulate slow network with a delay
-var DELAY = process.env.DELAY || 0;
+var app = express();
 
-// One second delay
-DELAY = 1000;
+app.use(express.urlencoded());
+app.use(express.json());
 
-app.use(express.bodyParser());
-
-// Global Data
-var videos = [
-  {
-    id: 1,
-    title: 'Introduction to JavaScript',
-    description: 'Basics of the awesome JavaScript programming language',
-    thumbnail: null,
-    url: 'http://vjs.zencdn.net/v/oceans.mp4',
-    watched: true
-  },
-  {
-    id: 2,
-    title: 'Egghead.io - Bower - Intro to Bower',
-    description: 'More great videos at http://egghead.io',
-    thumbnail: 'http://i1.ytimg.com/vi/vO_Ie3kMXbY/mqdefault.jpg',
-    url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY',
-    watched: false
-  },
-  {
-    id: 3,
-    title: 'Introduction to JavaScript',
-    description: 'Basics of the awesome JavaScript programming language',
-    thumbnail: null,
-    url: 'http://vjs.zencdn.net/v/oceans.mp4',
-    watched: false
-  },
-  {
-    id: 4,
-    title: 'Egghead.io - Bower - Intro to Bower',
-    description: 'More great videos at http://egghead.io',
-    thumbnail: 'http://i1.ytimg.com/vi/vO_Ie3kMXbY/mqdefault.jpg',
-    url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY',
-    watched: true
-  },
-  {
-    id: 5,
-    title: 'Introduction to JavaScript',
-    description: 'Basics of the awesome JavaScript programming language',
-    thumbnail: null,
-    url: 'http://vjs.zencdn.net/v/oceans.mp4',
-    watched: false
-  },
-  {
-    id: 6,
-    title: 'Egghead.io - Bower - Intro to Bower',
-    description: 'More great videos at http://egghead.io',
-    thumbnail: 'http://i1.ytimg.com/vi/vO_Ie3kMXbY/mqdefault.jpg',
-    url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY',
-    watched: false
-  },
-  {
-    id: 7,
-    title: 'Introduction to JavaScript',
-    description: 'Basics of the awesome JavaScript programming language',
-    thumbnail: null,
-    url: 'http://vjs.zencdn.net/v/oceans.mp4',
-    watched: true
-  },
-  {
-    id: 8,
-    title: 'Egghead.io - Bower - Intro to Bower',
-    description: 'More great videos at http://egghead.io',
-    thumbnail: 'http://i1.ytimg.com/vi/vO_Ie3kMXbY/mqdefault.jpg',
-    url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY',
-    watched: false
-  },
-  {
-    id: 9,
-    title: 'Introduction to JavaScript',
-    description: 'Basics of the awesome JavaScript programming language',
-    thumbnail: null,
-    url: 'http://vjs.zencdn.net/v/oceans.mp4',
-    watched: false
-  },
-  {
-    id: 10,
-    title: 'Egghead.io - Bower - Intro to Bower',
-    description: 'More great videos at http://egghead.io',
-    thumbnail: 'http://i1.ytimg.com/vi/vO_Ie3kMXbY/mqdefault.jpg',
-    url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY',
-    watched: false
+var corsOptions = {
+  credentials: true,
+  origin: function(origin, callback) {
+    if (origin === undefined) {
+      callback(null, false);
+    } else {
+      // var match = origin.match("^(.*)?.wordnik.com(:[0-9]+)?");
+      // var allowed = (match !== null && match.length > 0);
+      // callback(null, allowed);
+      // Allow all for now *
+      callback(null, true);
+    }
   }
-];
+};
 
-// Contain data from user relation
-var problems = [
-  {
-    id: 1,
-    title: 'Introduction to JavaScript',
-    description: 'Instruction or some useful hints',
-    questions: [
-      {
-        id: 1,
-        title: 'Undefined is ___',
-        options: ['Truthy', 'Falsy'],
-        //answer: 1,
-        //isCorrect: true
-      },
-      {
-        id: 2,
-        title: 'Please choose the correct answer?',
-        options: [
-          'null === false',
-          'null == undefined',
-          'null === undefined',
-          'NaN === NaN'
-        ]
-      }
-    ]
-  },
-  {
-    id: 2,
-    title: 'Introduction to AngularJS',
-    description: 'Instruction or some useful hints'
+app.use(cors(corsOptions));
+
+swagger.setAppHandler(app);
+
+var statsResources = require('./statsResources'),
+  videosResources = require('./videosResources'),
+  problemsResources = require('./problemsResources');
+
+swagger.addModels(models)
+
+  .addGet(statsResources.getStats)
+
+  .addGet(videosResources.findAll)
+  .addGet(videosResources.findById)
+
+  .addGet(problemsResources.findAll)
+  .addGet(problemsResources.findById)
+  .addPost(problemsResources.postAnswer)
+;
+
+
+swagger.configureDeclaration('stats', {
+  description: 'Operations about Stats',
+  authorizations: ['oauth2'],
+  produces: ['application/json']
+});
+
+swagger.configureDeclaration('videos', {
+  description: 'Operations about Videos',
+  authorizations: ['oauth2'],
+  produces: ['application/json']
+});
+
+swagger.configureDeclaration('problems', {
+  description: 'Operations about Problems',
+  authorizations: ['oauth2'],
+  produces: ['application/json']
+});
+
+// set api info
+swagger.setApiInfo({
+  title: 'Angular Education',
+  description: 'Angular Education Description',
+  termsOfServiceUrl: 'http://example.com/terms/',
+  contact: 'apiteam@example.com',
+  license: 'N/A',
+  licenseUrl: 'http://www.example.com/licenses/xyz.html'
+});
+
+swagger.setAuthorizations({
+  apiKey: {
+    type: 'apiKey',
+    passAs: 'header'
   }
-];
-
-app.get('/', function(req, res) {
-  res.send('welcome to fake api provider');
 });
 
-app.get('/videos', function(req, res) {
-  setTimeout(function() {
-    res.send(videos);
-  }, DELAY);
+// Configures the app's base path and api version.
+swagger.configureSwaggerPaths('', '/api-docs', '');
+// TODO: Make it dynamic
+swagger.configure('http://localhost:9090', '1.0.0');
+
+swagger.setHeaders = function setHeaders(res) {
+  res.header('Access-Control-Allow-Headers', 'Content-Type, api_key');
+  res.header('Content-Type', 'application/json; charset=utf-8');
+};
+
+// Serve up swagger ui at /docs via static route
+var docs_handler = express.static(__dirname + '/swagger-ui/');
+app.get(/^\/docs(\/.*)?$/, function(req, res, next) {
+  if (req.url === '/docs') { // express static barfs on root url w/o trailing slash
+    // Check for proxy
+    // TODO: Make it dynamic
+    if (req.headers.host.indexOf('9090') < 0) {
+      res.writeHead(302, { 'Location': 'http://' + req.headers.host + '/api/v1/docs/' });
+    }
+    else {
+      res.writeHead(302, { 'Location': req.url + '/' });
+    }
+    res.end();
+    return;
+  }
+  // take off leading /docs so that connect locates file correctly
+  req.url = req.url.substr('/docs'.length);
+  return docs_handler(req, res, next);
 });
 
-app.get('/videos/:id', function(req, res) {
-  setTimeout(function() {
-    res.send(videos[req.params.id - 1]);
-  }, DELAY);
-});
-
-app.get('/problems', function(req, res) {
-  setTimeout(function() {
-    res.send(_.map(problems, function(problem) {
-      return _.pick(problem, ['id', 'title', 'description']);
-    }));
-  }, DELAY);
-});
-
-app.get('/problems/:id', function(req, res) {
-  setTimeout(function() {
-    res.send(problems[req.params.id - 1]);
-  }, DELAY);
-});
-
-app.post('/problems/:id', function(req, res) {
-  setTimeout(function() {
-    var payload = req.body,
-      question = problems[req.params.id - 1].questions[payload.id - 1];
-    question.answer = payload.answer;
-    // Random answer
-    question.isCorrect = !!Math.floor(Math.random() * 2);
-    res.send({isCorrect: question.isCorrect});
-  }, DELAY);
-});
-
-
-app.get('/stats', function(req, res) {
-  setTimeout(function() {
-    res.send({
-      videosCount: videos.length,
-      problemsCount: 10,
-      unsolvedCount: 7,
-      solvedCount: 3
-    });
-  }, DELAY);
-});
-
+// Start the server on port 9090
 app.listen(9090);
 
 console.log('Listening on port 9090');

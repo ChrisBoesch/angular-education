@@ -63,6 +63,8 @@ module.exports = function(grunt) {
             context: '/api/v1',
             host: '0.0.0.0',
             port: 9090,
+            changeOrigin: true,
+            xforward: true,
             rewrite: {
               '^/api/v1': ''
             }

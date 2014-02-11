@@ -31,13 +31,15 @@
     "karma-phantomjs-launcher": "~0.1.0",
     "karma-coverage": "~0.1.0",
     "karma": "~0.10.2",
-    "protractor": "~0.17.0",
+    "protractor": "~0.18.1",
     "grunt-protractor-runner": "~0.2.0",
     "grunt-shell-spawn": "~0.3.0",
     "grunt-contrib-copy": "~0.5.0",
     "express": "~3.4.7",
     "grunt-express-server": "~0.4.11",
     "grunt-connect-proxy": "~0.1.7",
-    "lodash": "~2.4.1"
+    "lodash": "~2.4.1",
+    "swagger-node-express": "git://github.com/wordnik/swagger-node-express.git",
+    "cors": "~2.1.1"
   }
 }
