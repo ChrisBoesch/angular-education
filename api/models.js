@@ -25,6 +25,12 @@ module.exports = {
         type: 'string',
         description: 'URL of the video'
       },
+      problemId: {
+        type: 'integer',
+        format: 'int64',
+        description: 'Id of the associated problem',
+        minimum: '0'
+      },
       isWatched: {
         type: 'boolean',
         description: 'If this videos has already been watched by the logged in user?'
@@ -147,6 +153,31 @@ module.exports = {
         description: 'ID of the option that needs to be matched'
       }
     }
+  },
+  Counts: {
+    id: 'Counts',
+    required: ['videosCount', 'problemsCount', 'unsolvedCount', 'solvedCount'],
+    properties: {
+      videosCount: {
+        type: 'integer',
+        format: 'int64',
+        description: 'Number of total videos available'
+      },
+      problemsCount: {
+        type: 'integer',
+        format: 'int64',
+        description: 'Number of total problems available'
+      },
+      unsolvedCount: {
+        type: 'integer',
+        format: 'int64',
+        description: 'Number of unsolved problems'
+      },
+      solvedCount: {
+        type: 'integer',
+        format: 'int64',
+        description: 'Number of solved problems'
+      }
+    }
   }
-
 };

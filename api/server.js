@@ -1,5 +1,6 @@
 var express = require('express'),
   swagger = require('swagger-node-express'),
+  cors = require('cors'),
   models = require('./models');
 
 var app = express();
@@ -7,12 +8,33 @@ var app = express();
 app.use(express.urlencoded());
 app.use(express.json());
 
+var corsOptions = {
+  credentials: true,
+  origin: function(origin, callback) {
+    if (origin === undefined) {
+      callback(null, false);
+    } else {
+      // var match = origin.match("^(.*)?.wordnik.com(:[0-9]+)?");
+      // var allowed = (match !== null && match.length > 0);
+      // callback(null, allowed);
+      // Allow all for now *
+      callback(null, true);
+    }
+  }
+};
+
+app.use(cors(corsOptions));
+
 swagger.setAppHandler(app);
 
-var videosResources = require('./videosResources'),
+var statsResources = require('./statsResources'),
+  videosResources = require('./videosResources'),
   problemsResources = require('./problemsResources');
 
 swagger.addModels(models)
+
+  .addGet(statsResources.getStats)
+
   .addGet(videosResources.findAll)
   .addGet(videosResources.findById)
 
@@ -21,6 +43,12 @@ swagger.addModels(models)
   .addPost(problemsResources.postAnswer)
 ;
 
+
+swagger.configureDeclaration('stats', {
+  description: 'Operations about Stats',
+  authorizations: ['oauth2'],
+  produces: ['application/json']
+});
 
 swagger.configureDeclaration('videos', {
   description: 'Operations about Videos',
@@ -57,8 +85,6 @@ swagger.configureSwaggerPaths('', '/api-docs', '');
 swagger.configure('http://localhost:9090', '1.0.0');
 
 swagger.setHeaders = function setHeaders(res) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type, api_key');
   res.header('Content-Type', 'application/json; charset=utf-8');
 };

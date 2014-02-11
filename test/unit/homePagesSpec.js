@@ -75,6 +75,8 @@ describe('Home Pages', function() {
         expect(ret.id).toEqual(1);
       });
 
+      // Todo: Move to Question Factory
+      /*
       it('should return an objects when answer is posted', function() {
         var obj = {id: 1}, ans = !!Math.floor(Math.random() * 2);
         $httpBackend.whenPOST(API_BASE + '/problems/' + obj.id).respond({isCorrect: ans});
@@ -84,6 +86,7 @@ describe('Home Pages', function() {
         $httpBackend.flush();
         expect(ret).toEqual(ans);
       });
+      */
 
     });
 
@@ -249,18 +252,19 @@ describe('Home Pages', function() {
 
   describe('Controllers', function() {
 
-    var ctrl, $scope, deferred, videos, problems, question;
+    var ctrl, $scope, deferred, videos, problems, questions, question;
 
-    beforeEach(inject(function(_$q_, _videos_, _problems_, _question_) {
+    beforeEach(inject(function(_$q_, _videos_, _problems_, _questions_, _question_) {
       deferred = _$q_.defer();
       videos = _videos_;
       problems = _problems_;
+      questions = _questions_;
       question = _question_;
       spyOn(videos, 'all').andReturn(deferred.promise);
       spyOn(videos, 'getById').andReturn(deferred.promise);
       spyOn(problems, 'all').andReturn(deferred.promise);
       spyOn(problems, 'getById').andReturn(deferred.promise);
-      spyOn(problems, 'answer').andReturn(deferred.promise);
+      spyOn(questions, 'answer').andReturn(deferred.promise);
     }));
 
     describe('Home Controller', function() {
@@ -527,13 +531,13 @@ describe('Home Pages', function() {
           it('should invoke the answer function on problems', function() {
             $scope.question = {id: 5, answer: answer};
             $scope.submit();
-            expect(problems.answer).toHaveBeenCalledWith($scope.id, $scope.question);
+            expect(questions.answer).toHaveBeenCalledWith($scope.question);
           });
 
           it('shouldn\'t invoke the answer function on problems if answer is not defined', function() {
             $scope.question = {};
             $scope.submit();
-            expect(problems.answer).not.toHaveBeenCalled();
+            expect(questions.answer).not.toHaveBeenCalled();
           });
 
           // TODO: Fix this

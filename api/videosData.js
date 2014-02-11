@@ -7,7 +7,8 @@ var videos = [
     description: 'Basics of the awesome JavaScript programming language',
     thumbnail: null,
     url: 'http://vjs.zencdn.net/v/oceans.mp4',
-    watched: true
+    isWatched: true,
+    problemId: 1
   },
   {
     id: 2,
@@ -15,7 +16,8 @@ var videos = [
     description: 'More great videos at http://egghead.io',
     thumbnail: 'http://i1.ytimg.com/vi/vO_Ie3kMXbY/mqdefault.jpg',
     url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY',
-    watched: false
+    isWatched: false,
+    problemId: 2
   },
   {
     id: 3,
@@ -23,7 +25,7 @@ var videos = [
     description: 'Basics of the awesome JavaScript programming language',
     thumbnail: null,
     url: 'http://vjs.zencdn.net/v/oceans.mp4',
-    watched: false
+    isWatched: false
   },
   {
     id: 4,
@@ -31,7 +33,7 @@ var videos = [
     description: 'More great videos at http://egghead.io',
     thumbnail: 'http://i1.ytimg.com/vi/vO_Ie3kMXbY/mqdefault.jpg',
     url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY',
-    watched: true
+    isWatched: true
   },
   {
     id: 5,
@@ -39,7 +41,7 @@ var videos = [
     description: 'Basics of the awesome JavaScript programming language',
     thumbnail: null,
     url: 'http://vjs.zencdn.net/v/oceans.mp4',
-    watched: false
+    isWatched: false
   },
   {
     id: 6,
@@ -47,7 +49,7 @@ var videos = [
     description: 'More great videos at http://egghead.io',
     thumbnail: 'http://i1.ytimg.com/vi/vO_Ie3kMXbY/mqdefault.jpg',
     url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY',
-    watched: false
+    isWatched: false
   },
   {
     id: 7,
@@ -55,7 +57,7 @@ var videos = [
     description: 'Basics of the awesome JavaScript programming language',
     thumbnail: null,
     url: 'http://vjs.zencdn.net/v/oceans.mp4',
-    watched: true
+    isWatched: true
   },
   {
     id: 8,
@@ -71,7 +73,7 @@ var videos = [
     description: 'Basics of the awesome JavaScript programming language',
     thumbnail: null,
     url: 'http://vjs.zencdn.net/v/oceans.mp4',
-    watched: false
+    isWatched: false
   },
   {
     id: 10,
@@ -79,7 +81,7 @@ var videos = [
     description: 'More great videos at http://egghead.io',
     thumbnail: 'http://i1.ytimg.com/vi/vO_Ie3kMXbY/mqdefault.jpg',
     url: 'http://www.youtube.com/watch?v=vO_Ie3kMXbY',
-    watched: false
+    isWatched: false
   }
 ];
 

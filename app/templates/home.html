@@ -30,7 +30,7 @@
 
                 <p class="btn-group btn-group-justified">
                     <a href="#/videos/{{video.id}}" class="btn btn-block btn-warning">Watch</a>
-                    <a href="#/problems/{{video.id}}" ng-disabled="{{!video.watched}}" class="btn btn-block btn-success">Review</a>
+                    <a ng-if="video.problemId" href="#/problems/{{video.problemId}}" ng-disabled="{{!video.isWatched}}" class="btn btn-block btn-success">Review</a>
                 </p>
             </div>
         </div>

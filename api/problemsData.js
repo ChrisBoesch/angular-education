@@ -46,7 +46,7 @@ var problems = [
     id: 1,
     title: 'Introduction to JavaScript',
     description: 'Instruction or some useful hints',
-    questions: [questions[0], questions[1]]
+    questionsRef: [1, 2]
   },
   {
     id: 2,
@@ -64,20 +64,28 @@ exports.getAll = function() {
 exports.getById = function(id) {
   var problem = _.find(problems, {id: id});
   if (problem) {
-    problem.questions = _.map(problem.questions, function(question) {
-      return _.pick(question, ['id', 'title', 'options', 'answered', 'isCorrect']);
-    });
-    return problem;
+    problem.questions = _.chain(questions)
+      .filter(function(question) {
+        return problem.questionsRef.indexOf(question.id) > -1;
+      })
+      .map(function(question) {
+        return _.pick(question, ['id', 'title', 'options', 'answered', 'isCorrect']);
+      })
+      .value();
+    return _.pick(problem, ['id', 'title', 'description', 'questions']);
   }
 };
 
-exports.getAnswer = function(id, answer) {
+exports.postAnswer = function(id, answer) {
   var question = _.find(questions, {id: id});
   if (question) {
     if (!question.answered) {
       question.answered = answer;
       question.isCorrect = (question.validAnswer === answer);
     }
-    return {isCorrect: question.isCorrect};
+    return {
+      isCorrect: question.isCorrect,
+      answered: question.answered
+    };
   }
 };

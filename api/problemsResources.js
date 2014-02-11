@@ -77,7 +77,7 @@ exports.postAnswer = {
     nickname: 'postAnswer',
     parameters: [
       params.path('questionId', 'ID of question that needs to be fetched', 'integer'),
-      params.body('data', 'Expected Payload', 'AnswerPayload')
+      params.body('data', 'Expected JSON Payload', 'AnswerPayload')
     ],
     responseMessages: [
       swe.invalid('id'),
@@ -96,8 +96,8 @@ exports.postAnswer = {
     }
     else {
       var id = parseInt(req.params.questionId);
-      var answer = parseInt(body.answer);
-      var answerObj = problemsData.getAnswer(id, answer);
+      var answer = parseInt(body.answer, 10);
+      var answerObj = problemsData.postAnswer(id, answer);
 
       if (answerObj) {
         writeResponse(res, answerObj);

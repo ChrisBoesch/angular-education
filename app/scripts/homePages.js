@@ -22,10 +22,17 @@
     })
 
     .factory('problems', function(API_BASE, $resource) {
-      var res = $resource(API_BASE + '/problems/:id'),
+      return commonAPIs($resource(API_BASE + '/problems/:id'));
+    })
+
+    .factory('questions', function(API_BASE, $resource) {
+      var res = $resource(API_BASE + '/problems/:id/questions/:questionId/:verb'),
         api = {
-          answer: function(id, data) {
-            return res.save({id: id}, data).$promise;
+          answer: function(data) {
+            return res.save({
+              questionId: data.id,
+              verb: 'answer'
+            }, data).$promise;
           }
         };
       return angular.extend(api, commonAPIs(res));
@@ -40,6 +47,9 @@
         // will have id, title, options
         current: function() {
           cur = (qs && qs.length) ? qs[idx] : null;
+          if (cur && cur.answered) {
+            cur.answer = cur.answered;
+          }
           return cur;
         },
 
@@ -66,7 +76,7 @@
         },
 
         isAnswered: function() {
-          return angular.isDefined(cur.answer);
+          return angular.isDefined(cur.answered);
         }
       };
     })
@@ -195,7 +205,7 @@
       });
     })
 
-    .controller('ProblemCtrl', function($scope, $routeParams, problems, question) {
+    .controller('ProblemCtrl', function($scope, $routeParams, problems, questions, question) {
       $scope.id = $routeParams.id;
       $scope.title = null;
       $scope.canProceed = false;
@@ -239,8 +249,7 @@
         if (angular.isDefined($scope.question.answer)) {
           $scope.isAnswered = true;
           $scope.canProceed = true;
-          // Problem ID
-          problems.answer($scope.id, {
+          questions.answer({
             // Question ID
             id: $scope.question.id,
             answer: $scope.question.answer

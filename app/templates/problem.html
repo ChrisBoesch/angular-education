@@ -31,7 +31,7 @@
                 <div class="radio" ng-repeat="option in question.options">
                     <label>
                         <input ng-model="question.answer" name="question-{{question.id}}"
-                               value="{{$index}}" type="radio"> {{option}}
+                               value="{{option.id}}" type="radio"> {{option.value}}
                     </label>
                 </div>
             </form>
