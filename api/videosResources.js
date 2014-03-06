@@ -69,7 +69,7 @@ exports.findById = {
 exports.create = {
   spec: {
     description: 'Create video entry',
-    path: '/videos/',
+    path: '/videos',
     method: 'POST',
     summary: 'Create new video entry',
     type: 'Video',

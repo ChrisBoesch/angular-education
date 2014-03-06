@@ -18,7 +18,7 @@
   angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit'])
 
     .factory('videos', function(API_BASE, $resource) {
-      var res = $resource(API_BASE + '/videos/:id');
+      var res = $resource(API_BASE + '/videos/:id/');
       function createFunction(res){
         return function(video){
           return res.save(video).$promise;
