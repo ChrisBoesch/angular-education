@@ -46,6 +46,26 @@ describe('Home Pages', function() {
         expect(ret.id).toEqual(1);
       });
 
+      describe('.create(video)', function() {
+        it('should have create()',function(){
+          expect(videos.create).toBeDefined();
+        });
+        it('should POST to backend', function() {
+          var v  = {
+            url:"t",
+            description:"t",
+            title:"a"
+          };
+          $httpBackend
+            .expectPOST(API_BASE + '/videos')
+            .respond(201);
+          videos.create(v).then(function(resp){
+            expect(resp.$resolved).toBe(true);
+          });
+          $httpBackend.flush();
+        });  
+      });
+      
     });
 
     describe('Problems Factory', function() {
@@ -339,6 +359,8 @@ describe('Home Pages', function() {
 
       });
 
+
+
       describe('After factory resolved', function() {
 
         it('should update the title with content from factory', function() {
@@ -374,6 +396,45 @@ describe('Home Pages', function() {
 
     });
 
+    describe('Video create Controller', function() {
+      
+      beforeEach(inject(function(_$controller_, _$rootScope_) {
+        spyOn(videos,'create').andReturn(deferred.promise);
+        $scope = _$rootScope_.$new();
+        ctrl = _$controller_('CreateVideoCtrl', {
+          $scope: $scope
+        });
+      }));
+
+      describe('Initialization', function() {
+
+
+        it('Should have title', function() {
+          //console.log(videos);
+          expect($scope.title).toBeTruthy();
+        });
+
+        describe('.createVideo(video)', function() {
+          it('should be defined', function() {
+            expect($scope.create).toBeDefined();
+          });
+
+          it('should call save for non empty video',function(){
+            var createFun = videos.create;
+            $scope.create({uri:"1"});
+            expect(createFun).toHaveBeenCalledWith({uri:"1"});            
+          });
+
+          it('should redirect on successful save',function(){
+
+          });
+
+          it('should show error if save failed',function(){
+
+          });
+        });
+      })
+    });
     describe('Problem List Controller', function() {
 
       beforeEach(inject(function(_$controller_, _$rootScope_) {

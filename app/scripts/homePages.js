@@ -18,7 +18,16 @@
   angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit'])
 
     .factory('videos', function(API_BASE, $resource) {
-      return commonAPIs($resource(API_BASE + '/videos/:id'));
+      var res = $resource(API_BASE + '/videos/:id/');
+      function createFunction(res){
+        return function(video){
+          return res.save(video).$promise;
+        };
+      }
+
+      var videosApi = commonAPIs(res);
+      videosApi.create = createFunction(res);
+      return videosApi;
     })
 
     .factory('problems', function(API_BASE, $resource) {
@@ -195,6 +204,14 @@
         angular.extend($scope, res);
         $scope.isYouTube = res.url && res.url.indexOf('www.youtube.com/watch?') > -1;
       });
+    })
+    
+    .controller("CreateVideoCtrl",function($scope,videos){
+      $scope.title = "Create video";
+
+      $scope.create = function(video){
+        videos.create(video);
+      };
     })
 
     .controller('ProblemListCtrl', function($scope, problems) {

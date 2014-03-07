@@ -65,3 +65,24 @@ exports.findById = {
     }
   }
 };
+
+exports.create = {
+  spec: {
+    description: 'Create video entry',
+    path: '/videos',
+    method: 'POST',
+    summary: 'Create new video entry',
+    type: 'Video',
+    nickname: 'createVideo',
+    produces: ['application/json'],
+    parameters: [
+        params.body('data', 'Expected JSON Payload', 'Video')
+    ],
+    responseMessages: [
+      swe.invalid('payload')
+    ]
+  },
+  action: function(req, res) {
+    writeResponse(res,{status:"ok"});
+  }
+};
