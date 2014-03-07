@@ -83,6 +83,13 @@ module.exports = function(grunt) {
           port: 5555,
           keepalive: true
         }
+      },
+      screenshots: {
+        options: {
+          base: 'screenshots/',
+          port: 5556,
+          keepalive: true
+        }
       }
     },
 
@@ -182,6 +189,9 @@ module.exports = function(grunt) {
       },
       coverage: {
         path: 'http://0.0.0.0:5555'
+      },
+      screenshots: {
+        path: 'http://0.0.0.0:5556'
       }
     },
 
@@ -210,6 +220,39 @@ module.exports = function(grunt) {
           dir: 'coverage/'
         }
       }
+    },
+
+    autoshot: {
+      default_options: {
+        options: {
+          path: 'screenshots/',
+          remote: {
+            files: [
+              {
+                src: 'http://0.0.0.0:8888/#/',
+                dest: 'videos.jpg'
+              },
+              {
+                src: 'http://0.0.0.0:8888/#/problems',
+                dest: 'problems.jpg'
+              },
+              {
+                src: 'http://0.0.0.0:8888/#/videos/1',
+                dest: 'videos-details.jpg',
+                delay: 3000
+              },
+              {
+                src: 'http://0.0.0.0:8888/#/problems/1',
+                dest: 'problem-details.jpg',
+                delay: 1000
+              },
+              
+            ]
+          },
+          local: false,
+          viewport: ['1024x655']
+        }
+      }
     }
   });
 
@@ -228,6 +271,10 @@ module.exports = function(grunt) {
   //coverage testing
   grunt.registerTask('test:coverage', ['karma:unit_coverage']);
   grunt.registerTask('coverage', ['karma:unit_coverage', 'open:coverage', 'connect:coverage']);
+
+  //screenshots
+  grunt.registerTask('screenshots', ['express:api', 'configureProxies:devserver',
+    'connect:devserver', 'autoshot', 'open:screenshots', 'connect:screenshots']);
 
   //installation-related
   grunt.registerTask('install', ['update', 'shell:protractor_install']);
