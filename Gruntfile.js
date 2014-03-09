@@ -248,7 +248,7 @@ module.exports = function(grunt) {
                 delay: 3000
               },
               {
-                src: 'http://localhost:8888/#/videos/create',
+                src: 'http://0.0.0.0:8888/#/videos/create',
                 dest: 'videos-create.jpg'
               }
             ]
