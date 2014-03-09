@@ -230,30 +230,49 @@ module.exports = function(grunt) {
             files: [
               {
                 src: 'http://0.0.0.0:8888/#/',
-                dest: 'videos.jpg'
+                dest: 'videos.jpg',
+                delay: 1000
               },
               {
                 src: 'http://0.0.0.0:8888/#/problems',
                 dest: 'problems.jpg'
               },
               {
-                src: 'http://0.0.0.0:8888/#/videos/1',
+                src: 'http://0.0.0.0:8888/#/videos/2',
                 dest: 'videos-details.jpg',
-                delay: 3000
+                delay: 5000
               },
               {
                 src: 'http://0.0.0.0:8888/#/problems/1',
                 dest: 'problem-details.jpg',
-                delay: 1000
+                delay: 3000
               },
-              
+              {
+                src: 'http://localhost:8888/#/videos/create',
+                dest: 'videos-create.jpg'
+              }
             ]
           },
           local: false,
           viewport: ['1024x655']
         }
       }
+    },
+    
+    compress: {
+      screenshots: {
+        options: {
+          archive: 'screenshots/screenshots.zip'
+        },
+        files: [{
+          expand: true,
+          src: ['screenshots/*.jpg'],
+          dest: '/'
+        }]
+      }
     }
+
+
   });
 
   //single run tests
@@ -274,7 +293,7 @@ module.exports = function(grunt) {
 
   //screenshots
   grunt.registerTask('screenshots', ['express:api', 'configureProxies:devserver',
-    'connect:devserver', 'autoshot', 'open:screenshots', 'connect:screenshots']);
+    'connect:devserver', 'autoshot', 'open:screenshots', 'compress:screenshots', 'connect:screenshots']);
 
   //installation-related
   grunt.registerTask('install', ['update', 'shell:protractor_install']);
