@@ -272,7 +272,6 @@ module.exports = function(grunt) {
       }
     }
 
-
   });
 
   //single run tests
@@ -293,7 +292,7 @@ module.exports = function(grunt) {
 
   //screenshots
   grunt.registerTask('screenshots', ['express:api', 'configureProxies:devserver',
-    'connect:devserver', 'autoshot', 'open:screenshots', 'compress:screenshots', 'connect:screenshots']);
+    'connect:devserver', 'autoshot', 'compress:screenshots', 'connect:screenshots', 'open:screenshots']);
 
   //installation-related
   grunt.registerTask('install', ['update', 'shell:protractor_install']);
