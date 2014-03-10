@@ -17,13 +17,17 @@ angular.module('myApp', ['app.config', 'ngRoute', 'ngAnimate', 'ngResource',
         controller: 'ProblemCtrl',
         templateUrl: TPL_PATH + '/problem.html'
       })
-      .when('/videos/create',{
-        controller:'CreateVideoCtrl',
-        templateUrl: TPL_PATH + '/createVideo.html'
+      .when('/problems/:id/create',{
+        controller: 'ProblemEdit',
+        templateUrl: TPL_PATH + '/problemEdit.html'
       })
       .when('/videos/:id', {
         controller: 'VideoCtrl',
         templateUrl: TPL_PATH + '/video.html'
+      })
+      .when('/videos/create',{
+        controller:'CreateVideoCtrl',
+        templateUrl: TPL_PATH + '/createVideo.html'
       })
     ;
   });
