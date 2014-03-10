@@ -623,7 +623,31 @@ describe('Home Pages', function() {
       });
 
     });
+    
+    describe('ProblemEdit Controller', function() {
+      // Generate a random id between 0~100
+      var routeParamId = (Math.random() * 100).toFixed(0);
 
+      beforeEach(inject(function(_$controller_, _$rootScope_) {
+        $scope = _$rootScope_.$new();
+        ctrl = _$controller_('ProblemEditCtrl', {
+          $scope: $scope,
+          $routeParams: {
+            id: routeParamId
+          }
+        });
+      }));
+
+      it('should save problem to scope',function(){
+        var problemData = {id:routeParamId,title:'t'};
+        
+        deferred.resolve(problemData);
+        $scope.$digest();
+
+        expect($scope.problem).toEqual(problemData);
+      });
+
+    });
   });
 
 });

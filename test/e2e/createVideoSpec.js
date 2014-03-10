@@ -1,4 +1,4 @@
-describe('Create videos', function() {
+describe('Create video', function() {
 
   var ptor = protractor.getInstance();
   var createVideoUrl = '/#/videos/create';

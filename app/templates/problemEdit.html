@@ -1,0 +1,30 @@
+<div>
+	<div class="page-header edu-top-header">
+		<h2> Edit problem: {{problem.title}} </h2>
+	</div>
+	
+	<form role="form" name="problem">
+		<div class="form-group">
+			<label for="Title" >Title</label>
+			<input type="text" required ng-model="problem.title" class="form-control">
+		</div>
+		<div class="form-group">
+			<label for="description">Description</label>
+			<textarea type="text" ng-model="problem.description" class="form-control"></textarea>
+		</div>
+		<button name="CreateBtn" ng-disabled="form.$invalid" ng-click="save(problem)" class="btn btn-default">Save</button>	
+	</form>
+
+	<div ng-repeat="question in problem.questions">
+		<h3 for="Title" >question #{{$index+1}}</h3>
+		<form role="form">
+			<div class="form-group">
+				<input type="text" required ng-model="question.title" class="form-control">
+			</div>
+			<label>answers are:</label>
+			<div ng-repeat="answer in question.options" class = "form-group">
+				<input type="text" required ng-model="answer.value" class="form-control">
+			</div>
+		</form>
+	</div>
+</div>
