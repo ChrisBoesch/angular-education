@@ -37,7 +37,7 @@ swagger.addModels(models)
 
   .addGet(videosResources.findAll)
   .addGet(videosResources.findById)
-
+  .addPost(videosResources.create)
   .addGet(problemsResources.findAll)
   .addGet(problemsResources.findById)
   .addPost(problemsResources.postAnswer)
