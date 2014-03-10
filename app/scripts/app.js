@@ -13,12 +13,16 @@ angular.module('myApp', ['app.config', 'ngRoute', 'ngAnimate', 'ngResource',
         controller: 'ProblemListCtrl',
         templateUrl: TPL_PATH + '/problemList.html'
       })
+      .when('/problems/create',{
+        controller: 'ProblemEditCtrl',
+        templateUrl: TPL_PATH + '/problemCreate.html'
+      })
       .when('/problems/:id', {
         controller: 'ProblemCtrl',
         templateUrl: TPL_PATH + '/problem.html'
       })
-      .when('/problems/:id/create',{
-        controller: 'ProblemEdit',
+      .when('/problems/:id/edit',{
+        controller: 'ProblemEditCtrl',
         templateUrl: TPL_PATH + '/problemEdit.html'
       })
       .when('/videos/:id', {

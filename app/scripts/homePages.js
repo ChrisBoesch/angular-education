@@ -285,7 +285,10 @@
       };
 
     })
-
+    
+    .controller('ProblemEditCtrl', function($scope){
+      
+    })
   ;
 
 }());
