@@ -19,7 +19,7 @@ describe('Create videos', function() {
       .toBeTruthy();
   });
 
-  it('should redirect to other page after vide created', function()
+  it('should redirect to other page after video created', function()
   {
     ptor.get(createVideoUrl);
     element(by.model('video.title')).sendKeys('someTitle');
