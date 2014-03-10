@@ -244,6 +244,7 @@
         $scope.questions = res.questions;
       });
 
+      //TODO: implement as a filter
       $scope.currentClass = function(prefix, question) {
         var q = angular.isDefined(question) ? question : $scope.question;
         if (q) {
@@ -285,9 +286,13 @@
       };
 
     })
-    
-    .controller('ProblemEditCtrl', function($scope){
-      
+
+    .controller('ProblemEditCtrl', function($scope, $routeParams, problems){
+      var id = $routeParams.id;
+
+      problems.getById(id).then(function (problemData) {
+        $scope.problem = problemData;
+      });
     })
   ;
 
