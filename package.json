@@ -40,6 +40,8 @@
     "grunt-connect-proxy": "~0.1.7",
     "lodash": "~2.4.1",
     "swagger-node-express": "git://github.com/wordnik/swagger-node-express.git",
-    "cors": "~2.1.1"
+    "cors": "~2.1.1",
+    "grunt-autoshot": "^0.2.0",
+    "grunt-contrib-compress": "^0.7.0"
   }
 }
