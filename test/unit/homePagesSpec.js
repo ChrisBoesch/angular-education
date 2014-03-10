@@ -50,7 +50,7 @@ describe('Home Pages', function() {
         it('should have create()',function(){
           expect(videos.create).toBeDefined();
         });
-        it('should POST to backend', function() {
+        it('should POST to backend and redirect to videos', function() {
           var v  = {
             url:"t",
             description:"t",
@@ -63,7 +63,7 @@ describe('Home Pages', function() {
             expect(resp.$resolved).toBe(true);
           });
           $httpBackend.flush();
-        });  
+        }); 
       });
       
     });
@@ -397,18 +397,18 @@ describe('Home Pages', function() {
     });
 
     describe('Video create Controller', function() {
-      
-      beforeEach(inject(function(_$controller_, _$rootScope_) {
+      var location;
+
+      beforeEach(inject(function(_$controller_, _$rootScope_,_$location_) {
         spyOn(videos,'create').andReturn(deferred.promise);
         $scope = _$rootScope_.$new();
         ctrl = _$controller_('CreateVideoCtrl', {
           $scope: $scope
         });
+        location = _$location_;
       }));
 
       describe('Initialization', function() {
-
-
         it('Should have title', function() {
           //console.log(videos);
           expect($scope.title).toBeTruthy();
@@ -426,11 +426,15 @@ describe('Home Pages', function() {
           });
 
           it('should redirect on successful save',function(){
-
+            location.path('/t');
+            $scope.create({uri:"1"});
+            deferred.resolve();
+            $scope.$digest();
+            expect(location.path()).toBe('/');
           });
 
           it('should show error if save failed',function(){
-
+            //TODO
           });
         });
       })

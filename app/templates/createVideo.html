@@ -3,19 +3,19 @@
         <h2>{{title}}</h2>
     </div>
     
-    <form role="form">   
+    <form name="form" role="form">   
         <div class="form-group">
-            <label for="Title">Title</label>
-            <input type="text" ng-model="video.title" class="form-control">
+            <label for="Title" >Title</label>
+            <input type="text" required ng-model="video.title" class="form-control">
         </div>
         <div class="form-group">
             <label for="videoUrl">Video url:</label>
-            <input type="text" ng-model="video.url" class="form-control">
+            <input  type="url" type="text" required ng-model="video.url" class="form-control">
         </div>
         <div class="form-group">
             <label for="description">Description</label>
             <input type="text" ng-model="video.description" class="form-control">
         </div>
-        <button ng-click="create(video)" class="btn btn-default">Create</button>
+        <button name="CreateBtn" ng-disabled="form.$invalid" ng-click="create(video)" class="btn btn-default">Create</button>
     </form>
 </div>
