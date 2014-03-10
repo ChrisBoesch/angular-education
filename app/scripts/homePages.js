@@ -19,15 +19,13 @@
 
     .factory('videos', function(API_BASE, $resource) {
       var res = $resource(API_BASE + '/videos/:id/');
-      function createFunction(res){
-        return function(video){
+      var api = {
+        create: function(video){
           return res.save(video).$promise;
-        };
-      }
+        }
+      };
 
-      var videosApi = commonAPIs(res);
-      videosApi.create = createFunction(res);
-      return videosApi;
+      return angular.extend(api, commonAPIs(res));
     })
 
     .factory('problems', function(API_BASE, $resource) {
