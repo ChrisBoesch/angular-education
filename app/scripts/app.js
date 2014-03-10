@@ -25,13 +25,13 @@ angular.module('myApp', ['app.config', 'ngRoute', 'ngAnimate', 'ngResource',
         controller: 'ProblemEditCtrl',
         templateUrl: TPL_PATH + '/problemEdit.html'
       })
-      .when('/videos/:id', {
-        controller: 'VideoCtrl',
-        templateUrl: TPL_PATH + '/video.html'
-      })
       .when('/videos/create',{
         controller:'CreateVideoCtrl',
         templateUrl: TPL_PATH + '/createVideo.html'
+      })
+      .when('/videos/:id', {
+        controller: 'VideoCtrl',
+        templateUrl: TPL_PATH + '/video.html'
       })
     ;
   });
