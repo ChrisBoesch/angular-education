@@ -10,11 +10,20 @@ describe('Create videos', function() {
     .toBeTruthy();
   });  
 
+  it('should url is invalid',function(){
+    ptor.get(createVideoUrl);
+    element(by.model('video.title')).sendKeys('someTitle');
+    element(by.model('video.url')).sendKeys('someUrl');
+    var createBtn = element(by.name('CreateBtn'));
+    expect(createBtn.getAttribute('disabled'))
+      .toBeTruthy();
+  });
+
   it('should redirect to other page after vide created', function()
   {
     ptor.get(createVideoUrl);
     element(by.model('video.title')).sendKeys('someTitle');
-    element(by.model('video.url')).sendKeys('someUrl');
+    element(by.model('video.url')).sendKeys('http://example.com/someVideo?asdfasdf=asdfasd');
 
     var createBtn = element(by.name('CreateBtn'));
     expect(createBtn.getAttribute('disabled')).toBeFalsy();
