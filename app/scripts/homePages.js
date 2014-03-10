@@ -204,11 +204,13 @@
       });
     })
     
-    .controller("CreateVideoCtrl",function($scope,videos){
+    .controller("CreateVideoCtrl",function($scope, $location, videos){
       $scope.title = "Create video";
 
       $scope.create = function(video){
-        videos.create(video);
+        videos.create(video).then(function(){
+          $location.path('');
+        });
       };
     })
 
