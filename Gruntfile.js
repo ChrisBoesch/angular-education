@@ -4,7 +4,9 @@ module.exports = function(grunt) {
 
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
+
   grunt.initConfig({
+    localhostUrl:'0.0.0.0',
     shell: {
       options: {
         stdout: true
@@ -61,8 +63,7 @@ module.exports = function(grunt) {
         proxies: [
           {
             context: '/api/v1',
-            host: '0.0.0.0',
-            //host:'localhost',
+            host: '<%= localhostUrl %>',
             port: 9090,
             changeOrigin: true,
             xforward: true,
@@ -230,27 +231,35 @@ module.exports = function(grunt) {
           remote: {
             files: [
               {
-                src: 'http://0.0.0.0:8888/#/',
+                src: 'http://<%= localhostUrl %>:8888/#/',
                 dest: 'videos.jpg',
                 delay: 1000
               },
               {
-                src: 'http://0.0.0.0:8888/#/problems',
+                src: 'http://<%= localhostUrl %>:8888/#/problems',
                 dest: 'problems.jpg'
               },
               {
-                src: 'http://0.0.0.0:8888/#/videos/2',
+                src: 'http://<%= localhostUrl %>:8888/#/videos/2',
                 dest: 'videos-details.jpg',
                 delay: 5000
               },
               {
-                src: 'http://0.0.0.0:8888/#/problems/1',
+                src: 'http://<%= localhostUrl %>:8888/#/problems/1',
                 dest: 'problem-details.jpg',
                 delay: 3000
               },
               {
-                src: 'http://0.0.0.0:8888/#/videos/create',
+                src: 'http://<%= localhostUrl %>:8888/#/videos/create',
                 dest: 'videos-create.jpg'
+              },
+              {
+                src: 'http://<%= localhostUrl %>:8888/#/problems/1/create',
+                dest: 'problems-create.jpg'
+              },
+              {
+                src: 'http://<%= localhostUrl %>:8888/#/problems/1/edit',
+                dest: 'problems-edit.jpg'
               }
             ]
           },

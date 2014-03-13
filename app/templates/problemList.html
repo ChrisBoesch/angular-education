@@ -2,7 +2,9 @@
     <h2 class="row">
         <div class="col-sm-8 col-md-8">
             Problems
-            <small>Subtext for header</small>
+            <a href="#/problems/create" title="Create" tooltip><span class="glyphicon glyphicon-plus"></span></a>
+            <!-- <small>
+            </small> -->
         </div>
         <div class="col-sm-4 col-md-4">
             <form role="search">
@@ -36,6 +38,7 @@
             <td>
                 <a href="#/problems/{{problem.id}}" title="Solve" tooltip><span class="glyphicon glyphicon-time"></span></a>
                 <a href="#/videos/{{problem.id}}" title="Watch Again" tooltip><span class="glyphicon glyphicon-play-circle"></span></a>
+                <a href="#/problems/{{problem.id}}/edit" title="Edit" tooltip><span class="glyphicon glyphicon-edit"></span></a>
             </td>
         </tr>
     </tbody>
