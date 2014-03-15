@@ -594,9 +594,12 @@ describe('Home Pages', function() {
           });
 
           it('should invoke the answer function on problems', function() {
+            $scope.id = 20;
             $scope.question = {id: 5, answer: answer};
             $scope.submit();
-            expect(questions.answer).toHaveBeenCalledWith($scope.question);
+            expect(questions.answer).toHaveBeenCalledWith(
+              {id: 20, questionId: 5, answer: 6}
+            );
           });
 
           it('shouldn\'t invoke the answer function on problems if answer is not defined', function() {

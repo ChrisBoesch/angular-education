@@ -69,13 +69,14 @@ exports.findById = {
 exports.postAnswer = {
   spec: {
     description: 'Operations about problems',
-    path: '/problems/questions/{questionId}/answer',
+    path: '/problems/{problemId}/questions/{questionId}/answer',
     method: 'POST',
     summary: 'Answer to the question',
     notes: 'Returns if the answer is true or false',
     type: 'Answer',
     nickname: 'postAnswer',
     parameters: [
+      params.path('problemId', 'ID of problem that needs to be fetched', 'integer'),
       params.path('questionId', 'ID of question that needs to be fetched', 'integer'),
       params.body('data', 'Expected JSON Payload', 'AnswerPayload')
     ],
@@ -95,7 +96,7 @@ exports.postAnswer = {
       throw swe.invalid('payload');
     }
     else {
-      var id = parseInt(req.params.questionId);
+      var id = parseInt(req.params.questionId, 10);
       var answer = parseInt(body.answer, 10);
       var answerObj = problemsData.postAnswer(id, answer);
 
