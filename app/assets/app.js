@@ -50889,12 +50889,12 @@ videojs.Youtube.prototype.onError = function(error){
     })
 
     .factory('questions', function(API_BASE, $resource) {
-      var res = $resource(API_BASE + '/problems/:id/questions/:questionId/:verb'),
+      var res = $resource(API_BASE + '/problems/:problemId/questions/:questionId/:verb'),
         api = {
           answer: function(data) {
             return res.save({
-              id: data.id,
-              questionId: data.questionId,
+              problemId: parseInt(data.id, 10),
+              questionId: parseInt(data.questionId, 10),
               verb: 'answer'
             }, data).$promise;
           }
@@ -51060,7 +51060,7 @@ videojs.Youtube.prototype.onError = function(error){
         $scope.isYouTube = res.url && res.url.indexOf('www.youtube.com/watch?') > -1;
       });
     })
-    
+
     .controller("CreateVideoCtrl",function($scope, $location, videos){
       $scope.title = "Create video";
 
@@ -51128,7 +51128,7 @@ videojs.Youtube.prototype.onError = function(error){
             // Question ID
             id: $scope.id,
             questionId: $scope.question.id,
-            answer: $scope.question.answer
+            answer: parseInt($scope.question.answer, 10)
           }).then(
             // Success
             function(ret) {

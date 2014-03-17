@@ -148,6 +148,16 @@ module.exports = {
     id: 'Answer',
     required: ['answer'],
     properties: {
+      problemId: {
+        type: 'integer',
+        format: 'int64',
+        description: 'ID of the problem to answer'
+      },
+      questionId: {
+        type: 'integer',
+        format: 'int64',
+        description: 'ID of the question to answer'
+      },
       answer: {
         type: 'integer',
         description: 'ID of the option that needs to be matched'
