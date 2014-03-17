@@ -37,7 +37,8 @@
         api = {
           answer: function(data) {
             return res.save({
-              questionId: data.id,
+              id: data.id,
+              questionId: data.questionId,
               verb: 'answer'
             }, data).$promise;
           }
@@ -269,7 +270,8 @@
           $scope.canProceed = true;
           questions.answer({
             // Question ID
-            id: $scope.question.id,
+            id: $scope.id,
+            questionId: $scope.question.id,
             answer: $scope.question.answer
           }).then(
             // Success
