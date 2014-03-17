@@ -270,7 +270,7 @@
           $scope.canProceed = true;
           questions.answer({
             // Question ID
-            id: $scope.id,
+            problemId: $scope.id,
             questionId: $scope.question.id,
             answer: parseInt($scope.question.answer, 10)
           }).then(
