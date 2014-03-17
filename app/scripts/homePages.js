@@ -272,7 +272,7 @@
             // Question ID
             id: $scope.id,
             questionId: $scope.question.id,
-            answer: $scope.question.answer
+            answer: parseInt($scope.question.answer, 10)
           }).then(
             // Success
             function(ret) {
