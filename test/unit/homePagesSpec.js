@@ -63,9 +63,9 @@ describe('Home Pages', function() {
             expect(resp.$resolved).toBe(true);
           });
           $httpBackend.flush();
-        }); 
+        });
       });
-      
+
     });
 
     describe('Problems Factory', function() {
@@ -422,7 +422,7 @@ describe('Home Pages', function() {
           it('should call save for non empty video',function(){
             var createFun = videos.create;
             $scope.create({uri:"1"});
-            expect(createFun).toHaveBeenCalledWith({uri:"1"});            
+            expect(createFun).toHaveBeenCalledWith({uri:"1"});
           });
 
           it('should redirect on successful save',function(){
@@ -598,7 +598,7 @@ describe('Home Pages', function() {
             $scope.question = {id: 5, answer: answer};
             $scope.submit();
             expect(questions.answer).toHaveBeenCalledWith(
-              {id: 20, questionId: 5, answer: 6}
+              {problemId: 20, questionId: 5, answer: 6}
             );
           });
 
@@ -626,7 +626,7 @@ describe('Home Pages', function() {
       });
 
     });
-    
+
     describe('ProblemEdit Controller', function() {
       // Generate a random id between 0~100
       var routeParamId = (Math.random() * 100).toFixed(0);
@@ -643,7 +643,7 @@ describe('Home Pages', function() {
 
       it('should save problem to scope',function(){
         var problemData = {id:routeParamId,title:'t'};
-        
+
         deferred.resolve(problemData);
         $scope.$digest();
 

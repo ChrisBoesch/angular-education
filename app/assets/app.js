@@ -50892,9 +50892,12 @@ videojs.Youtube.prototype.onError = function(error){
       var res = $resource(API_BASE + '/problems/:problemId/questions/:questionId/:verb'),
         api = {
           answer: function(data) {
+            data.problemId = parseInt(data.problemId, 10);
+            data.questionId = parseInt(data.questionId, 10);
+            data.answer = parseInt(data.answer, 10);
             return res.save({
-              problemId: parseInt(data.id, 10),
-              questionId: parseInt(data.questionId, 10),
+              problemId: data.problemId,
+              questionId: data.questionId,
               verb: 'answer'
             }, data).$promise;
           }
@@ -51126,9 +51129,9 @@ videojs.Youtube.prototype.onError = function(error){
           $scope.canProceed = true;
           questions.answer({
             // Question ID
-            id: $scope.id,
+            problemId: $scope.id,
             questionId: $scope.question.id,
-            answer: parseInt($scope.question.answer, 10)
+            answer: $scope.question.answer
           }).then(
             // Success
             function(ret) {
