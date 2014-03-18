@@ -84,7 +84,8 @@ exports.add = function(newProblem) {
   newProblem.id = problems.length + 1;
   newProblem.questionsRef = [];
   problems.push(newProblem);
-  return newProblem;
+
+  return _.pick(newProblem, ['id', 'title', 'description', 'questions']);
 };
 
 exports.postAnswer = function(id, answer) {
