@@ -50888,7 +50888,7 @@ videojs.Youtube.prototype.onError = function(error){
       var res = $resource(API_BASE + '/problems/:id'),
         api = {
           create: function createNewProblem(newProblem) {
-            return res.save(newProblem);
+            return res.save(newProblem).$promise;
           }
         };
 
@@ -51160,7 +51160,7 @@ videojs.Youtube.prototype.onError = function(error){
       $scope.create = function createProblem(newProblem) {
         $scope.savingProblem = true;
 
-        problems.create(newProblem).$promise.then(function() {
+        problems.create(newProblem).then(function() {
           $location.path('/problems');
         }).catch(function (){
           $window.alert('Failed to save the problem');
