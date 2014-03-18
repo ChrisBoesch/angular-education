@@ -40,6 +40,7 @@ swagger.addModels(models)
   .addPost(videosResources.create)
   .addGet(problemsResources.findAll)
   .addGet(problemsResources.findById)
+  .addPost(problemsResources.createNewProblem)
   .addPost(problemsResources.postAnswer)
 ;
 

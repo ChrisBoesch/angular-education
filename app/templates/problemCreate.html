@@ -1,1 +1,23 @@
-<h2>Not implemented</h2>
+<div>
+  <div class="page-header edu-top-header">
+    <h2>Create new problem</h2>
+  </div>
+
+  <form role="form" name="newProblem">
+    <div ng-class="{'form-group': true, 'has-error': !newProblem.problemTitle.$valid, 'has-feedback': true}">
+      <label for="Title" >
+        Title
+        <small ng-if="newProblem.problemTitle.$error.required" class="text-danger">(required)</small>
+      </label>
+      <input type="text" name="problemTitle" required="true" ng-model="newProblem.title" class="form-control"/>
+      <span ng-if="!newProblem.problemTitle.$valid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+    </div>
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea type="text" ng-model="newProblem.description" class="form-control"></textarea>
+    </div>
+    <button name="CreateBtn" ng-disabled="newProblem.$invalid || savingProblem" ng-click="create(newProblem)" class="btn btn-default">
+      Create
+    </button>
+  </form>
+</div>

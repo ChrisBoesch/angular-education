@@ -51,7 +51,8 @@ var problems = [
   {
     id: 2,
     title: 'Introduction to AngularJS',
-    description: 'Instruction or some useful hints'
+    description: 'Instruction or some useful hints',
+    questionsRef: []
   }
 ];
 
@@ -74,6 +75,16 @@ exports.getById = function(id) {
       .value();
     return _.pick(problem, ['id', 'title', 'description', 'questions']);
   }
+};
+
+exports.add = function(newProblem) {
+  if (!newProblem || !newProblem.title || !newProblem.description) {
+    return;
+  }
+  newProblem.id = problems.length + 1;
+  newProblem.questionsRef = [];
+  problems.push(newProblem);
+  return newProblem;
 };
 
 exports.postAnswer = function(id, answer) {

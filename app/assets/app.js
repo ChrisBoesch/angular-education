@@ -50823,7 +50823,7 @@ videojs.Youtube.prototype.onError = function(error){
         templateUrl: TPL_PATH + '/problemList.html'
       })
       .when('/problems/create',{
-        controller: 'ProblemEditCtrl',
+        controller: 'ProblemCreateCtrl',
         templateUrl: TPL_PATH + '/problemCreate.html'
       })
       .when('/problems/:id', {
@@ -50885,7 +50885,14 @@ videojs.Youtube.prototype.onError = function(error){
     })
 
     .factory('problems', function(API_BASE, $resource) {
-      return commonAPIs($resource(API_BASE + '/problems/:id'));
+      var res = $resource(API_BASE + '/problems/:id'),
+        api = {
+          create: function createNewProblem(newProblem) {
+            return res.save(newProblem);
+          }
+        };
+
+      return angular.extend(api, commonAPIs(res));
     })
 
     .factory('questions', function(API_BASE, $resource) {
@@ -51146,6 +51153,21 @@ videojs.Youtube.prototype.onError = function(error){
         }
       };
 
+    })
+
+    .controller('ProblemCreateCtrl', function($scope, $location, $window, problems) {
+      $scope.savingProblem = false;
+      $scope.create = function createProblem(newProblem) {
+        $scope.savingProblem = true;
+
+        problems.create(newProblem).$promise.then(function() {
+          $location.path('/problems');
+        }).catch(function (){
+          $window.alert('Failed to save the problem');
+        })['finally'](function problemSaved() {
+          $scope.savingProblem = false;
+        });
+      };
     })
 
     .controller('ProblemEditCtrl', function($scope, $routeParams, problems){

@@ -95,6 +95,29 @@ describe('Home Pages', function() {
         expect(ret.id).toEqual(1);
       });
 
+      it('should send post request with new problem data when create is called', function() {
+        var payload, result;
+
+        $httpBackend.expectPOST(API_BASE + '/problems').respond(function() {
+          payload = JSON.parse(arguments[2]);
+          payload.id = 1;
+          return [200, payload];
+        });
+
+        problems.create({title: 'foo', description: 'bar'}).then(function(data) {
+          result = data;
+        });
+
+        $httpBackend.flush();
+        expect(payload.title).toBe('foo');
+        expect(payload.description).toBe('bar');
+
+        expect(result.id).toBe(1);
+        expect(result.title).toBe('foo');
+        expect(result.description).toBe('bar');
+
+      });
+
       // Todo: Move to Question Factory
       /*
       it('should return an objects when answer is posted', function() {
@@ -272,9 +295,10 @@ describe('Home Pages', function() {
 
   describe('Controllers', function() {
 
-    var ctrl, $scope, deferred, videos, problems, questions, question;
+    var ctrl, $scope, location, deferred, videos, problems, questions, question;
 
-    beforeEach(inject(function(_$q_, _videos_, _problems_, _questions_, _question_) {
+    beforeEach(inject(function(_$q_, _videos_, _problems_, _questions_, _question_, _$location_) {
+      location = _$location_;
       deferred = _$q_.defer();
       videos = _videos_;
       problems = _problems_;
@@ -284,6 +308,7 @@ describe('Home Pages', function() {
       spyOn(videos, 'getById').andReturn(deferred.promise);
       spyOn(problems, 'all').andReturn(deferred.promise);
       spyOn(problems, 'getById').andReturn(deferred.promise);
+      spyOn(problems, 'create').andReturn(deferred.promise);
       spyOn(questions, 'answer').andReturn(deferred.promise);
     }));
 
@@ -397,15 +422,13 @@ describe('Home Pages', function() {
     });
 
     describe('Video create Controller', function() {
-      var location;
 
-      beforeEach(inject(function(_$controller_, _$rootScope_,_$location_) {
+      beforeEach(inject(function(_$controller_, _$rootScope_) {
         spyOn(videos,'create').andReturn(deferred.promise);
         $scope = _$rootScope_.$new();
         ctrl = _$controller_('CreateVideoCtrl', {
           $scope: $scope
         });
-        location = _$location_;
       }));
 
       describe('Initialization', function() {
@@ -437,7 +460,7 @@ describe('Home Pages', function() {
             //TODO
           });
         });
-      })
+      });
     });
     describe('Problem List Controller', function() {
 
@@ -625,6 +648,34 @@ describe('Home Pages', function() {
 
       });
 
+    });
+
+    describe('ProblemCreateCtrl', function(){
+
+      beforeEach(inject(function(_$controller_, _$rootScope_) {
+        $scope = _$rootScope_.$new();
+        ctrl = _$controller_('ProblemCreateCtrl', {
+          $scope: $scope,
+          $location: location,
+          problems: problems
+        });
+      }));
+
+      it('should create a new problem', function() {
+        expect($scope.savingProblem).toBe(false);
+
+        $scope.create({title: 'foo', description: 'bar'});
+        expect(problems.create).toHaveBeenCalledWith(
+          {title: 'foo', description: 'bar'}
+        );
+        expect($scope.savingProblem).toBe(true);
+
+        deferred.resolve({id: 1, title: 'foo', description: 'bar'});
+
+        $scope.$digest();
+        expect(location.path()).toBe('/problems');
+        expect($scope.savingProblem).toBe(false);
+      });
     });
 
     describe('ProblemEdit Controller', function() {

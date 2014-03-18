@@ -37,6 +37,29 @@ exports.findAll = {
   }
 };
 
+exports.createNewProblem = {
+  spec: {
+    description: 'Operations about problems',
+    path: '/problems',
+    method: 'POST',
+    summary: 'Add a new problem',
+    notes: 'Returns a new problems',
+    type: 'Problem',
+    nickname: 'createNewProblem',
+    produces: ['application/json'],
+    responseMessages: [swe.invalid('problem')]
+  },
+  action: function(req, res) {
+    var problem = problemsData.add(req.body);
+
+    if (problem) {
+      writeResponse(res, problem);
+    } else {
+      throw swe.invalid('problem');
+    }
+  }
+};
+
 exports.findById = {
   spec: {
     description: 'Operations about problems',

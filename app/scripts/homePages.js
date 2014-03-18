@@ -29,7 +29,14 @@
     })
 
     .factory('problems', function(API_BASE, $resource) {
-      return commonAPIs($resource(API_BASE + '/problems/:id'));
+      var res = $resource(API_BASE + '/problems/:id'),
+        api = {
+          create: function createNewProblem(newProblem) {
+            return res.save(newProblem).$promise;
+          }
+        };
+
+      return angular.extend(api, commonAPIs(res));
     })
 
     .factory('questions', function(API_BASE, $resource) {
@@ -290,6 +297,21 @@
         }
       };
 
+    })
+
+    .controller('ProblemCreateCtrl', function($scope, $location, $window, problems) {
+      $scope.savingProblem = false;
+      $scope.create = function createProblem(newProblem) {
+        $scope.savingProblem = true;
+
+        problems.create(newProblem).then(function() {
+          $location.path('/problems');
+        }).catch(function (){
+          $window.alert('Failed to save the problem');
+        })['finally'](function problemSaved() {
+          $scope.savingProblem = false;
+        });
+      };
     })
 
     .controller('ProblemEditCtrl', function($scope, $routeParams, problems){
