@@ -51,6 +51,14 @@
               questionId: data.questionId,
               verb: 'answer'
             }, data).$promise;
+          },
+
+          add: function(problem, question) {
+            var params = {
+                problemId: problem.id
+              };
+
+            return res.save(params, question).$promise;
           }
         };
       return angular.extend(api, commonAPIs(res));
@@ -95,6 +103,55 @@
 
         isAnswered: function() {
           return angular.isDefined(cur.answered);
+        }
+      };
+    })
+
+    .directive('questionForm', function($q, TPL_PATH){
+      return {
+        restrict: 'E',
+        templateUrl: TPL_PATH + '/questionForm.html',
+        transclude: true,
+        scope: {
+          problem: '=',
+          onSubmit: '='
+        },
+        controller: function($scope) {
+          $scope.addAnswer = function(answer) {
+            if ($scope.question.options.indexOf(answer) > -1) {
+              return;
+            } else {
+              $scope.newAnswer = '';
+              $scope.question.options.push(answer);
+            }
+          };
+
+          $scope.create = function(question) {
+            if (!$scope.onSubmit || !$scope.isValid(question)) {
+              return;
+            }
+
+            $q.when($scope.onSubmit($scope.problem, question)).then(function() {
+              $scope.reset();
+            });
+          };
+
+          $scope.reset = function() {
+            $scope.question = { title: '', options: [], validAnswer: ''};
+          };
+
+          $scope.isValid = function(question) {
+            return (
+              question &&
+              question.title &&
+              question.options &&
+              question.validAnswer &&
+              question.options.length > 1 &&
+              question.options.indexOf(question.validAnswer) > -1
+            );
+          };
+
+          $scope.reset();
         }
       };
     })
@@ -314,12 +371,27 @@
       };
     })
 
-    .controller('ProblemEditCtrl', function($scope, $routeParams, problems){
+    .controller('ProblemEditCtrl', function($scope, $routeParams, $window, problems, questions){
       var id = $routeParams.id;
 
       problems.getById(id).then(function (problemData) {
         $scope.problem = problemData;
       });
+      $scope.showNewQuestionForm = false;
+      $scope.addQuestion = function(problem, question) {
+        if (!question) {
+          $scope.showNewQuestionForm = false;
+        }
+
+        return questions.add(problem, question).then(function(data) {
+          $scope.showNewQuestionForm = false;
+          $scope.problem.questions.push(data);
+          return data;
+        }).catch(function(data) {
+          $window.alert("Error: could not save the question");
+          throw data;
+        });
+      };
     })
   ;
 

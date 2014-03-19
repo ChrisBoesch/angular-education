@@ -19,7 +19,6 @@ describe('Home Pages', function() {
     });
 
     describe('Videos Factory', function() {
-
       var videos;
 
       beforeEach(inject(function(_videos_) {
@@ -133,6 +132,32 @@ describe('Home Pages', function() {
 
     });
 
+    describe('questions factory', function() {
+      var questions;
+
+      beforeEach(inject(function(_questions_) {
+        questions = _questions_;
+      }));
+
+      it('should send post request to add question', function() {
+        var data, questionDef = {
+            title: 'Undefined is ___',
+            options: ['Truthy', 'Falsy'],
+            validAnswer: 'Falsy'
+          };
+
+        $httpBackend.expectPOST(API_BASE + '/problems/1/questions').respond(
+          function(m, u, rawData) {
+            data = JSON.parse(rawData);
+            return [200, {}];
+          }
+        );
+        questions.add({id: 1}, questionDef);
+        $httpBackend.flush();
+        expect(data).toEqual(questionDef);
+      });
+    });
+
     describe('Question Factory', function() {
 
       var question;
@@ -210,6 +235,8 @@ describe('Home Pages', function() {
 
   describe('Directives', function() {
 
+    beforeEach(module('templates/questionForm.html'));
+
     // TODO: Fix the videojs issue
     describe('videoJs Directive', function() {
       var element, $scope, $window;
@@ -271,6 +298,71 @@ describe('Home Pages', function() {
          };
          expect(window.videojs).toHaveBeenCalledWith('video-js' + $scope.id, config);
          */
+      });
+
+    });
+
+    describe('questionForm Directive', function(){
+      var element, $scope, question;
+
+      beforeEach(inject(function(_$compile_, _$rootScope_) {
+        $scope = _$rootScope_.$new();
+        $scope.problem = {id: 1};
+        $scope.save = function(_problem, _question) {
+          question = _question;
+          expect(_problem).toEqual({id: 1});
+        };
+
+        element = angular.element(
+          '<question-form problem="problem" on-submit="save"></question-form>'
+        );
+
+        _$compile_(element)($scope);
+        $scope.$apply();
+      }));
+
+      afterEach(function() {
+        $scope.$destroy();
+      });
+
+      it('should send the question details to the onSubmit function on submit', function() {
+        var expected = {
+          title : 'foo',
+          options : [ 'foo', 'bar' ],
+          validAnswer : 'foo'
+        };
+
+        element.find("input.question-title").val(expected.title);
+        element.find("input.question-title").change();
+
+        expected.options.forEach(function (answer) {
+          element.find("input.question-new-answer").val(answer);
+          element.find("input.question-new-answer").change();
+          element.find("button.question-add-answer").click();
+          expect(element.find('select option:eq(-1)').text()).toBe(answer);
+        });
+
+        expect(element.find('select option').length).toBe(3);
+        element.find('select').val('0');
+        element.find('select').change();
+
+        element.find('.question-submit').click();
+        expect(question).toEqual(expected);
+
+      });
+
+      it('shouldn\'t allow 2 options with the same value', function() {
+        element.find("button.show-question-form").click();
+
+        ['foo', 'foo'].forEach(function (answer) {
+          element.find("input.question-new-answer").val(answer);
+          element.find("input.question-new-answer").change();
+          element.find("button.question-add-answer").click();
+          expect(element.find('select option:eq(-1)').text()).toBe(answer);
+        });
+
+        expect(element.find('select option').length).toBe(2);
+
       });
 
     });
@@ -680,9 +772,17 @@ describe('Home Pages', function() {
 
     describe('ProblemEdit Controller', function() {
       // Generate a random id between 0~100
-      var routeParamId = (Math.random() * 100).toFixed(0);
+      var questionDeferred,
+        problemData,
+        routeParamId = (Math.random() * 100).toFixed(0);
 
-      beforeEach(inject(function(_$controller_, _$rootScope_) {
+      beforeEach(inject(function(_$controller_, _$rootScope_, _$q_) {
+        questionDeferred = _$q_.defer();
+        spyOn(questions, 'add').andReturn(questionDeferred.promise);
+
+        problemData = {id:routeParamId, title:'t', questions: []};
+        deferred.resolve(problemData);
+
         $scope = _$rootScope_.$new();
         ctrl = _$controller_('ProblemEditCtrl', {
           $scope: $scope,
@@ -693,12 +793,42 @@ describe('Home Pages', function() {
       }));
 
       it('should save problem to scope',function(){
-        var problemData = {id:routeParamId,title:'t'};
-
-        deferred.resolve(problemData);
         $scope.$digest();
-
         expect($scope.problem).toEqual(problemData);
+      });
+
+      it('should save question', function() {
+        var questionDef = {
+            title: 'Undefined is ___',
+            options: ['Truthy', 'Falsy'],
+            validAnswer: 'Falsy'
+          },
+          question = {
+            id: 1,
+            title: 'Undefined is ___',
+            options: [
+              {
+                id: 1,
+                value: 'Truthy'
+              },
+              {
+                id: 2,
+                value: 'Falsy'
+              }
+            ],
+            validAnswer: 2
+          };
+
+        $scope.$digest();
+        $scope.showNewQuestionForm = true;
+        $scope.addQuestion($scope.problem, questionDef);
+        expect($scope.problem.questions.length).toBe(0);
+
+        questionDeferred.resolve(question);
+        $scope.$digest();
+        expect($scope.showNewQuestionForm).toBe(false);
+        expect($scope.problem.questions.length).toBe(1);
+        expect($scope.problem.questions[0]).toEqual(question);
       });
 
     });

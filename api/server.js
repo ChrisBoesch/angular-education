@@ -41,6 +41,7 @@ swagger.addModels(models)
   .addGet(problemsResources.findAll)
   .addGet(problemsResources.findById)
   .addPost(problemsResources.createNewProblem)
+  .addPost(problemsResources.addQuestion)
   .addPost(problemsResources.postAnswer)
 ;
 

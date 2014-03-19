@@ -47,6 +47,7 @@ exports.createNewProblem = {
     type: 'Problem',
     nickname: 'createNewProblem',
     produces: ['application/json'],
+    parameters: [params.body('data', 'Expected JSON Payload', 'Problem')],
     responseMessages: [swe.invalid('problem')]
   },
   action: function(req, res) {
@@ -77,7 +78,7 @@ exports.findById = {
     if (!req.params.problemId) {
       throw swe.invalid('id');
     }
-    var id = parseInt(req.params.problemId);
+    var id = parseInt(req.params.problemId, 10);
     var problem = problemsData.getById(id);
 
     if (problem) {
@@ -86,6 +87,46 @@ exports.findById = {
     else {
       throw swe.notFound('problem');
     }
+  }
+};
+
+exports.addQuestion = {
+  spec: {
+    description: 'Operations about a problem questions',
+    path: '/problems/{problemId}/questions',
+    method: 'POST',
+    summary: 'Add a question to a problem',
+    notes: 'Returns a question and its ID',
+    type: 'Question',
+    nickname: 'addQuestion',
+    produces: ['application/json'],
+    parameters: [
+      params.path('problemId', 'ID of problem that needs to be fetched', 'integer'),
+      params.body('data', 'Expected JSON Payload', 'QuestionDefinition')
+    ],
+    responseMessages: [swe.invalid('id'), swe.notFound('problem')]
+  },
+  action: function(req, res) {
+    var id, problem, question;
+
+    if (!req.params.problemId) {
+      throw swe.invalid('id');
+    }
+
+    id = parseInt(req.params.problemId, 10);
+    problem = problemsData.getById(id);
+
+    if (!problem) {
+      throw swe.notFound('problem');
+    }
+
+    question = problemsData.addQuestion(problem, req.body);
+    if (question) {
+      writeResponse(res, question);
+    } else {
+      throw swe.invalid('question');
+    }
+
   }
 };
 

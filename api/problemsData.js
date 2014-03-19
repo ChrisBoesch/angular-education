@@ -88,6 +88,51 @@ exports.add = function(newProblem) {
   return _.pick(newProblem, ['id', 'title', 'description', 'questions']);
 };
 
+exports.addQuestion = function(problem, question) {
+  var i, opt, newQuestion;
+
+  problem = _.find(problems, {id: problem.id});
+
+  if (
+    !question ||
+    !question.title ||
+    !question.options ||
+    !question.validAnswer ||
+    question.options.length < 2
+  ) {
+    return;
+  }
+
+  newQuestion = {
+    id: questions.length + 1,
+    title: question.title,
+    options: []
+  };
+
+  for (i = 0; i < question.options.length; i++) {
+    opt = {
+      id: i + 1,
+      value: question.options[i]
+    };
+
+    if (question.validAnswer === opt.value) {
+      newQuestion.validAnswer = opt.id;
+    }
+
+    newQuestion.options.push(opt);
+  }
+
+  if (!newQuestion.validAnswer) {
+    return;
+  }
+
+  questions.push(newQuestion);
+
+  problem.questionsRef.push(newQuestion.id);
+
+  return newQuestion;
+};
+
 exports.postAnswer = function(id, answer) {
   var question = _.find(questions, {id: id});
   if (question) {

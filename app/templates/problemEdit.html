@@ -2,7 +2,7 @@
 	<div class="page-header edu-top-header">
 		<h2> Edit problem: {{problem.title}} </h2>
 	</div>
-	
+
 	<form role="form" name="problem">
 		<div class="form-group">
 			<label for="Title" >Title</label>
@@ -12,19 +12,22 @@
 			<label for="description">Description</label>
 			<textarea type="text" ng-model="problem.description" class="form-control"></textarea>
 		</div>
-		<button name="CreateBtn" ng-disabled="form.$invalid" ng-click="save(problem)" class="btn btn-default">Save</button>	
+		<button name="CreateBtn" ng-disabled="form.$invalid" ng-click="save(problem)" class="btn btn-default">Save</button>
 	</form>
 
+	<h3>Questions</h3>
+	<p ng-if="problem.questions.length === 0">No questions</p>
+
 	<div ng-repeat="question in problem.questions">
-		<h3 for="Title" >question #{{$index+1}}</h3>
-		<form role="form">
-			<div class="form-group">
-				<input type="text" required ng-model="question.title" class="form-control">
-			</div>
-			<label>answers are:</label>
-			<div ng-repeat="answer in question.options" class = "form-group">
-				<input type="text" required ng-model="answer.value" class="form-control">
-			</div>
-		</form>
+		<h4 for="Title" >#{{$index+1}}. {{question.title}}</h4>
+		<p>Answers:</p>
+		<ul>
+			<li ng-repeat="answer in question.options">
+				#{{$index+1}}. "{{answer.value}}"<span ng-if="question.validAnswer == answer.id"> (valid answer)</span>.
+			</li>
+		</ul>
 	</div>
+
+	<a href="" ng-click="showNewQuestionForm = true" ng-hide="showNewQuestionForm">Add a question</a>
+	<question-form problem="problem" on-submit="addQuestion" ng-show="showNewQuestionForm"></question-form>
 </div>
