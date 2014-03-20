@@ -10,7 +10,7 @@ module.exports = function(config) {
       '**/*.html': 'ng-html2js'
     },
     ngHtml2JsPreprocessor: {
-      stripPrefix: 'app'
+      stripPrefix: 'app/'
     },
     browsers: ['PhantomJS'],
     // browsers: ['Chrome'],

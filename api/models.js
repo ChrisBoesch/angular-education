@@ -134,6 +134,28 @@ module.exports = {
       }
     }
   },
+  QuestionDefinition: {
+    id: "QuestionDefinition",
+    required: ["validAnswer", "options", "title"],
+    properties: {
+      options: {
+        type: "array",
+        items: {
+          type: "string"
+        },
+        uniqueItems: true,
+        description: "Options available for the question"
+      },
+      title: {
+        type: "string",
+        description: "Friendly name of the question"
+      },
+      validAnswer: {
+        type: "string",
+        description: "valid answer"
+      }
+    }
+  },
   Answer: {
     id: 'Answer',
     required: ['isCorrect'],
