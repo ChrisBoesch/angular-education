@@ -3,17 +3,46 @@
 		<h2> Edit problem: {{problem.title}} </h2>
 	</div>
 
-	<form role="form" name="problem">
-		<div class="form-group">
-			<label for="Title" >Title</label>
-			<input type="text" required ng-model="problem.title" class="form-control">
+	<h3>Title</h3>
+	<p>{{problem.title}}</p>
+
+	<h3>Description</h3>
+	<p>{{problem.description}}</p>
+
+	<h3>Video</h3>
+	<p ng-if="video"><a ng-href="#/videos/{{video.id}}">{{video.title}}</a></p>
+	<div ng-if="!video">
+		<p>No video associated to this problem
+			<span ng-hide="show.attachForm">
+				- <a href="" ng-click="show.attachForm = true">attach</a>
+			</span>
+		</p>
+		<div ng-show="show.attachForm">
+			<form name="attachForm" class="form-inline" role="form">
+				<div class="form-group">
+			    <label for="videoToAttach">video :</label>
+			    <select
+			    	class="form-control" id="videoToAttach"
+			    	ng-model="attach.video"
+			    	ng-options="v.title for v in videos"
+			    >
+			    	<option value="">-- select a video --</option>
+			    </select>
+					<button
+			      type="submit"
+			      class="btn btn-default question-submit"
+			      ng-click="attachVideo(attach.video, problem)"
+			      ng-disabled="!attach.video"
+			    >
+			      Attach
+			    </button>
+			    <button type="reset" class="btn btn-default question-cancel" ng-click="resetAttachForm()">
+			      Cancel
+			    </button>
+			  </div>
+			</form>
 		</div>
-		<div class="form-group">
-			<label for="description">Description</label>
-			<textarea type="text" ng-model="problem.description" class="form-control"></textarea>
-		</div>
-		<button name="CreateBtn" ng-disabled="form.$invalid" ng-click="save(problem)" class="btn btn-default">Save</button>
-	</form>
+	</div>
 
 	<h3>Questions</h3>
 	<p ng-if="problem.questions.length === 0">No questions</p>

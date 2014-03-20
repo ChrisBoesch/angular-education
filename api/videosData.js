@@ -92,3 +92,7 @@ exports.getAll = function() {
 exports.getById = function(id) {
   return _.find(videos, {id: id});
 };
+
+exports.getByProblemId = function(problemId) {
+  return _.find(videos, {problemId: problemId});
+};

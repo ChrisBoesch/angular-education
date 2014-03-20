@@ -50874,10 +50874,22 @@ videojs.Youtube.prototype.onError = function(error){
   angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit'])
 
     .factory('videos', function(API_BASE, $resource) {
-      var res = $resource(API_BASE + '/videos/:id/');
+      var res = $resource(
+          API_BASE + '/videos/:id/:property', null, {edit: {method: 'PUT'}}
+        );
+
       var api = {
         create: function(video){
           return res.save(video).$promise;
+        },
+        getByProblemId: function(problem) {
+          return res.query({problemId: problem.id}).$promise;
+        },
+        attach: function(video, problem) {
+          return res.edit(
+            {id: video.id, property: 'problem'},
+            {problemId: problem.id}
+          ).$promise;
         }
       };
 
@@ -51227,12 +51239,44 @@ videojs.Youtube.prototype.onError = function(error){
       };
     })
 
-    .controller('ProblemEditCtrl', function($scope, $routeParams, $window, problems, questions){
+    .controller('ProblemEditCtrl', function($scope, $routeParams, $window, videos, problems, questions){
       var id = $routeParams.id;
+
+      $scope.show = {
+        attachForm: false
+      };
 
       problems.getById(id).then(function (problemData) {
         $scope.problem = problemData;
+        return problemData;
       });
+
+      videos.getByProblemId({id: id}).then(function(videoList) {
+        if (videoList.length > 0 ) {
+          $scope.video = videoList[0];
+        }
+      });
+
+      videos.all().then(function(videoList) {
+        $scope.videos = videoList;
+      });
+
+      $scope.attachVideo = function(video, problem) {
+        return videos.attach(video, problem).then(function() {
+          $scope.video = video;
+          $scope.show.attachForm = false;
+        }).catch(function() {
+          $window.alert("Error: could not attached problem to video.");
+        });
+      };
+
+      $scope.resetAttachForm = function () {
+        $scope.show.attachForm = false;
+        if ($scope.attach && $scope.attach.video) {
+          $scope.attach.video = null;
+        }
+      };
+
       $scope.showNewQuestionForm = false;
       $scope.addQuestion = function(problem, question) {
         if (!question) {

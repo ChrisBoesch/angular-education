@@ -45,6 +45,33 @@ describe('Home Pages', function() {
         expect(ret.id).toEqual(1);
       });
 
+      it('should return an array when getByProblemId is called', function() {
+        var ret, obj = {id: 1};
+        $httpBackend.expectGET(API_BASE + '/videos?problemId=1').respond([obj]);
+
+        videos.getByProblemId({id: 1}).then(function(data) {
+          ret = data;
+        });
+        $httpBackend.flush();
+        expect(ret[0].id).toEqual(1);
+      });
+
+      it('should send a put request when attach is called', function() {
+        var data, resp;
+
+        $httpBackend.expectPUT(API_BASE + '/videos/foo/problem').respond(function (u, m, rawData) {
+          data = JSON.parse(rawData);
+          return [200, null];
+        });
+
+        videos.attach({id: 'foo'}, {id: 1}).then(function(_resp){
+          resp = _resp;
+        });
+
+        $httpBackend.flush();
+        expect(data).toEqual({problemId: 1});
+      });
+
       describe('.create(video)', function() {
         it('should have create()',function(){
           expect(videos.create).toBeDefined();
@@ -152,6 +179,7 @@ describe('Home Pages', function() {
             return [200, {}];
           }
         );
+
         questions.add({id: 1}, questionDef);
         $httpBackend.flush();
         expect(data).toEqual(questionDef);
@@ -773,12 +801,21 @@ describe('Home Pages', function() {
     describe('ProblemEdit Controller', function() {
       // Generate a random id between 0~100
       var questionDeferred,
+        videoDeferred,
+        allVideosDeffered,
         problemData,
+        attachDeffered,
         routeParamId = (Math.random() * 100).toFixed(0);
 
       beforeEach(inject(function(_$controller_, _$rootScope_, _$q_) {
         questionDeferred = _$q_.defer();
+        videoDeferred = _$q_.defer();
+        allVideosDeffered = _$q_.defer();
+        attachDeffered = _$q_.defer();
         spyOn(questions, 'add').andReturn(questionDeferred.promise);
+        spyOn(videos, 'getByProblemId').andReturn(videoDeferred.promise);
+        spyOn(videos, 'attach').andReturn(attachDeffered.promise);
+        videos.all.andReturn(allVideosDeffered.promise);
 
         problemData = {id:routeParamId, title:'t', questions: []};
         deferred.resolve(problemData);
@@ -818,8 +855,8 @@ describe('Home Pages', function() {
             ],
             validAnswer: 2
           };
-
         $scope.$digest();
+
         $scope.showNewQuestionForm = true;
         $scope.addQuestion($scope.problem, questionDef);
         expect($scope.problem.questions.length).toBe(0);
@@ -829,6 +866,61 @@ describe('Home Pages', function() {
         expect($scope.showNewQuestionForm).toBe(false);
         expect($scope.problem.questions.length).toBe(1);
         expect($scope.problem.questions[0]).toEqual(question);
+      });
+
+      it('should fetch the video the problem is attached to',function(){
+        $scope.$digest();
+
+        expect(videos.getByProblemId).toHaveBeenCalledWith({id: routeParamId});
+        videoDeferred.resolve([]);
+        $scope.$digest();
+        expect($scope.video).not.toBeDefined();
+      });
+
+      it('should save the video the problem is attached to',function(){
+        var video = {
+            id: 1,
+            title: 'Introduction to JavaScript',
+            problemId: routeParamId
+          };
+
+        $scope.$digest();
+
+        videoDeferred.resolve([video]);
+
+        $scope.$digest();
+        expect($scope.video).toEqual(video);
+      });
+
+      it('should get all videos',function(){
+        var video = {
+            id: 1,
+            title: 'Introduction to JavaScript',
+            problemId: routeParamId
+          };
+
+        allVideosDeffered.resolve([video]);
+        $scope.$digest();
+
+        expect($scope.videos).toEqual([video]);
+      });
+
+      it('should attach video to problem', function() {
+        var video = {
+            id: 1,
+            title: 'Introduction to JavaScript',
+            problemId: routeParamId
+          };
+
+        $scope.$digest();
+
+        $scope.attachVideo(video, $scope.problem);
+        expect(videos.attach).toHaveBeenCalledWith(video, $scope.problem);
+
+        attachDeffered.resolve({});
+        $scope.$digest();
+
+        expect($scope.video).toEqual(video);
       });
 
     });
