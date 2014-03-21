@@ -15,7 +15,7 @@
     };
   }
 
-  angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit'])
+  angular.module('app.homePages', ['app.config', 'app.services', 'ngResource', 'angularSpinkit'])
 
     .factory('videos', function(API_BASE, $resource) {
       var res = $resource(
@@ -368,7 +368,7 @@
 
     })
 
-    .controller('ProblemCreateCtrl', function($scope, $location, $window, problems) {
+    .controller('ProblemCreateCtrl', function($scope, $location, alerts, problems) {
       $scope.savingProblem = false;
       $scope.create = function createProblem(newProblem) {
         $scope.savingProblem = true;
@@ -376,14 +376,14 @@
         problems.create(newProblem).then(function() {
           $location.path('/problems');
         }).catch(function (){
-          $window.alert('Failed to save the problem');
+          alerts.warning('Failed to save the problem');
         })['finally'](function problemSaved() {
           $scope.savingProblem = false;
         });
       };
     })
 
-    .controller('ProblemEditCtrl', function($scope, $routeParams, $window, videos, problems, questions){
+    .controller('ProblemEditCtrl', function($scope, $routeParams, alerts, videos, problems, questions){
       var id = $routeParams.id;
 
       $scope.show = {
@@ -410,7 +410,7 @@
           $scope.video = video;
           $scope.show.attachForm = false;
         }).catch(function() {
-          $window.alert("Error: could not attached problem to video.");
+          alerts.warning("Error: could not attached problem to video.");
         });
       };
 
@@ -432,7 +432,7 @@
           $scope.problem.questions.push(data);
           return data;
         }).catch(function(data) {
-          $window.alert("Error: could not save the question");
+          alerts.warning("Error: could not save the question");
           throw data;
         });
       };

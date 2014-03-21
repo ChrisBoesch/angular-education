@@ -1,0 +1,11 @@
+<ul id="edu-alerts-messages" class="list-unstyled">
+  <li
+    ng-repeat="message in messages"
+    ng-class="['alert', 'alert-' + message.level]"
+  >
+    <button type="button" class="close" aria-hidden="true" ng-click="remove(message)">
+      &times;
+    </button>
+    <span ng-bind="message.content"></span>
+  </li>
+</ul>

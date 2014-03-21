@@ -1,4 +1,4 @@
-angular.module('myApp', ['app.config', 'ngRoute', 'ngAnimate', 'ngResource',
+angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate', 'ngResource',
     'angularSpinkit',
     'app.sidebar', 'app.homePages'])
 

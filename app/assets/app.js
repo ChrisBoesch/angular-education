@@ -50807,7 +50807,7 @@ videojs.Youtube.prototype.onError = function(error){
   ';
   document.getElementsByTagName('head')[0].appendChild(style);
 })();
-;angular.module('myApp', ['app.config', 'ngRoute', 'ngAnimate', 'ngResource',
+;angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate', 'ngResource',
     'angularSpinkit',
     'app.sidebar', 'app.homePages'])
 
@@ -50851,7 +50851,31 @@ videojs.Youtube.prototype.onError = function(error){
 ;(function() {
   'use strict';
 
-  angular.module('app.directives', ['app.config']);
+  angular.module('app.directives', ['app.config', 'app.services'])
+
+  .directive('eduAlerts', function(TPL_PATH) {
+    return {
+      templateUrl: TPL_PATH + '/alerts.html',
+      restrict: 'E',
+      controller: function($scope, alerts) {
+        $scope.messages = alerts.messages;
+        $scope.remove = function(message){
+          alerts.remove(message);
+        };
+      },
+      link: function(scope, iElement) {
+        scope.$watch('messages.length', function() {
+          if (scope.messages.length < 1) {
+            iElement.hide();
+          } else {
+            iElement.show();
+          }
+        });
+      }
+    };
+  })
+
+  ;
 
 }());
 ;/*global videojs, _*/
@@ -50871,7 +50895,7 @@ videojs.Youtube.prototype.onError = function(error){
     };
   }
 
-  angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit'])
+  angular.module('app.homePages', ['app.config', 'app.services', 'ngResource', 'angularSpinkit'])
 
     .factory('videos', function(API_BASE, $resource) {
       var res = $resource(
@@ -51224,7 +51248,7 @@ videojs.Youtube.prototype.onError = function(error){
 
     })
 
-    .controller('ProblemCreateCtrl', function($scope, $location, $window, problems) {
+    .controller('ProblemCreateCtrl', function($scope, $location, alerts, problems) {
       $scope.savingProblem = false;
       $scope.create = function createProblem(newProblem) {
         $scope.savingProblem = true;
@@ -51232,14 +51256,14 @@ videojs.Youtube.prototype.onError = function(error){
         problems.create(newProblem).then(function() {
           $location.path('/problems');
         }).catch(function (){
-          $window.alert('Failed to save the problem');
+          alerts.warning('Failed to save the problem');
         })['finally'](function problemSaved() {
           $scope.savingProblem = false;
         });
       };
     })
 
-    .controller('ProblemEditCtrl', function($scope, $routeParams, $window, videos, problems, questions){
+    .controller('ProblemEditCtrl', function($scope, $routeParams, alerts, videos, problems, questions){
       var id = $routeParams.id;
 
       $scope.show = {
@@ -51266,7 +51290,7 @@ videojs.Youtube.prototype.onError = function(error){
           $scope.video = video;
           $scope.show.attachForm = false;
         }).catch(function() {
-          $window.alert("Error: could not attached problem to video.");
+          alerts.warning("Error: could not attached problem to video.");
         });
       };
 
@@ -51288,7 +51312,7 @@ videojs.Youtube.prototype.onError = function(error){
           $scope.problem.questions.push(data);
           return data;
         }).catch(function(data) {
-          $window.alert("Error: could not save the question");
+          alerts.warning("Error: could not save the question");
           throw data;
         });
       };
@@ -51317,6 +51341,47 @@ videojs.Youtube.prototype.onError = function(error){
           });
         }
       };
+    })
+
+    .factory('alerts', function() {
+      var alerts = {
+        INFO: 'info',
+        SUCCESS: 'success',
+        WARNING: 'warning',
+        DANGER: 'danger',
+
+        counter: 1,
+        messages: [],
+
+        push: function(msg, level) {
+          var message;
+
+          message = {
+            id: this.counter++,
+            level: level ? level : this.INFO,
+            content: msg
+          };
+
+          this.messages.push(message);
+          return message;
+        },
+
+        remove: function (message) {
+          for (var i = 0; i < this.messages.length; i++) {
+            if (this.messages[i].id === message.id) {
+              return this.messages.splice(i, 1).pop();
+            }
+          }
+        }
+      };
+
+      ['info', 'success', 'warning', 'danger'].forEach(function(level) {
+        alerts[level] = function(msg) {
+          return this.push(msg, level);
+        };
+      });
+
+      return alerts;
     })
 
   ;
