@@ -50851,7 +50851,31 @@ videojs.Youtube.prototype.onError = function(error){
 ;(function() {
   'use strict';
 
-  angular.module('app.directives', ['app.config']);
+  angular.module('app.directives', ['app.config', 'app.services'])
+
+  .directive('eduAlerts', function(TPL_PATH) {
+    return {
+      templateUrl: TPL_PATH + '/alerts.html',
+      restrict: 'E',
+      controller: function($scope, alerts) {
+        $scope.messages = alerts.messages;
+        $scope.remove = function(message){
+          alerts.remove(message);
+        };
+      },
+      link: function(scope, iElement) {
+        scope.$watch('messages', function() {
+          if (scope.messages.length < 1) {
+            iElement.hide();
+          } else {
+            iElement.show();
+          }
+        });
+      }
+    };
+  })
+
+  ;
 
 }());
 ;/*global videojs, _*/
@@ -51317,6 +51341,47 @@ videojs.Youtube.prototype.onError = function(error){
           });
         }
       };
+    })
+
+    .factory('alerts', function() {
+      var alerts = {
+        INFO: 'info',
+        SUCCESS: 'success',
+        WARNING: 'warning',
+        DANGER: 'danger',
+
+        counter: 1,
+        messages: [],
+
+        push: function(msg, level) {
+          var message;
+
+          message = {
+            id: this.counter++,
+            level: level ? level : this.INFO,
+            content: msg
+          };
+
+          this.messages.push(message);
+          return message;
+        },
+
+        remove: function (message) {
+          for (var i = 0; i < this.messages.length; i++) {
+            if (this.messages[i].id === message.id) {
+              return this.messages.splice(i, 1).pop();
+            }
+          }
+        }
+      };
+
+      ['info', 'success', 'warning', 'danger'].forEach(function(level) {
+        alerts[level] = function(msg) {
+          return this.push(msg, level);
+        };
+      });
+
+      return alerts;
     })
 
   ;

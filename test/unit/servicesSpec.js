@@ -37,4 +37,87 @@ describe('Services', function() {
 
   });
 
+  describe('Alert service', function() {
+    var alerts;
+
+    beforeEach(inject(function(_alerts_) {
+      alerts = _alerts_;
+    }));
+
+    it('should initailly be empty', function() {
+      expect(alerts.messages.length).toBe(0);
+    });
+
+    it('should push messages', function() {
+      alerts.push('foo bar', alerts.DANGER);
+      expect(alerts.messages.length).toBe(1);
+      expect(alerts.messages[0]).toEqual({
+        id: 1,
+        level: 'danger',
+        content: 'foo bar'
+      });
+    });
+
+    it('should push info messages by default', function() {
+      alerts.push('foo bar');
+      expect(alerts.messages.length).toBe(1);
+      expect(alerts.messages[0]).toEqual({
+        id: 1,
+        level: 'info',
+        content: 'foo bar'
+      });
+    });
+
+    it('should push info messages', function() {
+      alerts.info('foo bar');
+      expect(alerts.messages.length).toBe(1);
+      expect(alerts.messages[0]).toEqual({
+        id: 1,
+        level: 'info',
+        content: 'foo bar'
+      });
+    });
+
+    it('should push success messages', function() {
+      alerts.success('foo bar');
+      expect(alerts.messages.length).toBe(1);
+      expect(alerts.messages[0]).toEqual({
+        id: 1,
+        level: 'success',
+        content: 'foo bar'
+      });
+    });
+
+    it('should push danger messages', function() {
+      alerts.danger('foo bar');
+      expect(alerts.messages.length).toBe(1);
+      expect(alerts.messages[0]).toEqual({
+        id: 1,
+        level: 'danger',
+        content: 'foo bar'
+      });
+    });
+
+    it('should push warning messages', function() {
+      alerts.warning('foo bar');
+      expect(alerts.messages.length).toBe(1);
+      expect(alerts.messages[0]).toEqual({
+        id: 1,
+        level: 'warning',
+        content: 'foo bar'
+      });
+    });
+
+    it('should remove messages', function() {
+      var i = alerts.info('foo bar'),
+        d = alerts.danger('foo bar');
+
+      expect(alerts.messages.length).toBe(2);
+
+      alerts.remove(i);
+      expect(alerts.messages.length).toBe(1);
+      expect(alerts.messages[0]).toBe(d);
+    });
+  });
+
 });
