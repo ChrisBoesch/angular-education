@@ -14,7 +14,7 @@
         };
       },
       link: function(scope, iElement) {
-        scope.$watch('messages', function() {
+        scope.$watch('messages.length', function() {
           if (scope.messages.length < 1) {
             iElement.hide();
           } else {

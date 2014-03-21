@@ -24,6 +24,12 @@ describe('Directives', function() {
       expect(element.find('ul li').length).toBe(0);
     });
 
+    it('should show when a message is added.', function() {
+      alerts.info('foo bar baz.');
+      $scope.$apply();
+      expect(element.css('display')).not.toBe('none');
+    });
+
     it('should add li element for each message in alerts.messages', function() {
       var first = alerts.info('foo bar.');
       $scope.$apply();

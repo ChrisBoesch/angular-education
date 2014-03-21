@@ -50807,7 +50807,7 @@ videojs.Youtube.prototype.onError = function(error){
   ';
   document.getElementsByTagName('head')[0].appendChild(style);
 })();
-;angular.module('myApp', ['app.config', 'ngRoute', 'ngAnimate', 'ngResource',
+;angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate', 'ngResource',
     'angularSpinkit',
     'app.sidebar', 'app.homePages'])
 
@@ -50864,7 +50864,7 @@ videojs.Youtube.prototype.onError = function(error){
         };
       },
       link: function(scope, iElement) {
-        scope.$watch('messages', function() {
+        scope.$watch('messages.length', function() {
           if (scope.messages.length < 1) {
             iElement.hide();
           } else {
@@ -50895,7 +50895,7 @@ videojs.Youtube.prototype.onError = function(error){
     };
   }
 
-  angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit'])
+  angular.module('app.homePages', ['app.config', 'app.services', 'ngResource', 'angularSpinkit'])
 
     .factory('videos', function(API_BASE, $resource) {
       var res = $resource(
