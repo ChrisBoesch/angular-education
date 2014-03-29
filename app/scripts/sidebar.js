@@ -1,4 +1,4 @@
-angular.module('app.sidebar', ['app.config'])
+angular.module('app.sidebar', ['app.config', 'ngResource'])
 
   .factory('stats', function(API_BASE, $resource) {
     var res = $resource(API_BASE + '/stats');

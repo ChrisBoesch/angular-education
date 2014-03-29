@@ -15,13 +15,25 @@
     };
   }
 
-  angular.module('app.homePages', ['app.config', 'ngResource', 'angularSpinkit'])
+  angular.module('app.homePages', ['app.config', 'app.services', 'ngResource', 'angularSpinkit'])
 
     .factory('videos', function(API_BASE, $resource) {
-      var res = $resource(API_BASE + '/videos/:id/');
+      var res = $resource(
+          API_BASE + '/videos/:id/:property', null, {edit: {method: 'PUT'}}
+        );
+
       var api = {
         create: function(video){
           return res.save(video).$promise;
+        },
+        getByProblemId: function(problem) {
+          return res.query({problemId: problem.id}).$promise;
+        },
+        attach: function(video, problem) {
+          return res.edit(
+            {id: video.id, property: 'problem'},
+            {problemId: problem.id}
+          ).$promise;
         }
       };
 
@@ -29,17 +41,36 @@
     })
 
     .factory('problems', function(API_BASE, $resource) {
-      return commonAPIs($resource(API_BASE + '/problems/:id'));
+      var res = $resource(API_BASE + '/problems/:id'),
+        api = {
+          create: function createNewProblem(newProblem) {
+            return res.save(newProblem).$promise;
+          }
+        };
+
+      return angular.extend(api, commonAPIs(res));
     })
 
     .factory('questions', function(API_BASE, $resource) {
-      var res = $resource(API_BASE + '/problems/:id/questions/:questionId/:verb'),
+      var res = $resource(API_BASE + '/problems/:problemId/questions/:questionId/:verb'),
         api = {
           answer: function(data) {
+            data.problemId = parseInt(data.problemId, 10);
+            data.questionId = parseInt(data.questionId, 10);
+            data.answer = parseInt(data.answer, 10);
             return res.save({
-              questionId: data.id,
+              problemId: data.problemId,
+              questionId: data.questionId,
               verb: 'answer'
             }, data).$promise;
+          },
+
+          add: function(problem, question) {
+            var params = {
+                problemId: problem.id
+              };
+
+            return res.save(params, question).$promise;
           }
         };
       return angular.extend(api, commonAPIs(res));
@@ -84,6 +115,55 @@
 
         isAnswered: function() {
           return angular.isDefined(cur.answered);
+        }
+      };
+    })
+
+    .directive('questionForm', function($q, TPL_PATH){
+      return {
+        restrict: 'E',
+        templateUrl: TPL_PATH + '/questionForm.html',
+        transclude: true,
+        scope: {
+          problem: '=',
+          onSubmit: '='
+        },
+        controller: function($scope) {
+          $scope.addAnswer = function(answer) {
+            if ($scope.question.options.indexOf(answer) > -1) {
+              return;
+            } else {
+              $scope.newAnswer = '';
+              $scope.question.options.push(answer);
+            }
+          };
+
+          $scope.create = function(question) {
+            if (!$scope.onSubmit || !$scope.isValid(question)) {
+              return;
+            }
+
+            $q.when($scope.onSubmit($scope.problem, question)).then(function() {
+              $scope.reset();
+            });
+          };
+
+          $scope.reset = function() {
+            $scope.question = { title: '', options: [], validAnswer: ''};
+          };
+
+          $scope.isValid = function(question) {
+            return (
+              question &&
+              question.title &&
+              question.options &&
+              question.validAnswer &&
+              question.options.length > 1 &&
+              question.options.indexOf(question.validAnswer) > -1
+            );
+          };
+
+          $scope.reset();
         }
       };
     })
@@ -203,7 +283,7 @@
         $scope.isYouTube = res.url && res.url.indexOf('www.youtube.com/watch?') > -1;
       });
     })
-    
+
     .controller("CreateVideoCtrl",function($scope, $location, videos){
       $scope.title = "Create video";
 
@@ -269,7 +349,8 @@
           $scope.canProceed = true;
           questions.answer({
             // Question ID
-            id: $scope.question.id,
+            problemId: $scope.id,
+            questionId: $scope.question.id,
             answer: $scope.question.answer
           }).then(
             // Success
@@ -287,12 +368,74 @@
 
     })
 
-    .controller('ProblemEditCtrl', function($scope, $routeParams, problems){
+    .controller('ProblemCreateCtrl', function($scope, $location, alerts, problems) {
+      $scope.savingProblem = false;
+      $scope.create = function createProblem(newProblem) {
+        $scope.savingProblem = true;
+
+        problems.create(newProblem).then(function() {
+          $location.path('/problems');
+        }).catch(function (){
+          alerts.warning('Failed to save the problem');
+        })['finally'](function problemSaved() {
+          $scope.savingProblem = false;
+        });
+      };
+    })
+
+    .controller('ProblemEditCtrl', function($scope, $routeParams, alerts, videos, problems, questions){
       var id = $routeParams.id;
+
+      $scope.show = {
+        attachForm: false
+      };
 
       problems.getById(id).then(function (problemData) {
         $scope.problem = problemData;
+        return problemData;
       });
+
+      videos.getByProblemId({id: id}).then(function(videoList) {
+        if (videoList.length > 0 ) {
+          $scope.video = videoList[0];
+        }
+      });
+
+      videos.all().then(function(videoList) {
+        $scope.videos = videoList;
+      });
+
+      $scope.attachVideo = function(video, problem) {
+        return videos.attach(video, problem).then(function() {
+          $scope.video = video;
+          $scope.show.attachForm = false;
+        }).catch(function() {
+          alerts.warning("Error: could not attached problem to video.");
+        });
+      };
+
+      $scope.resetAttachForm = function () {
+        $scope.show.attachForm = false;
+        if ($scope.attach && $scope.attach.video) {
+          $scope.attach.video = null;
+        }
+      };
+
+      $scope.showNewQuestionForm = false;
+      $scope.addQuestion = function(problem, question) {
+        if (!question) {
+          $scope.showNewQuestionForm = false;
+        }
+
+        return questions.add(problem, question).then(function(data) {
+          $scope.showNewQuestionForm = false;
+          $scope.problem.questions.push(data);
+          return data;
+        }).catch(function(data) {
+          alerts.warning("Error: could not save the question");
+          throw data;
+        });
+      };
     })
   ;
 

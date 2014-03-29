@@ -134,6 +134,28 @@ module.exports = {
       }
     }
   },
+  QuestionDefinition: {
+    id: "QuestionDefinition",
+    required: ["validAnswer", "options", "title"],
+    properties: {
+      options: {
+        type: "array",
+        items: {
+          type: "string"
+        },
+        uniqueItems: true,
+        description: "Options available for the question"
+      },
+      title: {
+        type: "string",
+        description: "Friendly name of the question"
+      },
+      validAnswer: {
+        type: "string",
+        description: "valid answer"
+      }
+    }
+  },
   Answer: {
     id: 'Answer',
     required: ['isCorrect'],
@@ -148,6 +170,16 @@ module.exports = {
     id: 'Answer',
     required: ['answer'],
     properties: {
+      problemId: {
+        type: 'integer',
+        format: 'int64',
+        description: 'ID of the problem to answer'
+      },
+      questionId: {
+        type: 'integer',
+        format: 'int64',
+        description: 'ID of the question to answer'
+      },
       answer: {
         type: 'integer',
         description: 'ID of the option that needs to be matched'

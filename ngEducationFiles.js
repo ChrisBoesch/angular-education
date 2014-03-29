@@ -19,7 +19,7 @@ var ngEducationFiles = {
   uniTestFiles: [
     'bower_components/angular-mocks/angular-mocks.js',
     'test/unit/**/*.js',
-    'app/templates/**/*.html'
+    'app/templates/*.html'
   ],
 
   karmaUnit: [

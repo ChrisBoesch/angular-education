@@ -4,8 +4,6 @@ node_modules
 bower_components
 /selenium
 /coverage
-/app/assets
-/app/fonts
 
 # ignore IDE Specific files
 /.idea

@@ -23,10 +23,18 @@ exports.findAll = {
     },
     nickname: 'getAllVideos',
     produces: ['application/json'],
+    parameters: [params.query('problemId', 'Option search criteria', 'integer')],
     responseMessages: [swe.notFound('videos')]
   },
   action: function(req, res) {
-    var videos = videosData.getAll();
+    var videos, video;
+
+    if (req.query && req.query.problemId) {
+      video = videosData.getByProblemId(parseInt(req.query.problemId, 10));
+      videos = video ? [video] : [];
+    } else {
+      videos = videosData.getAll();
+    }
 
     if (videos) {
       writeResponse(res, videos);
@@ -54,7 +62,7 @@ exports.findById = {
     if (!req.params.videoId) {
       throw swe.invalid('id');
     }
-    var id = parseInt(req.params.videoId);
+    var id = parseInt(req.params.videoId, 10);
     var video = videosData.getById(id);
 
     if (video) {
@@ -76,13 +84,49 @@ exports.create = {
     nickname: 'createVideo',
     produces: ['application/json'],
     parameters: [
-        params.body('data', 'Expected JSON Payload', 'Video')
+      params.body('data', 'Expected JSON Payload', 'Video')
     ],
     responseMessages: [
       swe.invalid('payload')
     ]
   },
   action: function(req, res) {
+    writeResponse(res,{status:"ok"});
+  }
+};
+
+exports.attach = {
+  spec: {
+    description: 'Attach video',
+    path: '/videos/{videoId}/problem',
+    method: 'PUT',
+    summary: 'Attach a problem to a video',
+    nickname: 'attachProblem',
+    parameters: [
+      params.path('videoId', 'ID of video that will be edited', 'integer'),
+      params.body('data', 'Expected JSON Payload', 'Video')
+    ],
+    responseMessages: [
+      swe.invalid('payload')
+    ]
+  },
+  action: function(req, res) {
+    if (!req.params.videoId) {
+      throw swe.invalid('id');
+    }
+
+    var id = parseInt(req.params.videoId, 10);
+    var video = videosData.getById(id);
+
+    if (!video) {
+      throw swe.notFound('video');
+    }
+
+    if (!req.body.problemId) {
+      throw swe.invalid('payload');
+    }
+
+    video.problemId = req.body.problemId;
     writeResponse(res,{status:"ok"});
   }
 };

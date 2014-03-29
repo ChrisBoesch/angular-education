@@ -51,7 +51,8 @@ var problems = [
   {
     id: 2,
     title: 'Introduction to AngularJS',
-    description: 'Instruction or some useful hints'
+    description: 'Instruction or some useful hints',
+    questionsRef: []
   }
 ];
 
@@ -74,6 +75,62 @@ exports.getById = function(id) {
       .value();
     return _.pick(problem, ['id', 'title', 'description', 'questions']);
   }
+};
+
+exports.add = function(newProblem) {
+  if (!newProblem || !newProblem.title || !newProblem.description) {
+    return;
+  }
+  newProblem.id = problems.length + 1;
+  newProblem.questionsRef = [];
+  problems.push(newProblem);
+
+  return _.pick(newProblem, ['id', 'title', 'description', 'questions']);
+};
+
+exports.addQuestion = function(problem, question) {
+  var i, opt, newQuestion;
+
+  problem = _.find(problems, {id: problem.id});
+
+  if (
+    !question ||
+    !question.title ||
+    !question.options ||
+    !question.validAnswer ||
+    question.options.length < 2
+  ) {
+    return;
+  }
+
+  newQuestion = {
+    id: questions.length + 1,
+    title: question.title,
+    options: []
+  };
+
+  for (i = 0; i < question.options.length; i++) {
+    opt = {
+      id: i + 1,
+      value: question.options[i]
+    };
+
+    if (question.validAnswer === opt.value) {
+      newQuestion.validAnswer = opt.id;
+    }
+
+    newQuestion.options.push(opt);
+  }
+
+  if (!newQuestion.validAnswer) {
+    return;
+  }
+
+  questions.push(newQuestion);
+
+  problem.questionsRef.push(newQuestion.id);
+
+  return newQuestion;
 };
 
 exports.postAnswer = function(id, answer) {

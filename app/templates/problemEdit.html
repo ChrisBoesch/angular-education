@@ -2,29 +2,61 @@
 	<div class="page-header edu-top-header">
 		<h2> Edit problem: {{problem.title}} </h2>
 	</div>
-	
-	<form role="form" name="problem">
-		<div class="form-group">
-			<label for="Title" >Title</label>
-			<input type="text" required ng-model="problem.title" class="form-control">
+
+	<h3>Title</h3>
+	<p>{{problem.title}}</p>
+
+	<h3>Description</h3>
+	<p>{{problem.description}}</p>
+
+	<h3>Video</h3>
+	<p ng-if="video"><a ng-href="#/videos/{{video.id}}">{{video.title}}</a></p>
+	<div ng-if="!video">
+		<p>No video associated to this problem
+			<span ng-hide="show.attachForm">
+				- <a href="" ng-click="show.attachForm = true">attach</a>
+			</span>
+		</p>
+		<div ng-show="show.attachForm">
+			<form name="attachForm" class="form-inline" role="form">
+				<div class="form-group">
+			    <label for="videoToAttach">video :</label>
+			    <select
+			    	class="form-control" id="videoToAttach"
+			    	ng-model="attach.video"
+			    	ng-options="v.title for v in videos"
+			    >
+			    	<option value="">-- select a video --</option>
+			    </select>
+					<button
+			      type="submit"
+			      class="btn btn-default question-submit"
+			      ng-click="attachVideo(attach.video, problem)"
+			      ng-disabled="!attach.video"
+			    >
+			      Attach
+			    </button>
+			    <button type="reset" class="btn btn-default question-cancel" ng-click="resetAttachForm()">
+			      Cancel
+			    </button>
+			  </div>
+			</form>
 		</div>
-		<div class="form-group">
-			<label for="description">Description</label>
-			<textarea type="text" ng-model="problem.description" class="form-control"></textarea>
-		</div>
-		<button name="CreateBtn" ng-disabled="form.$invalid" ng-click="save(problem)" class="btn btn-default">Save</button>	
-	</form>
+	</div>
+
+	<h3>Questions</h3>
+	<p ng-if="problem.questions.length === 0">No questions</p>
 
 	<div ng-repeat="question in problem.questions">
-		<h3 for="Title" >question #{{$index+1}}</h3>
-		<form role="form">
-			<div class="form-group">
-				<input type="text" required ng-model="question.title" class="form-control">
-			</div>
-			<label>answers are:</label>
-			<div ng-repeat="answer in question.options" class = "form-group">
-				<input type="text" required ng-model="answer.value" class="form-control">
-			</div>
-		</form>
+		<h4 for="Title" >#{{$index+1}}. {{question.title}}</h4>
+		<p>Answers:</p>
+		<ul>
+			<li ng-repeat="answer in question.options">
+				#{{$index+1}}. "{{answer.value}}"<span ng-if="question.validAnswer == answer.id"> (valid answer)</span>.
+			</li>
+		</ul>
 	</div>
+
+	<a href="" ng-click="showNewQuestionForm = true" ng-hide="showNewQuestionForm">Add a question</a>
+	<question-form problem="problem" on-submit="addQuestion" ng-show="showNewQuestionForm"></question-form>
 </div>
