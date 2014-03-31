@@ -189,7 +189,8 @@
               autoplay: false,
               ytcontrols: false,
               width: '100%',
-              height: 0
+              height: 0,
+              forceSSL: true
             };
           } else {
             setup = {

@@ -96,3 +96,13 @@ exports.getById = function(id) {
 exports.getByProblemId = function(problemId) {
   return _.find(videos, {problemId: problemId});
 };
+
+exports.add = function(video){
+  if(!video || !video.title || !video.url){
+    return;
+  }
+  video.id = videos.length+1;
+  videos.push(video);
+
+  return video;
+};
