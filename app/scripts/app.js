@@ -1,6 +1,6 @@
 angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate', 'ngResource',
     'angularSpinkit',
-    'app.sidebar', 
+    'app.sidebar',
     'app.homePages'])
 
   .config(function($routeProvider, TPL_PATH) {
@@ -22,7 +22,7 @@ angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate',
             return problems.all().then(function(res){
               var filtered = res.filter(function(item){
                 return item.solved;
-              });             
+              });
               return filtered;
             });
           }
@@ -36,11 +36,11 @@ angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate',
             return problems.all().then(function(res){
               var filtered = res.filter(function(item){
                 return !item.solved;
-              });             
+              });
               return filtered;
             });
           }
-        }        
+        }
       })
       .when('/problems/create',{
         controller: 'ProblemCreateCtrl',

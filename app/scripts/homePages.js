@@ -292,7 +292,7 @@
           $location.path('');
         });
       };
-    })   
+    })
 
     .controller('ProblemCtrl', function($scope, $routeParams, problems, questions, question) {
       $scope.id = $routeParams.id;
