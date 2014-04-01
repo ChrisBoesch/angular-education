@@ -582,39 +582,7 @@ describe('Home Pages', function() {
         });
       });
     });
-    describe('Problem List Controller', function() {
-
-      beforeEach(inject(function(_$controller_, _$rootScope_) {
-        $scope = _$rootScope_.$new();
-        ctrl = _$controller_('ProblemListCtrl', {
-          $scope: $scope
-        });
-      }));
-
-      describe('Initialization', function() {
-
-        it('should instantiate problems to null', function() {
-          expect($scope.problems).toBeNull();
-        });
-
-        it('should call the all function in factory', function() {
-          expect(problems.all).toHaveBeenCalled();
-        });
-
-      });
-
-      describe('After factory resolved', function() {
-
-        it('should update the problems with content from factory', function() {
-          var problems = [1, 2, 3];
-          deferred.resolve(problems);
-          $scope.$apply();
-          expect($scope.problems).toEqual(problems);
-        });
-
-      });
-
-    });
+   
 
     describe('Problem Controller', function() {
       // Generate a random id between 0~100
