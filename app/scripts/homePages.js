@@ -295,14 +295,6 @@
       };
     })
 
-    .controller('ProblemListCtrl', function($scope, problems) {
-      $scope.problems = null;
-
-      problems.all().then(function(res) {
-        $scope.problems = res;
-      });
-    })
-
     .controller('ProblemCtrl', function($scope, $routeParams, problems, questions, question) {
       $scope.id = $routeParams.id;
       $scope.title = null;

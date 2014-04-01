@@ -50302,7 +50302,8 @@ function setInnerText(element, text) {
 })();
 ;angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate', 'ngResource',
     'angularSpinkit',
-    'app.sidebar', 'app.homePages'])
+    'app.sidebar', 
+    'app.homePages'])
 
   .config(function($routeProvider, TPL_PATH) {
     // $locationProvider.html5Mode(true);
@@ -50314,6 +50315,34 @@ function setInnerText(element, text) {
       .when('/problems', {
         controller: 'ProblemListCtrl',
         templateUrl: TPL_PATH + '/problemList.html'
+      })
+      .when('/problems/solved',{
+        controller: 'ProblemListCtrl',
+        templateUrl: TPL_PATH + '/problemList.html',
+        resolve:{
+          problems: function(problems){
+            return problems.all().then(function(res){
+              var filtered = res.filter(function(item){
+                return item.solved;
+              });             
+              return filtered;
+            });
+          }
+        }
+      })
+      .when('/problems/unsolved',{
+        controller: 'ProblemListCtrl',
+        templateUrl: TPL_PATH + '/problemList.html',
+        resolve:{
+          problems: function(problems){
+            return problems.all().then(function(res){
+              var filtered = res.filter(function(item){
+                return !item.solved;
+              });             
+              return filtered;
+            });
+          }
+        }        
       })
       .when('/problems/create',{
         controller: 'ProblemCreateCtrl',
@@ -50666,15 +50695,7 @@ function setInnerText(element, text) {
           $location.path('');
         });
       };
-    })
-
-    .controller('ProblemListCtrl', function($scope, problems) {
-      $scope.problems = null;
-
-      problems.all().then(function(res) {
-        $scope.problems = res;
-      });
-    })
+    })   
 
     .controller('ProblemCtrl', function($scope, $routeParams, problems, questions, question) {
       $scope.id = $routeParams.id;
@@ -50814,7 +50835,19 @@ function setInnerText(element, text) {
   ;
 
 }());
-;(function() {
+;angular.module('app.homePages')
+.controller('ProblemListCtrl', function($scope, problems) {
+  $scope.problems = null;
+
+  if(angular.isArray(problems)){
+    $scope.problems = problems;
+  }
+  else{
+    problems.all().then(function(res) {
+      $scope.problems = res;
+    });
+  }
+});;(function() {
   'use strict';
 
   angular.module('app.services', [])
