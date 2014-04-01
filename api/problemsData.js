@@ -46,19 +46,21 @@ var problems = [
     id: 1,
     title: 'Introduction to JavaScript',
     description: 'Instruction or some useful hints',
-    questionsRef: [1, 2]
+    questionsRef: [1, 2],
+    solved: false
   },
   {
     id: 2,
     title: 'Introduction to AngularJS',
     description: 'Instruction or some useful hints',
-    questionsRef: []
+    questionsRef: [],
+    solved: true
   }
 ];
 
 exports.getAll = function() {
   return _.map(problems, function(problem) {
-    return _.pick(problem, ['id', 'title', 'description']);
+    return _.pick(problem, ['id', 'title', 'description','solved']);
   });
 };
 

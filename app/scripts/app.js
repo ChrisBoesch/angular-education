@@ -1,6 +1,7 @@
 angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate', 'ngResource',
     'angularSpinkit',
-    'app.sidebar', 'app.homePages'])
+    'app.sidebar', 
+    'app.homePages'])
 
   .config(function($routeProvider, TPL_PATH) {
     // $locationProvider.html5Mode(true);
@@ -12,6 +13,34 @@ angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate',
       .when('/problems', {
         controller: 'ProblemListCtrl',
         templateUrl: TPL_PATH + '/problemList.html'
+      })
+      .when('/problems/solved',{
+        controller: 'ProblemListCtrl',
+        templateUrl: TPL_PATH + '/problemList.html',
+        resolve:{
+          problems: function(problems){
+            return problems.all().then(function(res){
+              var filtered = res.filter(function(item){
+                return item.solved;
+              });             
+              return filtered;
+            });
+          }
+        }
+      })
+      .when('/problems/unsolved',{
+        controller: 'ProblemListCtrl',
+        templateUrl: TPL_PATH + '/problemList.html',
+        resolve:{
+          problems: function(problems){
+            return problems.all().then(function(res){
+              var filtered = res.filter(function(item){
+                return !item.solved;
+              });             
+              return filtered;
+            });
+          }
+        }        
       })
       .when('/problems/create',{
         controller: 'ProblemCreateCtrl',
