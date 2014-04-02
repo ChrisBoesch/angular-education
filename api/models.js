@@ -55,6 +55,10 @@ module.exports = {
       description: {
         type: 'string',
         description: 'Description of the problem'
+      },
+      solved:{
+        type: 'boolean',
+        description: 'Was solved by user'
       }
     }
   },
@@ -83,6 +87,10 @@ module.exports = {
         },
         description: 'Questions available for the problem'
       }
+    },
+    solved:{
+      type: 'boolean',
+      description: 'Was solved by user'
     }
   },
   Question: {

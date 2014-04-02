@@ -12,7 +12,7 @@
     "bootstrap": "~3.1.0",
     "angular-spinkit": "~0.0.2",
     "video.js": "~4.3.0",
-    "videojs-youtube": "~1.0.0",
+    "videojs-youtube": "655203a97fe0efdd66963c9fa16ec007a8f4aad5",
     "lodash": "~2.4.1"
   },
   "devDependencies": {

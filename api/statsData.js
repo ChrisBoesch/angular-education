@@ -4,8 +4,14 @@ var videos = require('./videosData'),
 var counts = {
   videosCount: videos.getAll().length,
   problemsCount: problems.getAll().length,
-  unsolvedCount: 2,
-  solvedCount: 0
+  unsolvedCount: problems
+  	.getAll()
+  	.filter(function(problem){ return !problem.solved})
+  	.length,
+  solvedCount: problems
+  	.getAll()
+  	.filter(function(problem){ return problem.solved})
+  	.length,
 };
 
 exports.getCounts = function() {

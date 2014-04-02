@@ -189,7 +189,8 @@
               autoplay: false,
               ytcontrols: false,
               width: '100%',
-              height: 0
+              height: 0,
+              forceSSL: true
             };
           } else {
             setup = {
@@ -292,14 +293,6 @@
           $location.path('');
         });
       };
-    })
-
-    .controller('ProblemListCtrl', function($scope, problems) {
-      $scope.problems = null;
-
-      problems.all().then(function(res) {
-        $scope.problems = res;
-      });
     })
 
     .controller('ProblemCtrl', function($scope, $routeParams, problems, questions, question) {

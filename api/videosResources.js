@@ -91,7 +91,16 @@ exports.create = {
     ]
   },
   action: function(req, res) {
-    writeResponse(res,{status:"ok"});
+    var video = videosData.add(req.body);
+
+    if(video)
+    {
+      writeResponse(res,video);
+    }
+    else{
+      throw swe.invalid('video');
+    }
+
   }
 };
 
