@@ -5,7 +5,7 @@ module.exports = function(config) {
     files: ngEducationFiles.mergeFilesFor('karmaUnit'),
     basePath: '../',
     frameworks: ['jasmine'],
-    reporters: ['progress'],
+    reporters: ['dots'],
     preprocessors: {
       '**/*.html': 'ng-html2js'
     },
