@@ -1,0 +1,45 @@
+<div class="page-header edu-top-header">
+    <h2 class="row">
+        <div class="col-sm-8 col-md-8">
+            Topics
+            <a href="#/topics/create" title="Create" tooltip><span class="glyphicon glyphicon-plus"></span></a>
+
+        </div>
+        <div class="col-sm-4 col-md-4">
+            <form role="search">
+                <div class="right-inner-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control" ng-model="search.title"
+                        placeholder="Search for a topic..."/>
+                </div>
+            </form>
+        </div>
+    </h2>
+</div>
+
+
+<!--
+TODO: wave during resolve
+ <div ng-if="!problems">
+    <wave-spinner></wave-spinner>
+</div> -->
+<table ng-if="data" class="table table-hover table-responsive">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="topic in data | filter:search track by $index">
+            <td>{{topic.id}}</td>
+            <td>{{topic.title}}</td>
+            <td>{{topic.description}}</td>
+            <td>
+                <a href="#/topics/{{topic.id}}/edit" title="Edit" tooltip><span class="glyphicon glyphicon-edit"></span></a>
+            </td>
+        </tr>
+    </tbody>
+</table>
