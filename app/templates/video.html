@@ -23,6 +23,53 @@
         <div class="panel-body">
             <h3 class="text-muted lead">Instructions</h3>
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium ad at cum dolorem eveniet fugiat impedit laudantium nam neque obcaecati quaerat repudiandae sequi sunt tempora ullam, ut veniam vitae voluptates?</p>
+            
+            <h3 class="text-muted lead">Unsolved problems 5/6</h3>
+            <table class="table">
+                <tr>
+                    <td><a href="#/problems/1">SomeProblem1</a></td>
+                </tr>
+                <tr>
+                    <td><a href="#/problems/1">SomeProblem2</a></td>
+                </tr>
+                <tr>
+                    <td><a href="#/problems/1">SomeProblem3</a></td>
+                </tr>
+                <tr>
+                    <td><a href="#/problems/1">SomeProblem4</a></td>
+                </tr>
+                <tr>
+                    <td><a href="#/problems/1">SomeProblem5</a></td>
+                </tr>
+            </table>
+
+            <h3 class="text-muted lead">Solved 1/6</h3>
+            <button class="btn btn-default" ng-click="isCollapsed = !isCollapsed">
+                {{!isCollapsed&&'Show'||'Hide'}} solved</button>
+            <div ng-show="isCollapsed">
+                <table class="table">
+                    <tr>
+                        <td>Solved1</td>
+                        <td><a href="#/problems/1">try again</a></td>
+                    </tr>
+                    <tr>
+                        <td>Solved2</td>
+                        <td><a href="#/problems/1">try again</a></td>
+                    </tr>
+                    <tr>
+                        <td>Solved3</td>
+                        <td><a href="#/problems/1">try again</a></td>
+                    </tr>
+                    <tr>
+                        <td>Solved4</td>
+                        <td><a href="#/problems/1">try again</a></td>
+                    </tr>
+                    <tr>
+                        <td>Solved5</td>
+                        <td><a href="#/problems/1">try again</a></td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 </div>
