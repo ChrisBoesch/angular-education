@@ -242,12 +242,12 @@ module.exports = function(grunt) {
               {
                 src: 'http://<%= localhostUrl %>:8888/#/videos/2',
                 dest: 'videos-details.jpg',
-                delay: 5000
+                delay: 500
               },
               {
                 src: 'http://<%= localhostUrl %>:8888/#/problems/1',
                 dest: 'problem-details.jpg',
-                delay: 3000
+                delay: 300
               },
               {
                 src: 'http://<%= localhostUrl %>:8888/#/videos/create',
@@ -264,7 +264,7 @@ module.exports = function(grunt) {
             ]
           },
           local: false,
-          viewport: ['1024x655']
+          viewport: ['1024x655','640x1136','768x1024']
         }
       }
     },
