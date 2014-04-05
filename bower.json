@@ -20,6 +20,6 @@
     "angular-mocks": "~1.2.10"
   },
   "resolutions": {
-    "angular": "1.2.15-build.2384+sha.7682e57"
+    "angular": "~1.2.10"
   }
 }
