@@ -254,7 +254,7 @@ module.exports = function(grunt) {
                 dest: 'videos-create.jpg'
               },
               {
-                src: 'http://<%= localhostUrl %>:8888/#/problems/1/create',
+                src: 'http://<%= localhostUrl %>:8888/#/problems/create',
                 dest: 'problems-create.jpg'
               },
               {
@@ -264,7 +264,7 @@ module.exports = function(grunt) {
             ]
           },
           local: false,
-          viewport: ['1024x655','640x1136','768x1024']
+          viewport: ['1024x768','320x568','768x1024']
         }
       }
     },
