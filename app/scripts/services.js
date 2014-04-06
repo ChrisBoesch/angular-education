@@ -20,7 +20,18 @@
         }
       };
     })
-
+    .factory('commonAPIs',function(){
+      return function commonAPIs(res) {
+        return {
+          all: function() {
+            return res.query().$promise;
+          },
+          getById: function(id) {
+            return res.get({id: id}).$promise;
+          }
+        };
+      }
+    })
     .factory('alerts', function() {
       var alerts = {
         INFO: 'info',
