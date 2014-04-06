@@ -1,7 +1,8 @@
 angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate', 'ngResource',
   'angularSpinkit',
   'app.sidebar',
-  'app.homePages'])
+  'app.homePages',
+  'ui.bootstrap'])
 
 .config(function($routeProvider, TPL_PATH) {
     // $locationProvider.html5Mode(true);
