@@ -2,7 +2,8 @@ angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate',
   'angularSpinkit',
   'app.sidebar',
   'app.homePages',
-  'app.topics'
+  'app.topics',
+  'ui.bootstrap'
   ])
 
 .config(function($routeProvider, TPL_PATH) {

@@ -54464,7 +54464,8 @@ function setInnerText(element, text) {
   'angularSpinkit',
   'app.sidebar',
   'app.homePages',
-  'app.topics'
+  'app.topics',
+  'ui.bootstrap'
   ])
 
 .config(function($routeProvider, TPL_PATH) {

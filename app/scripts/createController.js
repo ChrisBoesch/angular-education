@@ -4,7 +4,6 @@ angular.module('myApp')
   $scope.savingProblem = false;
   
   $scope.create = function(newData){
-    debugger;
     return create(newData);
-  };  
+  };
 });
