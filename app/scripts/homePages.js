@@ -383,6 +383,7 @@
       };
 
       problems.getById(id).then(function (problemData) {
+        debugger;
         $scope.problem = problemData;
         return problemData;
       });

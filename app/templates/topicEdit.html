@@ -1,0 +1,23 @@
+<div>
+  <div class="page-header edu-top-header">
+    <h2>Edit topic</h2>
+  </div>
+
+  <form role="form" name="newTopicForm">
+    <div ng-class="{'form-group': true, 'has-error': !newTopicForm.TopicTitle.$valid, 'has-feedback': true}">
+      <label for="Title" >
+        Title
+        <small ng-if="newTopicForm.TopicTitle.$error.required" class="text-danger">(required)</small>
+      </label>
+      <input type="text" name="TopicTitle" required="true" ng-model="topic.title" class="form-control"/>
+      <span ng-if="!newTopicForm.TopicTitle.$valid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+    </div>
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea type="text" ng-model="topic.description" class="form-control"></textarea>
+    </div>
+    <button name="EditBtn" ng-disabled="newTopicForm.$invalid || savingTopic" ng-click="save(topic)" class="btn btn-default">
+      Save
+    </button>
+  </form>
+</div>

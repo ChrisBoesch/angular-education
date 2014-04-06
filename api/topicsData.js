@@ -29,3 +29,18 @@ exports.add = function(topic){
 
   return topic;
 };
+
+exports.update = function(topic){
+  if(!topic || !topic.title)
+    return;
+  //UGLY: change needed
+  topics.forEach(function(value){
+    if(value.id===topic.id)
+    {
+      value.title = topic.title;
+      value.description = topic.description;
+    }
+  });
+
+  return topic;
+}

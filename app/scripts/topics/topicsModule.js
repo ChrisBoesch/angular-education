@@ -20,9 +20,32 @@ angular
       controller: 'CreateCtrl',
       templateUrl: TPL_PATH + '/topicCreate.html',
       resolve:{
-        // create:function(topic){
-        //   //$location.path('');
-        // }
+        create:function($location,topics){
+          return function(newData){
+            topics.create(newData).then(function(){
+              $location.path('/topics/');
+            });
+          };
+        }
+      }
+    })
+    .when('/topics/:id/edit',{
+      controller: 'TopicsEditCtrl',
+      templateUrl: TPL_PATH + '/topicEdit.html',
+      resolve:{
+        topic:function($route,topics){
+          var id = $route.current.params.id;
+          var topic = topics.getById(id);
+          return topic;
+        },
+        save:function($location){
+          return function(topic){
+            topic.$save()
+            .then(function(){
+              $location.path('/topics/');
+            });
+          };
+        }
       }
     });
   });

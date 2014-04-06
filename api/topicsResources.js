@@ -91,8 +91,14 @@ exports.create = {
     ]
   },
   action: function(req, res) {
-    var topic = topicsData.add(req.body);
-
+    var topicReq = req.body;
+    var topic;
+    if(!topicReq.id){
+      topic = topicsData.add(topicReq);
+    }
+    else{
+      topic = topicsData.update(topicReq);
+    }
     if(topic)
     {
       writeResponse(res,topic);
