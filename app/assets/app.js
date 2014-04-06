@@ -54551,9 +54551,8 @@ function setInnerText(element, text) {
   $scope.savingProblem = false;
   
   $scope.create = function(newData){
-    debugger;
     return create(newData);
-  };  
+  };
 });;angular.module('myApp')
 .controller('DataCtrl', function($scope, data) {
   $scope.data = data;
@@ -54972,7 +54971,6 @@ function setInnerText(element, text) {
       };
 
       problems.getById(id).then(function (problemData) {
-        debugger;
         $scope.problem = problemData;
         return problemData;
       });

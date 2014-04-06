@@ -260,6 +260,22 @@ module.exports = function(grunt) {
               {
                 src: 'http://<%= localhostUrl %>:8888/#/problems/1/edit',
                 dest: 'problems-edit.jpg'
+              },
+              {
+                src: 'http://<%= localhostUrl %>:8888/#/topics',
+                dest: 'topicss-list.jpg'
+              },
+              {
+                src: 'http://<%= localhostUrl %>:8888/#/topics/1/edit',
+                dest: 'topics-edit.jpg'
+              },
+              {
+                src: 'http://<%= localhostUrl %>:8888/#/topics/create',
+                dest: 'topics-create.jpg'
+              },
+              {
+                src: 'http://<%= localhostUrl %>:8888/#/courses/',
+                dest: 'courses-list.jpg'
               }
             ]
           },
