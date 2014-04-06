@@ -29,8 +29,8 @@ swagger.setAppHandler(app);
 
 var statsResources = require('./statsResources'),
   videosResources = require('./videosResources'),
-  problemsResources = require('./problemsResources');
-
+  problemsResources = require('./problemsResources'),
+  topicsResources = require('./topicsResources');
 swagger.addModels(models)
 
   .addGet(statsResources.getStats)
@@ -44,6 +44,10 @@ swagger.addModels(models)
   .addPost(problemsResources.createNewProblem)
   .addPost(problemsResources.addQuestion)
   .addPost(problemsResources.postAnswer)
+
+  .addGet(topicsResources.findAll)
+  .addGet(topicsResources.findById)
+  .addPost(topicsResources.create)
 ;
 
 
