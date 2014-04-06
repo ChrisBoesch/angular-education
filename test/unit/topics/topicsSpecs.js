@@ -26,6 +26,15 @@ describe('Topics', function() {
     $httpBackend
     .expectPOST(API_BASE + '/topics')
     .respond(200,{});
-    topics.create({id:1});
+
+    var result;
+    topics
+    .create({id:1})
+    .then(function(res){
+      result = res;
+    });
+    $httpBackend.flush();
+    expect(result).toBeDefined();
+    expect(result.$resolved).toBeTruthy();
   });
 });
