@@ -1,7 +1,9 @@
 angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate', 'ngResource',
   'angularSpinkit',
   'app.sidebar',
-  'app.homePages'])
+  'app.homePages',
+  'app.topics'
+  ])
 
 .config(function($routeProvider, TPL_PATH) {
     // $locationProvider.html5Mode(true);
@@ -10,18 +12,7 @@ angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate',
       controller: 'HomeCtrl',
       templateUrl: TPL_PATH + '/home.html'
     })
-    .when('/topics',{
-      controller: 'DataCtrl',
-      templateUrl: TPL_PATH + '/topics.html',
-      resolve:{
-        data:function () {
-          return [{
-            id:1,
-            title:'Basics to javascript'
-          }];
-        }
-      }
-    })
+    
     .when('/courses',{
       controller: 'DataCtrl',
       templateUrl: TPL_PATH + '/courses.html',
