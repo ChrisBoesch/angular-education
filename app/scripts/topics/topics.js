@@ -7,6 +7,5 @@ angular
         return res.save(newProblem).$promise;
       }
     };
-
   return angular.extend(api, commonAPIs(res));
 });

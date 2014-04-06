@@ -30,7 +30,7 @@
             return res.get({id: id}).$promise;
           }
         };
-      }
+      };
     })
     .factory('alerts', function() {
       var alerts = {

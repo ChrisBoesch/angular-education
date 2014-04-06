@@ -7,9 +7,9 @@ angular
 .config(function($routeProvider, TPL_PATH) {
     // $locationProvider.html5Mode(true);
     var exampleTopic = {
-            id:1,
-            title:'Basics of javascript'
-          };
+      id:1,
+      title:'Basics of javascript'
+    };
 
     $routeProvider
     .when('/topics',{
