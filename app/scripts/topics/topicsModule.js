@@ -6,18 +6,13 @@ angular
   'app.services'])
 .config(function($routeProvider, TPL_PATH) {
     // $locationProvider.html5Mode(true);
-    var exampleTopic = {
-      id:1,
-      title:'Basics of javascript'
-    };
-
     $routeProvider
     .when('/topics',{
       controller: 'DataCtrl',
       templateUrl: TPL_PATH + '/topics.html',
       resolve:{
-        data:function () {
-          return [exampleTopic];
+        data:function (topics) {
+          return topics.all();
         }
       }
     })
@@ -30,4 +25,4 @@ angular
         // }
       }
     });
-  }).factory('test2',function(){});
+  });

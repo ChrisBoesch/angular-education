@@ -6,7 +6,6 @@ angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate',
   ])
 
 .config(function($routeProvider, TPL_PATH) {
-    // $locationProvider.html5Mode(true);
     $routeProvider
     .when('/', {
       controller: 'HomeCtrl',
