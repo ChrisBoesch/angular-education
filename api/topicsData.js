@@ -1,14 +1,17 @@
 var _ = require('lodash');
+var videos = require('./videosData');
 
 var topics = [{
   id: 1,
   title: 'Basics of JavaScript',
   description: 'Basics of the awesome JavaScript programming language',
+  videosRef:[1,3,5]
 },
 {
   id: 2,
   title: 'Functional JavaScript',
   description: 'Introduction to FL paradigm',
+  videosRef:[2,1,3,7]
 }
 ];
 
@@ -17,7 +20,17 @@ exports.getAll = function(){
 };
 
 exports.getById = function(id) {
-  return _.find(topics, {id: id});
+  var topic = _(topics).chain()
+  .filter({id:id})
+  .map(function(_topic){
+    var vids =
+      _.map(_topic.videosRef,videos.getById);
+    return _.extend(_topic,{videos: vids});
+  })
+  .first()
+  .pick(['id','title','description','videos'])
+  .value();
+  return topic;
 };
 
 exports.add = function(topic){
@@ -31,8 +44,9 @@ exports.add = function(topic){
 };
 
 exports.update = function(topic){
-  if(!topic || !topic.title)
+  if(!topic || !topic.title){
     return;
+  }
   //UGLY: change needed
   topics.forEach(function(value){
     if(value.id===topic.id)
@@ -43,4 +57,4 @@ exports.update = function(topic){
   });
 
   return topic;
-}
+};
