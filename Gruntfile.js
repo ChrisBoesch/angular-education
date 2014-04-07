@@ -38,7 +38,7 @@ module.exports = function(grunt) {
       },
       devserver: {
         options: {
-          hostname: 'localhost',
+          hostname: '0.0.0.0',
           port: 8888,
           middleware: function(connect, options) {
             var middlewares = [];
@@ -332,7 +332,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['dev']);
 
   //development
-  grunt.registerTask('dev', [ 'express:api', 'configureProxies:devserver',
+  grunt.registerTask('dev', ['update', 'express:api', 'configureProxies:devserver',
     'connect:devserver', 'watch:assets', 'watch:templates']);
 
   //server daemon
