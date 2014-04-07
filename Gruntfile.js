@@ -38,7 +38,7 @@ module.exports = function(grunt) {
       },
       devserver: {
         options: {
-          hostname: '0.0.0.0',
+          hostname: 'localhost',
           port: 8888,
           middleware: function(connect, options) {
             var middlewares = [];
@@ -263,20 +263,24 @@ module.exports = function(grunt) {
               },
               {
                 src: 'http://<%= localhostUrl %>:8888/#/topics',
-                dest: 'topicss-list.jpg'
+                dest: 'topics-list.jpg'
               },
               {
                 src: 'http://<%= localhostUrl %>:8888/#/topics/1/edit',
-                dest: 'topics-edit.jpg'
+                dest: 'topic-edit.jpg'
               },
               {
                 src: 'http://<%= localhostUrl %>:8888/#/topics/create',
-                dest: 'topics-create.jpg'
+                dest: 'topic-create.jpg'
+              },
+              {
+                src: 'http://<%= localhostUrl %>:8888/#/topics/1',
+                dest: 'topic-view.jpg'
               },
               {
                 src: 'http://<%= localhostUrl %>:8888/#/courses/',
                 dest: 'courses-list.jpg'
-              }
+              },
             ]
           },
           local: false,
@@ -328,7 +332,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['dev']);
 
   //development
-  grunt.registerTask('dev', ['update', 'express:api', 'configureProxies:devserver',
+  grunt.registerTask('dev', [ 'express:api', 'configureProxies:devserver',
     'connect:devserver', 'watch:assets', 'watch:templates']);
 
   //server daemon
