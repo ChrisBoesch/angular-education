@@ -31,16 +31,16 @@ exports.add = function(topic){
 };
 
 exports.update = function(topic){
-  if(!topic || !topic.title)
+  if(!topic || !topic.id || !topic.title){
     return;
-  //UGLY: change needed
-  topics.forEach(function(value){
-    if(value.id===topic.id)
-    {
-      value.title = topic.title;
-      value.description = topic.description;
-    }
-  });
+  }
+  
+  var topicId = _.findIndex(topics,{id:topic.id});
+  if(topicId==-1){
+    throw new Error('topicId not found:'+ topic.id + ' '+ topicId);
+  }
+  _.assign(topics[topicId],
+    _.pick(topic,['id','title','description']));
 
-  return topic;
-}
+  return topics[topicId];
+};
