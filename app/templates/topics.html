@@ -34,8 +34,8 @@ TODO: wave during resolve
     </thead>
     <tbody>
         <tr ng-repeat="topic in data | filter:search track by $index">
-            <td>{{topic.id}}</td>
-            <td>{{topic.title}}</td>
+            <td>{{$index+1}}</td>
+            <td> <a href="#/topics/{{topic.id}}">{{topic.title}}</a>  </td>
             <td>{{topic.description}}</td>
             <td>
                 <a href="#/topics/{{topic.id}}/edit" title="Edit" tooltip><span class="glyphicon glyphicon-edit"></span></a>
