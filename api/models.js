@@ -37,6 +37,47 @@ module.exports = {
       }
     }
   },
+  Topic: {
+    id: 'Topic',
+    required: ['id', 'title'],
+    properties: {
+      id: {
+        type: 'integer',
+        format: 'int64',
+        description: 'Unique identifier for the Topic',
+        minimum: '0'
+      },
+      title: {
+        type: 'string',
+        description: 'Friendly name of the Topic'
+      },
+      description: {
+        type: 'string',
+        description: 'Description of the Topic'
+      }      
+    }
+  },
+  Topics: {
+    id: 'Topics',
+    required: ['id', 'title'],
+    type: 'array',
+    properties: {
+      id: {
+        type: 'integer',
+        format: 'int64',
+        description: 'Unique identifier for the topic',
+        minimum: '0'
+      },
+      title: {
+        type: 'string',
+        description: 'Friendly name of the topic'
+      },
+      description: {
+        type: 'string',
+        description: 'Description of the topic'
+      }
+    }
+  },
   Problems: {
     id: 'Problem',
     required: ['id', 'title'],
