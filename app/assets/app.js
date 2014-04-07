@@ -54409,31 +54409,72 @@ function setInnerText(element, text) {
   setInnerText(style, css);  
   document.getElementsByTagName('head')[0].appendChild(style);
 })();
+;angular
+.module('app.topics',
+  ['ngRoute',
+  'ngAnimate',
+  'ngResource',
+  'app.services'])
+.config(function($routeProvider, TPL_PATH) {
+    // $locationProvider.html5Mode(true);
+    $routeProvider
+    .when('/topics',{
+      controller: 'DataCtrl',
+      templateUrl: TPL_PATH + '/topics.html',
+      resolve:{
+        data:function (topics) {
+          return topics.all();
+        }
+      }
+    })
+    .when('/topics/create',{
+      controller: 'CreateCtrl',
+      templateUrl: TPL_PATH + '/topicCreate.html',
+      resolve:{
+        create:function($location,topics){
+          return function(newData){
+            topics.create(newData).then(function(){
+              $location.path('/topics/');
+            });
+          };
+        }
+      }
+    })
+    .when('/topics/:id/edit',{
+      controller: 'TopicsEditCtrl',
+      templateUrl: TPL_PATH + '/topicEdit.html',
+      resolve:{
+        topic:function($route,topics){
+          var id = $route.current.params.id;
+          var topic = topics.getById(id);
+          return topic;
+        },
+        save:function($location){
+          return function(topic){
+            topic.$save()
+            .then(function(){
+              $location.path('/topics/');
+            });
+          };
+        }
+      }
+    });
+  });
 ;angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate', 'ngResource',
   'angularSpinkit',
   'app.sidebar',
   'app.homePages',
-  'ui.bootstrap'])
+  'app.topics',
+  'ui.bootstrap'
+  ])
 
 .config(function($routeProvider, TPL_PATH) {
-    // $locationProvider.html5Mode(true);
     $routeProvider
     .when('/', {
       controller: 'HomeCtrl',
       templateUrl: TPL_PATH + '/home.html'
     })
-    .when('/topics',{
-      controller: 'DataCtrl',
-      templateUrl: TPL_PATH + '/topics.html',
-      resolve:{
-        data:function () {
-          return [{
-            id:1,
-            title:'Basics to javascript'
-          }];
-        }
-      }
-    })
+    
     .when('/courses',{
       controller: 'DataCtrl',
       templateUrl: TPL_PATH + '/courses.html',
@@ -54505,6 +54546,14 @@ function setInnerText(element, text) {
   .constant('TPL_PATH', 'templates')
   .constant('API_BASE', '/api/v1/content-delivery');
 ;angular.module('myApp')
+.controller("CreateCtrl",function($scope,create){
+  
+  $scope.savingProblem = false;
+  
+  $scope.create = function(newData){
+    return create(newData);
+  };
+});;angular.module('myApp')
 .controller('DataCtrl', function($scope, data) {
   $scope.data = data;
 });;(function() {
@@ -54555,7 +54604,6 @@ function setInnerText(element, text) {
   }
 
   angular.module('app.homePages', ['app.config', 'app.services', 'ngResource', 'angularSpinkit'])
-
     .factory('videos', function(API_BASE, $resource) {
       var res = $resource(
           API_BASE + '/videos/:id/:property', null, {edit: {method: 'PUT'}}
@@ -55006,7 +55054,18 @@ function setInnerText(element, text) {
         }
       };
     })
-
+    .factory('commonAPIs',function(){
+      return function commonAPIs(res) {
+        return {
+          all: function() {
+            return res.query().$promise;
+          },
+          getById: function(id) {
+            return res.get({id: id}).$promise;
+          }
+        };
+      };
+    })
     .factory('alerts', function() {
       var alerts = {
         INFO: 'info',
@@ -55099,3 +55158,23 @@ function setInnerText(element, text) {
       angular.extend($scope, res);
     });
   });
+;angular
+.module('app.topics')
+.factory('topics', function(API_BASE, $resource,commonAPIs) {
+  var res = $resource(API_BASE + '/topics/:id'),
+    api = {
+      create: function createNewTopic(newProblem) {
+        return res.save(newProblem).$promise;
+      }
+    };
+  return angular.extend(api, commonAPIs(res));
+});
+;angular
+.module('app.topics')
+.controller('TopicsEditCtrl',function($scope,topic,save){
+  $scope.topic = topic;
+
+  $scope.save = function(topic){
+    save(topic);
+  };
+});

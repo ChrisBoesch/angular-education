@@ -120,4 +120,17 @@ describe('Services', function() {
     });
   });
 
+  describe('CommonAPIs',function(){
+    var commonAPIs,
+    testRes;
+    beforeEach(inject(function (_commonAPIs_) {
+        commonAPIs = _commonAPIs_;
+    }));
+
+    it('Should have all and getById', function() {
+      var res = commonAPIs({});
+      expect(res.all).toBeDefined();
+      expect(res.getById).toBeDefined();
+    });
+  })
 });

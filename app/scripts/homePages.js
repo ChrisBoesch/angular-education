@@ -16,7 +16,6 @@
   }
 
   angular.module('app.homePages', ['app.config', 'app.services', 'ngResource', 'angularSpinkit'])
-
     .factory('videos', function(API_BASE, $resource) {
       var res = $resource(
           API_BASE + '/videos/:id/:property', null, {edit: {method: 'PUT'}}
