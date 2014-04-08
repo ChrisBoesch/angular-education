@@ -33,7 +33,6 @@ angular
       templateUrl: TPL_PATH+'/course.html',
       resolve:{
         data:function($route,courses){
-          throw new Error('not implemented');
           return courses.getById($route.current.params.id);
         }
       }
@@ -43,7 +42,6 @@ angular
       templateUrl: TPL_PATH + '/courseEdit.html',
       resolve:{
         topic:function($route,courses){
-          throw new Error('not implemented');
           var id = $route.current.params.id;
           var topic = courses.getById(id);
           return topic;
