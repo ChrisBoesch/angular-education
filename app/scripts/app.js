@@ -3,6 +3,7 @@ angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate',
   'app.sidebar',
   'app.homePages',
   'app.topics',
+  'app.courses',
   'ui.bootstrap'
   ])
 
@@ -11,19 +12,6 @@ angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate',
     .when('/', {
       controller: 'HomeCtrl',
       templateUrl: TPL_PATH + '/home.html'
-    })
-    
-    .when('/courses',{
-      controller: 'DataCtrl',
-      templateUrl: TPL_PATH + '/courses.html',
-      resolve:{
-        data:function () {
-          return [{
-            id:1,
-            title:'Javascript For Dummies'
-          }];
-        }
-      }
     })
     .when('/problems', {
       controller: 'ProblemListCtrl',
