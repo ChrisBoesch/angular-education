@@ -4,13 +4,14 @@ var topics = require('./topicsData');
 var courses = [{
   id: 1,
   title: 'Introduction to JavaScript',
-  description: 'Basic toppics of Javascript language: syntax overview, jquery, scopes etc.',
+  description: 'Basic topics of Javascript language: syntax overview, jquery, scopes etc.',
+  enrolled:true,
   topicsRef:[1,2]
 },
 {
   id: 2,
-  title: 'Introduction to Python',
-  description: 'Basic toppics of Javascript language: syntax overview, jquery, scopes etc.',
+  title: 'Python in science',
+  description: 'Overview of Python libraries, basic algorithms',
   topicsRef:[3,4,5]
 }
 ];
@@ -28,7 +29,7 @@ exports.getById = function(id) {
     return _.extend(_course,{topics: _topics});
   })
   .first()
-  .pick(['id','title','description','topics'])
+  .pick(['id','title','description','topics','enrolled'])
   .value();
   return course;
 };

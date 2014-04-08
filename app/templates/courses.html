@@ -31,7 +31,8 @@
             <td>{{course.title}}</td>
             <td>{{course.description}}</td>
             <td>
-                <button class="btn btn-xs btn-success">Enroll!!!</button>
+                <button class="btn btn-xs btn-success">{{!course.enrolled&&"Enroll!!!"|| "go to     class"}}
+                </button>
             </td>
             <td>
                 <a href="#/topics/{{course.id}}/edit" title="Edit" tooltip><span class="glyphicon glyphicon-edit"></span></a>
