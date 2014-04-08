@@ -54440,6 +54440,15 @@ function setInnerText(element, text) {
         }
       }
     })
+    .when('/topics/:id',{
+      controller:'DataCtrl',
+      templateUrl: TPL_PATH+'/topic.html',
+      resolve:{
+        data:function($route,topics){
+          return topics.getById($route.current.params.id);
+        }
+      }
+    })
     .when('/topics/:id/edit',{
       controller: 'TopicsEditCtrl',
       templateUrl: TPL_PATH + '/topicEdit.html',
