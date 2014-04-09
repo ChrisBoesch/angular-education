@@ -54410,6 +54410,65 @@ function setInnerText(element, text) {
   document.getElementsByTagName('head')[0].appendChild(style);
 })();
 ;angular
+.module('app.courses',
+  ['ngRoute',
+  'ngAnimate',
+  'ngResource',
+  'app.services'])
+.config(function($routeProvider, TPL_PATH) {
+    $routeProvider
+    .when('/courses',{
+      controller: 'DataCtrl',
+      templateUrl: TPL_PATH + '/courses.html',
+      resolve:{
+        data:function (courses) {
+          return courses.all();
+        }
+      }
+    })
+    .when('/courses/create',{
+      controller: 'CreateCtrl',
+      templateUrl: TPL_PATH + '/courseCreate.html',
+      resolve:{
+        create:function($location,courses){
+          return function(course){
+            courses.create(course).then(function(){
+              $location.path('/courses/');
+            });
+          };
+        }
+      }
+    })
+    .when('/courses/:id',{
+      controller:'DataCtrl',
+      templateUrl: TPL_PATH+'/course.html',
+      resolve:{
+        data:function($route,courses){
+          return courses.getById($route.current.params.id);
+        }
+      }
+    })
+    .when('/courses/:id/edit',{
+      controller: 'coursesEditCtrl',
+      templateUrl: TPL_PATH + '/courseEdit.html',
+      resolve:{
+        topic:function($route,courses){
+          var id = $route.current.params.id;
+          var topic = courses.getById(id);
+          return topic;
+        },
+        save:function($location){
+          return function(course){
+            course.$save()
+            .then(function(){
+              $location.path('/courses/');
+            });
+          };
+        }
+      }
+    });
+  });
+;angular
 .module('app.topics',
   ['ngRoute',
   'ngAnimate',
@@ -54474,6 +54533,7 @@ function setInnerText(element, text) {
   'app.sidebar',
   'app.homePages',
   'app.topics',
+  'app.courses',
   'ui.bootstrap'
   ])
 
@@ -54482,19 +54542,6 @@ function setInnerText(element, text) {
     .when('/', {
       controller: 'HomeCtrl',
       templateUrl: TPL_PATH + '/home.html'
-    })
-    
-    .when('/courses',{
-      controller: 'DataCtrl',
-      templateUrl: TPL_PATH + '/courses.html',
-      resolve:{
-        data:function () {
-          return [{
-            id:1,
-            title:'Javascript For Dummies'
-          }];
-        }
-      }
     })
     .when('/problems', {
       controller: 'ProblemListCtrl',
@@ -54505,12 +54552,7 @@ function setInnerText(element, text) {
       templateUrl: TPL_PATH + '/problemList.html',
       resolve:{
         problems: function(problems){
-          return problems.all().then(function(res){
-            var filtered = res.filter(function(item){
-              return item.solved;
-            });
-            return filtered;
-          });
+          return problems.solved();
         }
       }
     })
@@ -54519,12 +54561,7 @@ function setInnerText(element, text) {
       templateUrl: TPL_PATH + '/problemList.html',
       resolve:{
         problems: function(problems){
-          return problems.all().then(function(res){
-            var filtered = res.filter(function(item){
-              return !item.solved;
-            });
-            return filtered;
-          });
+          return problems.solved(false);
         }
       }
     })
@@ -54554,6 +54591,17 @@ function setInnerText(element, text) {
 
   .constant('TPL_PATH', 'templates')
   .constant('API_BASE', '/api/v1/content-delivery');
+;angular
+.module('app.courses')
+.factory('courses', function(API_BASE, $resource,commonAPIs) {
+  var res = $resource(API_BASE + '/courses/:id'),
+    api = {
+      create: function createNewCourse(newCourse) {
+        return res.save(newCourse).$promise;
+      }
+    };
+  return angular.extend(api, commonAPIs(res));
+});
 ;angular.module('myApp')
 .controller("CreateCtrl",function($scope,create){
   
@@ -54632,17 +54680,6 @@ function setInnerText(element, text) {
           ).$promise;
         }
       };
-
-      return angular.extend(api, commonAPIs(res));
-    })
-
-    .factory('problems', function(API_BASE, $resource) {
-      var res = $resource(API_BASE + '/problems/:id'),
-        api = {
-          create: function createNewProblem(newProblem) {
-            return res.save(newProblem).$promise;
-          }
-        };
 
       return angular.extend(api, commonAPIs(res));
     })
@@ -55041,6 +55078,28 @@ function setInnerText(element, text) {
       $scope.problems = res;
     });
   }
+});;angular.module('app.homePages')
+.factory('problems', function(API_BASE, commonAPIs,$resource) {
+  var res = $resource(API_BASE + '/problems/:id');
+
+  var api = {
+    create: function createNewProblem(newProblem) {
+      return res.save(newProblem).$promise;
+    },
+    solved: function getSolved(solved){
+      if(solved==undefined)
+        solved = true;
+      return res.query({solved:solved}).$promise.then(function (result) {
+        return result.filter(function(problem){
+          if(!problem.solved&&!solved)
+            return true;
+          return problem.solved==solved;
+        });
+      });
+    }
+  };
+
+  return angular.extend(api, commonAPIs(res));
 });;(function() {
   'use strict';
 
@@ -55172,8 +55231,8 @@ function setInnerText(element, text) {
 .factory('topics', function(API_BASE, $resource,commonAPIs) {
   var res = $resource(API_BASE + '/topics/:id'),
     api = {
-      create: function createNewTopic(newProblem) {
-        return res.save(newProblem).$promise;
+      create: function createNewTopic(newCourse) {
+        return res.save(newCourse).$promise;
       }
     };
   return angular.extend(api, commonAPIs(res));
