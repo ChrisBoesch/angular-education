@@ -54519,7 +54519,7 @@ function setInnerText(element, text) {
         },
         save:function($location){
           return function(topic){
-            topic.$save()
+            topic.$update()
             .then(function(){
               $location.path('/topics/');
             });
@@ -55087,13 +55087,15 @@ function setInnerText(element, text) {
       return res.save(newProblem).$promise;
     },
     solved: function getSolved(solved){
-      if(solved==undefined)
+      if(solved===undefined){
         solved = true;
+      }
       return res.query({solved:solved}).$promise.then(function (result) {
         return result.filter(function(problem){
-          if(!problem.solved&&!solved)
+          if(!problem.solved&&!solved){
             return true;
-          return problem.solved==solved;
+          }
+          return problem.solved===solved;
         });
       });
     }
@@ -55227,17 +55229,23 @@ function setInnerText(element, text) {
     });
   });
 ;angular
-.module('app.topics')
-.factory('topics', function(API_BASE, $resource,commonAPIs) {
-  var res = $resource(API_BASE + '/topics/:id'),
-    api = {
-      create: function createNewTopic(newCourse) {
-        return res.save(newCourse).$promise;
-      }
-    };
-  return angular.extend(api, commonAPIs(res));
-});
-;angular
+  .module('app.topics')
+  .factory('topics', function(API_BASE, $resource, commonAPIs) {
+    var res = $resource(
+        API_BASE + '/topics/:id',
+        {id: '@id'},
+        {update: {method: 'PUT'}}
+      ),
+      api = {
+        create: function createNewTopic(newTopic) {
+          return res.save(newTopic).$promise;
+        },
+        update: function update(topic) {
+          return res.update(topic).$promise;
+        }
+      };
+    return angular.extend(api, commonAPIs(res));
+  });;angular
 .module('app.topics')
 .controller('TopicsEditCtrl',function($scope,topic,save){
   $scope.topic = topic;

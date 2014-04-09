@@ -43,15 +43,18 @@ exports.add = function(topic){
   return topic;
 };
 
-exports.update = function(topic){
-  if(!topic || !topic.id || !topic.title){
+exports.update = function(topicId, topic){
+  if(!topic || !topic.title){
     return;
   }
-  
-  var topicId = _.findIndex(topics,{id:topic.id});
-  if(topicId==-1){
-    throw new Error('topic not found by id:'+ topic.id);
+
+  topicId = _.findIndex(topics, {id:topicId});
+  if(topicId === -1){
+    throw new Error('topic not found by id:'+ topicId);
+  } else {
+    topic.id = topicId;
   }
+
   _.assign(topics[topicId],
     _.pick(topic,['id','title','description']));
 
