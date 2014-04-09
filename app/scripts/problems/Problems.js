@@ -7,13 +7,15 @@ angular.module('app.homePages')
       return res.save(newProblem).$promise;
     },
     solved: function getSolved(solved){
-      if(solved==undefined)
+      if(solved===undefined){
         solved = true;
+      }
       return res.query({solved:solved}).$promise.then(function (result) {
         return result.filter(function(problem){
-          if(!problem.solved&&!solved)
+          if(!problem.solved&&!solved){
             return true;
-          return problem.solved==solved;
+          }
+          return problem.solved===solved;
         });
       });
     }
