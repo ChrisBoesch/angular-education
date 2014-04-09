@@ -16,33 +16,42 @@
       <label for="description">Description</label>
       <textarea type="text" ng-model="topic.description" class="form-control"></textarea>
     </div>
-    <button name="EditBtn" ng-disabled="newTopicForm.$invalid || savingTopic" ng-click="save(topic)" class="btn btn-default">
-      Save
-    </button>
-  </form>
-  <div ng-controller="VideoAssociationCtrl as videos">
-    <table class="table table-hover table-responsive">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Title</th>
-          <th>Description</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-      <tr ng-repeat="video in topic.videos | filter:search track by $index">
-          <td>{{$index+1}}</td>
-          <td>{{video.title}}</td>
-          <td>{{video.description}}</td>
-          <td>                
-            <a title="Remove" ng-click="removeVideo(topic,video)"tooltip><span class="glyphicon glyphicon-remove"></span></a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div ng-controller="VideoAssociationCtrl as videos">
+      <table class="table table-hover table-responsive">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="video in topic.videos | filter:search track by $index">
+            <td>{{$index+1}}</td>
+            <td>{{video.title}}</td>
+            <td>{{video.description}}</td>
+            <td>                
+              <a title="Remove" ng-click="removeVideo(topic,video)"tooltip><span class="glyphicon glyphicon-remove"></span></a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-    <select ng-model="videoToChoose" on-se ng-options="c.title for c in list"></select>
-    <button ng-click="addVideo(topic,videoToChoose)">Assosiate</button>
+      <div class="row form-group">
+        <div class="col-md-10">
+          <select class="form-control" placeholder="Select a video" ng-model="videoToChoose" on-se ng-options="c.title for c in list"></select>
+          <span class="help-block">Select a video, that should be associated with topic</span>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-default" ng-disabled="!videoToChoose"  ng-click="addVideo(topic,videoToChoose)">Add video</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <button name="EditBtn" ng-disabled="newTopicForm.$invalid || savingTopic" ng-click="save(topic)" class="btn btn-primary">Save</button>
+        <a href="#/topics/{{topic.id}}">Cancel edit and go to topic</a>        
+      </div>
+    </form>
   </div>
 </div>
