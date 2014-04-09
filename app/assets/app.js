@@ -55087,13 +55087,15 @@ function setInnerText(element, text) {
       return res.save(newProblem).$promise;
     },
     solved: function getSolved(solved){
-      if(solved==undefined)
+      if(solved===undefined){
         solved = true;
+      }
       return res.query({solved:solved}).$promise.then(function (result) {
         return result.filter(function(problem){
-          if(!problem.solved&&!solved)
+          if(!problem.solved&&!solved){
             return true;
-          return problem.solved==solved;
+          }
+          return problem.solved===solved;
         });
       });
     }
@@ -55244,5 +55246,24 @@ function setInnerText(element, text) {
 
   $scope.save = function(topic){
     save(topic);
+  };
+});;angular
+.module('app.topics')
+.controller('VideoAssociationCtrl',function($scope,videos){
+  //TODO: should not show already added
+  videos.all().then(function(data){
+    $scope.list = data;
+  });
+
+  //todo: add back to available videos
+  $scope.removeVideo = function(topic,video){
+    topic.videos = topic.videos.filter(function(vid){
+      return vid.id!==video.id;
+    });
+  };
+  
+  //todo: remove added from list
+  $scope.addVideo = function(topic,video){
+    topic.videos.push(video);
   };
 });
