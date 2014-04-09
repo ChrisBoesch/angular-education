@@ -1,0 +1,23 @@
+<div>
+  <div class="page-header edu-top-header">
+    <h2>Create new Course</h2>
+  </div>
+
+  <form role="form" name="newCourseForm">
+    <div ng-class="{'form-group': true, 'has-error': !newCourseForm.CourseTitle.$valid, 'has-feedback': true}">
+      <label for="Title" >
+        Title
+        <small ng-if="newCourseForm.CourseTitle.$error.required" class="text-danger">(required)</small>
+      </label>
+      <input type="text" name="CourseTitle" required="true" ng-model="newCourse.title" class="form-control"/>
+      <span ng-if="!newCourseForm.CourseTitle.$valid" class="glyphicon glyphicon-remove form-control-feedback"></span>
+    </div>
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea type="text" ng-model="newCourse.description" class="form-control"></textarea>
+    </div>
+    <button name="CreateBtn" ng-disabled="newCourseForm.$invalid || savingTopic" ng-click="create(newCourse)" class="btn btn-default">
+      Create
+    </button>
+  </form>
+</div>
