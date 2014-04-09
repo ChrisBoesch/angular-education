@@ -22,12 +22,7 @@ angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate',
       templateUrl: TPL_PATH + '/problemList.html',
       resolve:{
         problems: function(problems){
-          return problems.all().then(function(res){
-            var filtered = res.filter(function(item){
-              return item.solved;
-            });
-            return filtered;
-          });
+          return problems.solved();
         }
       }
     })
@@ -36,12 +31,7 @@ angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate',
       templateUrl: TPL_PATH + '/problemList.html',
       resolve:{
         problems: function(problems){
-          return problems.all().then(function(res){
-            var filtered = res.filter(function(item){
-              return !item.solved;
-            });
-            return filtered;
-          });
+          return problems.solved(false);
         }
       }
     })

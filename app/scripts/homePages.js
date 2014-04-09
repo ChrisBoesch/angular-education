@@ -39,17 +39,6 @@
       return angular.extend(api, commonAPIs(res));
     })
 
-    .factory('problems', function(API_BASE, $resource) {
-      var res = $resource(API_BASE + '/problems/:id'),
-        api = {
-          create: function createNewProblem(newProblem) {
-            return res.save(newProblem).$promise;
-          }
-        };
-
-      return angular.extend(api, commonAPIs(res));
-    })
-
     .factory('questions', function(API_BASE, $resource) {
       var res = $resource(API_BASE + '/problems/:problemId/questions/:questionId/:verb'),
         api = {
