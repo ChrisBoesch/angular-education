@@ -20,4 +20,29 @@
       Save
     </button>
   </form>
+  <div ng-controller="VideoAssociationCtrl as videos">
+    <table class="table table-hover table-responsive">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="video in topic.videos | filter:search track by $index">
+          <td>{{$index+1}}</td>
+          <td>{{video.title}}</td>
+          <td>{{video.description}}</td>
+          <td>                
+            <a title="Remove" ng-click="removeVideo(topic,video)"tooltip><span class="glyphicon glyphicon-remove"></span></a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <select ng-model="videoToChoose" on-se ng-options="c.title for c in list"></select>
+    <button ng-click="addVideo(topic,videoToChoose)">Assosiate</button>
+  </div>
 </div>

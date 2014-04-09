@@ -19,12 +19,13 @@ exports.getAll = function(){
   return topics;
 };
 
-exports.getById = function(id) {
+
+exports.getById =  function(id) {
   var topic = _(topics).chain()
   .filter({id:id})
   .map(function(_topic){
     var vids =
-      _.map(_topic.videosRef,videos.getById);
+    _.map(_topic.videosRef,videos.getById);
     return _.extend(_topic,{videos: vids});
   })
   .first()
@@ -47,13 +48,19 @@ exports.update = function(topic){
   if(!topic || !topic.id || !topic.title){
     return;
   }
+  topic.videosRef =
+  _(topic.videos)
+  .pluck("id")
+  .uniq()
+  .value();
   
   var topicId = _.findIndex(topics,{id:topic.id});
-  if(topicId==-1){
+  if(topicId===-1){
     throw new Error('topic not found by id:'+ topic.id);
   }
+
   _.assign(topics[topicId],
-    _.pick(topic,['id','title','description']));
+    _.pick(topic,['id','title','description','videosRef']));
 
   return topics[topicId];
 };
