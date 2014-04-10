@@ -91,14 +91,47 @@ exports.create = {
     ]
   },
   action: function(req, res) {
-    var topicReq = req.body;
-    var topic;
-    if(!topicReq.id){
-      topic = topicsData.add(topicReq);
+    var topic = topicsData.add(req.body);
+
+    if(topic)
+    {
+      writeResponse(res,topic);
     }
     else{
-      topic = topicsData.update(topicReq);
+      throw swe.invalid('topic');
     }
+
+  }
+};
+
+exports.update = {
+  spec: {
+    description: 'Update a topic entry',
+    path: '/topics/{topicId}',
+    method: 'PUT',
+    summary: 'Update an existing topic entry',
+    type: 'topic',
+    nickname: 'updateTopic',
+    produces: ['application/json'],
+    parameters: [
+      params.body('data', 'Expected JSON Payload', 'topic')
+    ],
+    responseMessages: [
+      swe.invalid('payload')
+    ]
+  },
+  action: function(req, res) {
+    var topicReq = req.body;
+    var topicId;
+    var topic;
+
+    if (!req.params.topicId) {
+      throw swe.invalid('id');
+    }
+
+    topicId = parseInt(req.params.topicId, 10);
+    topic = topicsData.update(topicId, topicReq);
+
     if(topic)
     {
       writeResponse(res,topic);

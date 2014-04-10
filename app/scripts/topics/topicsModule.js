@@ -49,7 +49,7 @@ angular
         },
         save:function($location){
           return function(topic){
-            topic.$save()
+            topic.$update()
             .then(function(){
               $location.path('/topics/'+topic.id);
             });
