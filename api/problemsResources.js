@@ -1,6 +1,7 @@
 var swagger = require('swagger-node-express'),
   params = swagger.params,
-  swe = swagger.errors;
+  swe = swagger.errors,
+  _ = require('lodash');
 
 var problemsData = require('./problemsData.js');
 
@@ -27,6 +28,17 @@ exports.findAll = {
   },
   action: function(req, res) {
     var problems = problemsData.getAll();
+    var solved = req.query.solved;
+
+    if (solved === 'true') {
+      problems = _.where(problems, {solved: true});
+    } else if (solved === 'false') {
+      problems = _.where(problems, {solved: false});
+    }
+
+    problems = _.map(problems, function(p){
+      return _.omit(p, 'solved');
+    });
 
     if (problems) {
       writeResponse(res, problems);
