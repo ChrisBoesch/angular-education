@@ -51,7 +51,7 @@ angular
           return function(topic){
             topic.$update()
             .then(function(){
-              $location.path('/topics/');
+              $location.path('/topics/'+topic.id);
             });
           };
         }

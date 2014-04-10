@@ -18,6 +18,11 @@
   "globals": {
     "angular": false,
     "jquery": false,
-    "$": false
+    "$": false,
+    "describe":false,
+    "beforeEach":false,
+    "inject":false,
+    "it":false,
+    "expect":false
   }
 }
