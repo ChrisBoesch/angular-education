@@ -54521,7 +54521,7 @@ function setInnerText(element, text) {
           return function(topic){
             topic.$save()
             .then(function(){
-              $location.path('/topics/');
+              $location.path('/topics/'+topic.id);
             });
           };
         }
@@ -54643,7 +54643,23 @@ function setInnerText(element, text) {
   ;
 
 }());
-;/*global videojs, _*/
+;angular
+.module('myApp')
+.filter('excludeSame',function(){
+  return function(input,collection){
+    if(!input||!angular.isArray(input)){
+      return;
+    }
+    if(!collection||!angular.isArray(collection)){
+      return input;
+    }
+    return input.filter(function(item){
+      return !collection.some(function(coll){
+        return item.id===coll.id;
+      });
+    });
+  };
+});;/*global videojs, _*/
 
 (function() {
   'use strict';
@@ -55241,29 +55257,41 @@ function setInnerText(element, text) {
 });
 ;angular
 .module('app.topics')
-.controller('TopicsEditCtrl',function($scope,topic,save){
+.controller('TopicsEditCtrl',function($scope,topic,save,videos){
   $scope.topic = topic;
 
   $scope.save = function(topic){
     save(topic);
   };
-});;angular
-.module('app.topics')
-.controller('VideoAssociationCtrl',function($scope,videos){
-  //TODO: should not show already added
-  videos.all().then(function(data){
-    $scope.list = data;
-  });
 
-  //todo: add back to available videos
+  if(videos){
+    if(angular.isArray(videos)){
+      $scope.videos = videos;
+    }
+    else{
+      videos.all().then(function(data){
+        $scope.videos = data;
+      });
+    }
+  }
+
   $scope.removeVideo = function(topic,video){
     topic.videos = topic.videos.filter(function(vid){
       return vid.id!==video.id;
     });
   };
   
-  //todo: remove added from list
   $scope.addVideo = function(topic,video){
+    if(!topic.videos)
+    {
+      topic.videos = [video];
+      return;
+    }
+    if(topic.videos.some(function(vid){
+        return vid.id===video.id;
+      })){
+      return;
+    }
     topic.videos.push(video);
   };
 });
