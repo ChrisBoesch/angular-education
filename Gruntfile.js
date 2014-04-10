@@ -62,13 +62,13 @@ module.exports = function(grunt) {
         },
         proxies: [
           {
-            context: '/api/v1/content-delivery',
+            context: '/api/v1',
             host: '<%= localhostUrl %>',
             port: 9090,
             changeOrigin: true,
             xforward: true,
             rewrite: {
-              '^/api/v1/content-delivery': ''
+              '^/api/v1': ''
             }
           }
         ]
