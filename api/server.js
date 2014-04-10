@@ -32,7 +32,7 @@ var statsResources = require('./statsResources'),
   problemsResources = require('./problemsResources'),
   topicsResources = require('./topicsResources'),
   coursesResources = require('./coursesResources');
-  
+
 swagger.addModels(models)
 
   .addGet(statsResources.getStats)
@@ -50,6 +50,7 @@ swagger.addModels(models)
   .addGet(topicsResources.findAll)
   .addGet(topicsResources.findById)
   .addPost(topicsResources.create)
+  .addPut(topicsResources.update)
 
   .addGet(coursesResources.findAll)
   .addGet(coursesResources.findById)
