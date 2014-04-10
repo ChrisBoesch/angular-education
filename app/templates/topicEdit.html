@@ -40,7 +40,7 @@
 
       <div class="row form-group">
         <div class="col-md-10">
-          <select class="form-control" placeholder="Select a video" ng-model="videoToChoose" on-se ng-options="c.title for c in videos"></select>
+          <select class="form-control" placeholder="Select a video" ng-model="videoToChoose" on-se ng-options="c.title for c in videos | excludeSame:topic.videos"></select>
           <span class="help-block">Select a video, that should be associated with topic</span>
         </div>
         <div class="col-md-2">

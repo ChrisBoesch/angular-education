@@ -35,7 +35,6 @@ angular
       })){
       return;
     }
-
     topic.videos.push(video);
   };
 });

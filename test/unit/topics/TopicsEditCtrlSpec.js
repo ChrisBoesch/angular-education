@@ -2,11 +2,11 @@ describe('TopicsEditCtrl', function() {
   beforeEach(module('app.homePages'));
   beforeEach(module('app.topics'));
 
-  var associationCtrl,
+  var topicEditCtrl,
   $scope;
   beforeEach(inject(function($controller,$rootScope){
     $scope = $rootScope.$new();
-    associationCtrl =
+    topicEditCtrl =
     function(topic,videos,save){
       return $controller('TopicsEditCtrl',
       {
@@ -21,7 +21,7 @@ describe('TopicsEditCtrl', function() {
   it('should update scope with topic and videos', function() {
     var topic = {id:1};
 
-    expect(associationCtrl(topic,[{id:10}],null)).toBeDefined();
+    expect(topicEditCtrl(topic,[{id:10}],null)).toBeDefined();
     expect($scope.topic.id).toBe(1);
     expect($scope.videos[0]).toEqual({id:10});
   });
@@ -48,7 +48,7 @@ describe('TopicsEditCtrl', function() {
 
     it('should add video to topic.video',function(){
       var topic = {id:1};
-      var ctrl = associationCtrl({id:1},[],null);
+      var ctrl = topicEditCtrl({id:1},[],null);
 
       $scope.addVideo(topic,videosList[0]);
       $scope.addVideo(topic,videosList[1]);
@@ -57,7 +57,7 @@ describe('TopicsEditCtrl', function() {
 
     it('should ignore adding video with same id',function(){
       var topic = {id:1};
-      var ctrl = associationCtrl(
+      var ctrl = topicEditCtrl(
         {
           id:1,
           videos:[videosList[0]]
