@@ -10,14 +10,7 @@ angular.module('app.homePages')
       if(solved===undefined){
         solved = true;
       }
-      return res.query({solved:solved}).$promise.then(function (result) {
-        return result.filter(function(problem){
-          if(!problem.solved&&!solved){
-            return true;
-          }
-          return problem.solved===solved;
-        });
-      });
+      return res.query({solved:solved}).$promise;
     }
   };
 
