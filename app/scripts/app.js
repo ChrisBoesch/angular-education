@@ -4,7 +4,8 @@ angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate',
   'app.homePages',
   'app.topics',
   'app.courses',
-  'ui.bootstrap'
+  'ui.bootstrap',
+  'scceUser.directives'
   ])
 
 .config(function($routeProvider, TPL_PATH) {
