@@ -10,7 +10,7 @@ angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate',
   ])
 
 .config(function($routeProvider, TPL_PATH) {
-    $routeProvider   
+    $routeProvider
     .when('/', {
       controller: 'HomeCtrl',
       templateUrl: TPL_PATH + '/home.html'

@@ -18,50 +18,49 @@ module('app.problems')
   problems.getById($scope.id).then(function(res) {
     $scope.title = res.title;
     question.set(res.questions);
-        // TODO: Make it better
-        $scope.questions = res.questions;
-      });
+    // TODO: Make it better
+    $scope.questions = res.questions;
+  });
 
-      //TODO: implement as a filter
-      $scope.currentClass = function(prefix, question) {
-        var q = angular.isDefined(question) ? question : $scope.question;
-        if (q) {
-          switch (q.isCorrect) {
-            case undefined:
-            return prefix + '-warning';
-            case true:
-            return prefix + '-success';
-            case false:
-            return prefix + '-danger';
-          }
-        }
-      };
+  //TODO: implement as a filter
+  $scope.currentClass = function(prefix, question) {
+    var q = angular.isDefined(question) ? question : $scope.question;
+    if (q) {
+      switch (q.isCorrect) {
+        case undefined:
+          return prefix + '-warning';
+        case true:
+          return prefix + '-success';
+        case false:
+          return prefix + '-danger';
+      }
+    }
+  };
 
-      $scope.next = function() {
-        question.next();
-      };
+  $scope.next = function() {
+    question.next();
+  };
 
-      $scope.submit = function() {
-        if (angular.isDefined($scope.question.answer)) {
-          $scope.isAnswered = true;
-          $scope.canProceed = true;
-          questions.answer({
-            // Question ID
-            problemId: $scope.id,
-            questionId: $scope.question.id,
-            answer: $scope.question.answer
-          }).then(
-            // Success
-            function(ret) {
-              $scope.question.isCorrect = ret.isCorrect;
-              $scope.canProceed = false;
-            },
-            // Error
-            function() {
-              $scope.isAnswered = false;
-              $scope.canProceed = false;
-            });
-        }
-      };
-
-    })
+  $scope.submit = function() {
+    if (angular.isDefined($scope.question.answer)) {
+      $scope.isAnswered = true;
+      $scope.canProceed = true;
+      questions.answer({
+        // Question ID
+        problemId: $scope.id,
+        questionId: $scope.question.id,
+        answer: $scope.question.answer
+      }).then(
+        // Success
+        function(ret) {
+          $scope.question.isCorrect = ret.isCorrect;
+          $scope.canProceed = false;
+        },
+        // Error
+        function() {
+          $scope.isAnswered = false;
+          $scope.canProceed = false;
+        });
+    }
+  };
+});
