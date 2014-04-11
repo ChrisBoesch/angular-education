@@ -56376,6 +56376,51 @@ angular.module("views/sccoreeducation/user/login.html", []).run(["$templateCache
       }
     });
   });
+;angular.
+module('app.problems',
+  ['ngRoute',
+  'ngAnimate',
+  'ngResource',
+  'app.services',
+  'app.config'])
+.config(function($routeProvider, TPL_PATH) {
+  $routeProvider
+  .when('/problems', {
+    controller: 'ProblemListCtrl',
+    templateUrl: TPL_PATH + '/problemList.html'
+  })
+  .when('/problems/solved',{
+    controller: 'ProblemListCtrl',
+    templateUrl: TPL_PATH + '/problemList.html',
+    resolve:{
+      problems: function(problems){
+        return problems.solved();
+      }
+    }
+  })
+  .when('/problems/unsolved',{
+    controller: 'ProblemListCtrl',
+    templateUrl: TPL_PATH + '/problemList.html',
+    resolve:{
+      problems: function(problems){
+        return problems.solved(false);
+      }
+    }
+  })
+  .when('/problems/create',{
+    controller: 'ProblemCreateCtrl',
+    templateUrl: TPL_PATH + '/problemCreate.html'
+  })
+  .when('/problems/:id', {
+    controller: 'ProblemCtrl',
+    templateUrl: TPL_PATH + '/problem.html'
+  })
+  .when('/problems/:id/edit',{
+    controller: 'ProblemEditCtrl',
+    templateUrl: TPL_PATH + '/problemEdit.html',
+  });
+});
+
 ;angular
 .module('app.topics',
   ['ngRoute',
@@ -56442,6 +56487,7 @@ angular.module("views/sccoreeducation/user/login.html", []).run(["$templateCache
   'app.homePages',
   'app.topics',
   'app.courses',
+  'app.problems',
   'ui.bootstrap',
   'scceUser.directives'
   ])
@@ -56451,40 +56497,6 @@ angular.module("views/sccoreeducation/user/login.html", []).run(["$templateCache
     .when('/', {
       controller: 'HomeCtrl',
       templateUrl: TPL_PATH + '/home.html'
-    })
-    .when('/problems', {
-      controller: 'ProblemListCtrl',
-      templateUrl: TPL_PATH + '/problemList.html'
-    })
-    .when('/problems/solved',{
-      controller: 'ProblemListCtrl',
-      templateUrl: TPL_PATH + '/problemList.html',
-      resolve:{
-        problems: function(problems){
-          return problems.solved();
-        }
-      }
-    })
-    .when('/problems/unsolved',{
-      controller: 'ProblemListCtrl',
-      templateUrl: TPL_PATH + '/problemList.html',
-      resolve:{
-        problems: function(problems){
-          return problems.solved(false);
-        }
-      }
-    })
-    .when('/problems/create',{
-      controller: 'ProblemCreateCtrl',
-      templateUrl: TPL_PATH + '/problemCreate.html'
-    })
-    .when('/problems/:id', {
-      controller: 'ProblemCtrl',
-      templateUrl: TPL_PATH + '/problem.html'
-    })
-    .when('/problems/:id/edit',{
-      controller: 'ProblemEditCtrl',
-      templateUrl: TPL_PATH + '/problemEdit.html'
     })
     .when('/videos/create',{
       controller:'CreateVideoCtrl',
@@ -56853,145 +56865,65 @@ angular.module("views/sccoreeducation/user/login.html", []).run(["$templateCache
       };
     })
 
-    .controller('ProblemCtrl', function($scope, $routeParams, problems, questions, question) {
-      $scope.id = $routeParams.id;
-      $scope.title = null;
-      $scope.canProceed = false;
-
-      $scope.$watch(question.current, function(newVal) {
-        if (newVal) {
-          $scope.question = question.current();
-          $scope.total = question.total();
-          $scope.position = question.position();
-          $scope.isAnswered = question.isAnswered();
-          $scope.hasNext = question.hasNext();
-        }
-      });
-
-      problems.getById($scope.id).then(function(res) {
-        $scope.title = res.title;
-        question.set(res.questions);
-        // TODO: Make it better
-        $scope.questions = res.questions;
-      });
-
-      //TODO: implement as a filter
-      $scope.currentClass = function(prefix, question) {
-        var q = angular.isDefined(question) ? question : $scope.question;
-        if (q) {
-          switch (q.isCorrect) {
-            case undefined:
-              return prefix + '-warning';
-            case true:
-              return prefix + '-success';
-            case false:
-              return prefix + '-danger';
-          }
-        }
-      };
-
-      $scope.next = function() {
-        question.next();
-      };
-
-      $scope.submit = function() {
-        if (angular.isDefined($scope.question.answer)) {
-          $scope.isAnswered = true;
-          $scope.canProceed = true;
-          questions.answer({
-            // Question ID
-            problemId: $scope.id,
-            questionId: $scope.question.id,
-            answer: $scope.question.answer
-          }).then(
-            // Success
-            function(ret) {
-              $scope.question.isCorrect = ret.isCorrect;
-              $scope.canProceed = false;
-            },
-            // Error
-            function() {
-              $scope.isAnswered = false;
-              $scope.canProceed = false;
-            });
-        }
-      };
-
-    })
-
-    .controller('ProblemCreateCtrl', function($scope, $location, alerts, problems) {
-      $scope.savingProblem = false;
-      $scope.create = function createProblem(newProblem) {
-        $scope.savingProblem = true;
-
-        problems.create(newProblem).then(function() {
-          $location.path('/problems');
-        }).catch(function (){
-          alerts.warning('Failed to save the problem');
-        })['finally'](function problemSaved() {
-          $scope.savingProblem = false;
-        });
-      };
-    })
-
-    .controller('ProblemEditCtrl', function($scope, $routeParams, alerts, videos, problems, questions){
-      var id = $routeParams.id;
-
-      $scope.show = {
-        attachForm: false
-      };
-
-      problems.getById(id).then(function (problemData) {
-        $scope.problem = problemData;
-        return problemData;
-      });
-
-      videos.getByProblemId({id: id}).then(function(videoList) {
-        if (videoList.length > 0 ) {
-          $scope.video = videoList[0];
-        }
-      });
-
-      videos.all().then(function(videoList) {
-        $scope.videos = videoList;
-      });
-
-      $scope.attachVideo = function(video, problem) {
-        return videos.attach(video, problem).then(function() {
-          $scope.video = video;
-          $scope.show.attachForm = false;
-        }).catch(function() {
-          alerts.warning("Error: could not attached problem to video.");
-        });
-      };
-
-      $scope.resetAttachForm = function () {
-        $scope.show.attachForm = false;
-        if ($scope.attach && $scope.attach.video) {
-          $scope.attach.video = null;
-        }
-      };
-
-      $scope.showNewQuestionForm = false;
-      $scope.addQuestion = function(problem, question) {
-        if (!question) {
-          $scope.showNewQuestionForm = false;
-        }
-
-        return questions.add(problem, question).then(function(data) {
-          $scope.showNewQuestionForm = false;
-          $scope.problem.questions.push(data);
-          return data;
-        }).catch(function(data) {
-          alerts.warning("Error: could not save the question");
-          throw data;
-        });
-      };
-    })
   ;
 
 }());
-;angular.module('app.homePages')
+;angular
+.module('app.problems')
+.controller('ProblemEditCtrl', function($scope, $routeParams, alerts, videos, problems, questions){
+  var id = $routeParams.id;
+
+  $scope.show = {
+    attachForm: false
+  };
+
+  problems.getById(id).then(function (problemData) {
+    $scope.problem = problemData;
+    return problemData;
+  });
+
+  videos.getByProblemId({id: id}).then(function(videoList) {
+    if (videoList.length > 0 ) {
+      $scope.video = videoList[0];
+    }
+  });
+
+  videos.all().then(function(videoList) {
+    $scope.videos = videoList;
+  });
+
+  $scope.attachVideo = function(video, problem) {
+    return videos.attach(video, problem).then(function() {
+      $scope.video = video;
+      $scope.show.attachForm = false;
+    }).catch(function() {
+      alerts.warning("Error: could not attached problem to video.");
+    });
+  };
+
+  $scope.resetAttachForm = function () {
+    $scope.show.attachForm = false;
+    if ($scope.attach && $scope.attach.video) {
+      $scope.attach.video = null;
+    }
+  };
+
+  $scope.showNewQuestionForm = false;
+  $scope.addQuestion = function(problem, question) {
+    if (!question) {
+      $scope.showNewQuestionForm = false;
+    }
+
+    return questions.add(problem, question).then(function(data) {
+      $scope.showNewQuestionForm = false;
+      $scope.problem.questions.push(data);
+      return data;
+    }).catch(function(data) {
+      alerts.warning("Error: could not save the question");
+      throw data;
+    });
+  };
+});;angular.module('app.problems')
 .controller('ProblemListCtrl', function($scope, problems) {
   $scope.problems = null;
 
@@ -57003,7 +56935,7 @@ angular.module("views/sccoreeducation/user/login.html", []).run(["$templateCache
       $scope.problems = res;
     });
   }
-});;angular.module('app.homePages')
+});;angular.module('app.problems')
 .factory('problems', function(API_BASE, commonAPIs,$resource) {
   var res = $resource(API_BASE + '/problems/:id');
 
@@ -57020,7 +56952,89 @@ angular.module("views/sccoreeducation/user/login.html", []).run(["$templateCache
   };
 
   return angular.extend(api, commonAPIs(res));
-});;(function() {
+});;angular.
+module('app.problems')
+.controller('ProblemCreateCtrl', function($scope, $location, alerts, problems) {
+  $scope.savingProblem = false;
+  $scope.create = function createProblem(newProblem) {
+    $scope.savingProblem = true;
+
+    problems.create(newProblem).then(function() {
+      $location.path('/problems');
+    }).catch(function (){
+      alerts.warning('Failed to save the problem');
+    })['finally'](function problemSaved() {
+      $scope.savingProblem = false;
+    });
+  };
+});
+;angular.
+module('app.problems')
+.controller('ProblemCtrl', function($scope, $routeParams, problems, questions, question) {
+  $scope.id = $routeParams.id;
+  $scope.title = null;
+  $scope.canProceed = false;
+
+  $scope.$watch(question.current, function(newVal) {
+    if (newVal) {
+      $scope.question = question.current();
+      $scope.total = question.total();
+      $scope.position = question.position();
+      $scope.isAnswered = question.isAnswered();
+      $scope.hasNext = question.hasNext();
+    }
+  });
+
+  problems.getById($scope.id).then(function(res) {
+    $scope.title = res.title;
+    question.set(res.questions);
+    // TODO: Make it better
+    $scope.questions = res.questions;
+  });
+
+  //TODO: implement as a filter
+  $scope.currentClass = function(prefix, question) {
+    var q = angular.isDefined(question) ? question : $scope.question;
+    if (q) {
+      switch (q.isCorrect) {
+        case undefined:
+          return prefix + '-warning';
+        case true:
+          return prefix + '-success';
+        case false:
+          return prefix + '-danger';
+      }
+    }
+  };
+
+  $scope.next = function() {
+    question.next();
+  };
+
+  $scope.submit = function() {
+    if (angular.isDefined($scope.question.answer)) {
+      $scope.isAnswered = true;
+      $scope.canProceed = true;
+      questions.answer({
+        // Question ID
+        problemId: $scope.id,
+        questionId: $scope.question.id,
+        answer: $scope.question.answer
+      }).then(
+        // Success
+        function(ret) {
+          $scope.question.isCorrect = ret.isCorrect;
+          $scope.canProceed = false;
+        },
+        // Error
+        function() {
+          $scope.isAnswered = false;
+          $scope.canProceed = false;
+        });
+    }
+  };
+});
+;(function() {
   'use strict';
 
   angular.module('app.services', [])
