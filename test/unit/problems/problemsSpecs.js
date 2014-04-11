@@ -5,7 +5,7 @@ describe('Problems Factory', function() {
   var problems, ret;
   var $httpBackend, API_BASE;
 
-  beforeEach(module('app.homePages'));
+  beforeEach(module('app.problems'));
 
   beforeEach(inject(function(_$httpBackend_, _API_BASE_, _problems_) {
     $httpBackend = _$httpBackend_;
