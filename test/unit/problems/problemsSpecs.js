@@ -1,8 +1,10 @@
+/* global describe, beforeEach, afterEach, it, inject, expect */
+
 describe('Problems Factory', function() {
 
   var problems, ret;
   var $httpBackend, API_BASE;
-  
+
   beforeEach(module('app.homePages'));
 
   beforeEach(inject(function(_$httpBackend_, _API_BASE_, _problems_) {
@@ -27,32 +29,11 @@ describe('Problems Factory', function() {
   });
 
   describe('.solved', function() {
+
     it('should query with solved param', function() {
       $httpBackend.expectGET(API_BASE + '/problems?solved=true').respond([]);
       problems.solved();
       $httpBackend.flush();
-    });
-
-    it('should filter request while not implemented server side', function() {
-      $httpBackend.expectGET(API_BASE + '/problems?solved=true')
-      .respond([{
-        id:1,
-        solved:true
-      },
-      {
-        id:2,
-        solved:false
-      },
-      {
-        id:3
-      }]);
-
-      problems.solved().then(function(data) {
-        ret = data;
-      });
-
-      $httpBackend.flush();
-      expect(ret.length).toBe(1);
     });
 
     describe('.solved(false)', function() {
@@ -61,31 +42,9 @@ describe('Problems Factory', function() {
         problems.solved(false);
         $httpBackend.flush();
       });
-
-      it('should filter request while not implemented server side', function() {
-        $httpBackend.expectGET(API_BASE + '/problems?solved=false')
-        .respond([{
-          id:1,
-          solved:true
-        },
-        {
-          id:2,
-          solved:false
-        },
-        {
-          id:3
-        }]);
-
-        problems.solved(false).then(function(data) {
-          ret = data;
-        });
-
-        $httpBackend.flush();
-        expect(ret.length).toBe(2);
-      });
     });
   });
-  
+
 
   it('should return an objects when getById is called', function() {
     var obj = {id: 1};

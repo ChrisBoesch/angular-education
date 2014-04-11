@@ -3,10 +3,12 @@ var express = require('express'),
   cors = require('cors'),
   models = require('./models');
 
-var app = express();
+var app = express(),
+  subpath = express();
 
 app.use(express.urlencoded());
 app.use(express.json());
+app.use("/content-delivery", subpath);
 
 var corsOptions = {
   credentials: true,
@@ -25,7 +27,21 @@ var corsOptions = {
 
 app.use(cors(corsOptions));
 
-swagger.setAppHandler(app);
+/** Login **/
+app.get('/user', function(req, res){
+  setTimeout(function(){
+    res.send(
+      {
+        "isAdmin": true,
+        "logoutUrl": "/",
+        "name": "Admin"
+      }
+    );
+  }, 1000);
+});
+
+/** Proper api **/
+swagger.setAppHandler(subpath);
 
 var statsResources = require('./statsResources'),
   videosResources = require('./videosResources'),

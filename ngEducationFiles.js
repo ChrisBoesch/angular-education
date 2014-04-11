@@ -14,6 +14,9 @@ var ngEducationFiles = {
     'bower_components/angular-spinkit/build/angular-spinkit.js',
     'bower_components/video.js/video.dev.js',
     'bower_components/videojs-youtube/src/media.youtube.js',
+    'bower_components/restangular/dist/restangular.js',
+    'bower_components/core-education/app-build/js/app.js',
+    'bower_components/core-education/app-build/js/app-templates.js',
     'app/scripts/**/*Module.js',
     'app/scripts/**/*.js'
   ],

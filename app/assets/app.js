@@ -54409,6 +54409,1914 @@ function setInnerText(element, text) {
   setInnerText(style, css);  
   document.getElementsByTagName('head')[0].appendChild(style);
 })();
+;/**
+ * Restful Resources service for AngularJS apps
+ * @version v1.3.1 - 2014-01-29 * @link https://github.com/mgonto/restangular
+ * @author Martin Gontovnikas <martin@gon.to>
+ * @license MIT License, http://www.opensource.org/licenses/MIT
+ */(function() {
+
+var module = angular.module('restangular', []);
+
+module.provider('Restangular', function() {
+        // Configuration
+        var Configurer = {};
+        Configurer.init = function(object, config) {
+            /**
+             * Those are HTTP safe methods for which there is no need to pass any data with the request.
+             */
+
+            object.configuration = config;
+
+            var safeMethods= ["get", "head", "options", "trace", "getlist"];
+            config.isSafe = function(operation) {
+              return _.contains(safeMethods, operation.toLowerCase());
+            };
+
+            var absolutePattern = /^https?:\/\//i;
+            config.isAbsoluteUrl = function(string) {
+              return _.isUndefined(config.absoluteUrl) || _.isNull(config.absoluteUrl) ? 
+                      string && absolutePattern.test(string) :
+                      config.absoluteUrl;
+            };
+            
+            config.absoluteUrl = _.isUndefined(config.absoluteUrl) ? false : true;
+            object.setSelfLinkAbsoluteUrl = function(value) {
+                config.absoluteUrl = value;
+            };
+            /**
+             * This is the BaseURL to be used with Restangular
+             */
+            config.baseUrl = _.isUndefined(config.baseUrl) ? "" : config.baseUrl;
+            object.setBaseUrl = function(newBaseUrl) {
+                config.baseUrl = /\/$/.test(newBaseUrl)
+                  ? newBaseUrl.substring(0, newBaseUrl.length-1)
+                  : newBaseUrl;
+                return this;
+            };
+
+            /**
+             * Sets the extra fields to keep from the parents
+             */
+            config.extraFields = config.extraFields || [];
+            object.setExtraFields = function(newExtraFields) {
+              config.extraFields = newExtraFields;
+              return this;
+            };
+
+            /**
+             * Some default $http parameter to be used in EVERY call
+            **/
+            config.defaultHttpFields = config.defaultHttpFields || {};
+            object.setDefaultHttpFields = function(values) {
+              config.defaultHttpFields = values;
+              return this;
+            };
+
+            config.withHttpValues = function(httpLocalConfig, obj) {
+              return _.defaults(obj, httpLocalConfig, config.defaultHttpFields);
+            };
+
+            config.encodeIds = _.isUndefined(config.encodeIds) ? true : config.encodeIds;
+            object.setEncodeIds = function(encode) {
+                config.encodeIds = encode;
+            };
+
+            config.defaultRequestParams = config.defaultRequestParams || {
+                get: {},
+                post: {},
+                put: {},
+                remove: {},
+                common: {}
+            };
+
+            object.setDefaultRequestParams = function(param1, param2) {
+              var methods = [],
+                  params = param2 || param1;
+              if (!_.isUndefined(param2)) {
+                if (_.isArray(param1)) {
+                  methods = param1;
+                } else {
+                  methods.push(param1);
+                }
+              } else {
+                methods.push('common');
+              }
+
+              _.each(methods, function (method) {
+                config.defaultRequestParams[method] = params;
+              });
+              return this;
+            };
+
+            object.requestParams = config.defaultRequestParams;
+
+
+            config.defaultHeaders = config.defaultHeaders || {};
+            object.setDefaultHeaders = function(headers) {
+              config.defaultHeaders = headers;
+              object.defaultHeaders = config.defaultHeaders;
+              return this;
+            };
+
+            object.defaultHeaders = config.defaultHeaders;
+
+            /**
+             * Method overriders will set which methods are sent via POST with an X-HTTP-Method-Override
+             **/
+            config.methodOverriders = config.methodOverriders || [];
+            object.setMethodOverriders = function(values) {
+              var overriders = _.extend([], values);
+              if (config.isOverridenMethod('delete', overriders)) {
+                overriders.push("remove");
+              }
+              config.methodOverriders = overriders;
+              return this;
+            };
+
+            config.jsonp = _.isUndefined(config.jsonp) ? false : config.jsonp;
+            object.setJsonp = function(active) {
+              config.jsonp = active;
+            };
+
+            config.isOverridenMethod = function(method, values) {
+              var search = values || config.methodOverriders;
+              return !_.isUndefined(_.find(search, function(one) {
+                return one.toLowerCase() === method.toLowerCase();
+              }));
+            };
+
+            /**
+             * Sets the URL creator type. For now, only Path is created. In the future we'll have queryParams
+            **/
+            config.urlCreator = config.urlCreator || "path";
+            object.setUrlCreator = function(name) {
+              if (!_.has(config.urlCreatorFactory, name)) {
+                  throw new Error("URL Path selected isn't valid");
+              }
+
+              config.urlCreator = name;
+              return this;
+            };
+
+            /**
+             * You can set the restangular fields here. The 3 required fields for Restangular are:
+             *
+             * id: Id of the element
+             * route: name of the route of this element
+             * parentResource: the reference to the parent resource
+             *
+             *  All of this fields except for id, are handled (and created) by Restangular. By default,
+             *  the field values will be id, route and parentResource respectively
+             */
+            config.restangularFields = config.restangularFields || {
+                id: "id",
+                route: "route",
+                parentResource: "parentResource",
+                restangularCollection: "restangularCollection",
+                cannonicalId: "__cannonicalId",
+                etag: "restangularEtag",
+                selfLink: "href",
+                get: "get",
+                getList: "getList",
+                put: "put",
+                post: "post",
+                remove: "remove",
+                head: "head",
+                trace: "trace",
+                options: "options",
+                patch: "patch",
+                getRestangularUrl: "getRestangularUrl",
+                getRequestedUrl: "getRequestedUrl",
+                putElement: "putElement",
+                addRestangularMethod: "addRestangularMethod",
+                getParentList: "getParentList",
+                clone: "clone",
+                ids: "ids",
+                httpConfig: '_$httpConfig',
+                reqParams: 'reqParams',
+                one: 'one',
+                all: 'all',
+                several: 'several',
+                oneUrl: 'oneUrl',
+                allUrl: 'allUrl',
+                customPUT: 'customPUT',
+                customPOST: 'customPOST',
+                customDELETE: 'customDELETE',
+                customGET: 'customGET',
+                customGETLIST: 'customGETLIST',
+                customOperation: 'customOperation',
+                doPUT: 'doPUT',
+                doPOST: 'doPOST',
+                doDELETE: 'doDELETE',
+                doGET: 'doGET',
+                doGETLIST: 'doGETLIST',
+                fromServer: '$fromServer',
+                withConfig: 'withConfig',
+                withHttpConfig: 'withHttpConfig'
+            };
+            object.setRestangularFields = function(resFields) {
+                config.restangularFields =
+                  _.extend(config.restangularFields, resFields);
+                return this;
+            };
+
+            config.isRestangularized = function(obj) {
+              return !!obj[config.restangularFields.one] || !!obj[config.restangularFields.all];
+            };
+
+            config.setFieldToElem = function(field, elem, value) {
+              var properties = field.split('.');
+              var idValue = elem;
+              _.each(_.initial(properties), function(prop) {
+                idValue[prop] = {};
+                idValue = idValue[prop];
+              });
+              idValue[_.last(properties)] = value;
+              return this;
+            };
+
+            config.getFieldFromElem = function(field, elem) {
+              var properties = field.split('.');
+              var idValue = elem;
+              _.each(properties, function(prop) {
+                if (idValue) {
+                  idValue = idValue[prop];
+                }
+              });
+              return angular.copy(idValue);
+            };
+
+            config.setIdToElem = function(elem, id) {
+              config.setFieldToElem(config.restangularFields.id, elem, id);
+              return this;
+            };
+
+            config.getIdFromElem = function(elem) {
+              return config.getFieldFromElem(config.restangularFields.id, elem);
+            };
+
+            config.isValidId = function(elemId) {
+                return "" !== elemId && !_.isUndefined(elemId) && !_.isNull(elemId);
+            };
+
+            config.setUrlToElem = function(elem, url) {
+              config.setFieldToElem(config.restangularFields.selfLink, elem, url);
+              return this;
+            };
+
+            config.getUrlFromElem = function(elem) {
+              return config.getFieldFromElem(config.restangularFields.selfLink, elem);
+            };
+
+            config.useCannonicalId = _.isUndefined(config.useCannonicalId) ? false : config.useCannonicalId;
+            object.setUseCannonicalId = function(value) {
+                config.useCannonicalId = value;
+                return this;
+            };
+
+            config.getCannonicalIdFromElem = function(elem) {
+              var cannonicalId = elem[config.restangularFields.cannonicalId];
+              var actualId = config.isValidId(cannonicalId) ?
+                  cannonicalId : config.getIdFromElem(elem);
+              return actualId;
+            };
+
+            /**
+             * Sets the Response parser. This is used in case your response isn't directly the data.
+             * For example if you have a response like {meta: {'meta'}, data: {name: 'Gonto'}}
+             * you can extract this data which is the one that needs wrapping
+             *
+             * The ResponseExtractor is a function that receives the response and the method executed.
+             */
+
+            config.responseInterceptors = config.responseInterceptors || [];
+
+            config.defaultResponseInterceptor = function(data, operation,
+                    what, url, response, deferred) {
+                return data;
+            };
+
+            config.responseExtractor = function(data, operation,
+                    what, url, response, deferred) {
+                var interceptors = angular.copy(config.responseInterceptors);
+                interceptors.push(config.defaultResponseInterceptor);
+                var theData = data;
+                _.each(interceptors, function(interceptor) {
+                  theData = interceptor(theData, operation,
+                    what, url, response, deferred);
+                });
+                return theData;
+            };
+
+            object.addResponseInterceptor = function(extractor) {
+              config.responseInterceptors.push(extractor);
+              return this;
+            };
+
+            object.setResponseInterceptor = object.addResponseInterceptor;
+            object.setResponseExtractor = object.addResponseInterceptor;
+
+            /**
+             * Response interceptor is called just before resolving promises.
+             */
+
+
+            /**
+             * Request interceptor is called before sending an object to the server.
+             */
+             config.requestInterceptors = config.requestInterceptors || [];
+
+             config.defaultInterceptor = function(element, operation,
+              path, url, headers, params, httpConfig) {
+                return {
+                  element: element,
+                  headers: headers,
+                  params: params,
+                  httpConfig: httpConfig
+                };
+              };
+
+            config.fullRequestInterceptor = function(element, operation,
+              path, url, headers, params, httpConfig) {
+                var interceptors = angular.copy(config.requestInterceptors);
+                interceptors.push(config.defaultInterceptor);
+                return _.reduce(interceptors, function(request, interceptor) {
+                  return _.defaults(request, interceptor(element, operation,
+                    path, url, headers, params, httpConfig));
+                }, {});
+            };
+
+            object.addRequestInterceptor = function(interceptor) {
+              config.requestInterceptors.push(function(elem, operation, path, url, headers, params, httpConfig) {
+                return {
+                  headers: headers,
+                  params: params,
+                  element: interceptor(elem, operation, path, url),
+                  httpConfig: httpConfig
+                };
+              });
+              return this;
+            };
+
+            object.setRequestInterceptor = object.addRequestInterceptor;
+
+            object.addFullRequestInterceptor = function(interceptor) {
+              config.requestInterceptors.push(interceptor);
+              return this;
+            };
+
+            object.setFullRequestInterceptor = object.addFullRequestInterceptor;
+
+            config.errorInterceptor = config.errorInterceptor || function() {};
+
+            object.setErrorInterceptor = function(interceptor) {
+              config.errorInterceptor = interceptor;
+              return this;
+            };
+
+            config.onBeforeElemRestangularized = config.onBeforeElemRestangularized || function(elem) {
+              return elem;
+            };
+            object.setOnBeforeElemRestangularized = function(post) {
+              config.onBeforeElemRestangularized = post;
+              return this;
+            };
+
+            /**
+             * This method is called after an element has been "Restangularized".
+             *
+             * It receives the element, a boolean indicating if it's an element or a collection
+             * and the name of the model
+             *
+             */
+            config.onElemRestangularized = config.onElemRestangularized || function(elem) {
+              return elem;
+            };
+            object.setOnElemRestangularized = function(post) {
+              config.onElemRestangularized = post;
+              return this;
+            };
+
+            config.shouldSaveParent = config.shouldSaveParent || function() {
+                return true;
+            };
+            object.setParentless = function(values) {
+                if (_.isArray(values)) {
+                    config.shouldSaveParent = function(route) {
+                        return !_.contains(values, route);
+                    };
+                } else if (_.isBoolean(values)) {
+                    config.shouldSaveParent = function() {
+                        return !values;
+                    };
+                }
+                return this;
+            };
+
+            /**
+             * This lets you set a suffix to every request.
+             *
+             * For example, if your api requires that for JSon requests you do /users/123.json, you can set that
+             * in here.
+             *
+             *
+             * By default, the suffix is null
+             */
+            config.suffix = _.isUndefined(config.suffix) ? null : config.suffix;
+            object.setRequestSuffix = function(newSuffix) {
+                config.suffix = newSuffix;
+                return this;
+            };
+
+            /**
+             * Add element transformers for certain routes.
+             */
+            config.transformers = config.transformers || {};
+            object.addElementTransformer = function(type, secondArg, thirdArg) {
+                var isCollection = null;
+                var transformer = null;
+                if (arguments.length === 2) {
+                    transformer = secondArg;
+                } else {
+                    transformer = thirdArg;
+                    isCollection = secondArg;
+                }
+
+                var typeTransformers = config.transformers[type];
+                if (!typeTransformers) {
+                    typeTransformers = config.transformers[type] = [];
+                }
+
+                typeTransformers.push(function(coll, elem) {
+                    if (_.isNull(isCollection) || (coll == isCollection)) {
+                        return transformer(elem);
+                    }
+                    return elem;
+                });
+            };
+
+            object.extendCollection = function(route, fn) {
+              return object.addElementTransformer(route, true, fn);
+            };
+
+            object.extendModel = function(route, fn) {
+              return object.addElementTransformer(route, false, fn);
+            };
+
+            config.transformElem = function(elem, isCollection, route, Restangular) {
+                if (!config.transformLocalElements && !elem[config.restangularFields.fromServer]) {
+                  return elem;
+                }
+                var typeTransformers = config.transformers[route];
+                var changedElem = elem;
+                if (typeTransformers) {
+                    _.each(typeTransformers, function(transformer) {
+                       changedElem = transformer(isCollection, changedElem);
+                    });
+                }
+                return config.onElemRestangularized(changedElem,
+                  isCollection, route, Restangular);
+            };
+
+            config.transformLocalElements = _.isUndefined(config.transformLocalElements) ? true : config.transformLocalElements;
+            object.setTransformOnlyServerElements = function(active) {
+              config.transformLocalElements = !active;
+            }
+
+            config.fullResponse = _.isUndefined(config.fullResponse) ? false : config.fullResponse;
+            object.setFullResponse = function(full) {
+                config.fullResponse = full;
+                return this;
+            };
+
+            
+
+
+
+            //Internal values and functions
+            config.urlCreatorFactory = {};
+
+            /**
+             * Base URL Creator. Base prototype for everything related to it
+             **/
+
+             var BaseCreator = function() {
+             };
+
+             BaseCreator.prototype.setConfig = function(config) {
+                 this.config = config;
+                 return this;
+             };
+
+             BaseCreator.prototype.parentsArray = function(current) {
+                var parents = [];
+                while(current) {
+                    parents.push(current);
+                    current = current[this.config.restangularFields.parentResource];
+                }
+                return parents.reverse();
+            };
+
+            function RestangularResource(config, $http, url, configurer) {
+              var resource = {};
+              _.each(_.keys(configurer), function(key) {
+                  var value = configurer[key];
+
+                  // Add default parameters
+                  value.params = _.extend({}, value.params,
+                          config.defaultRequestParams[value.method.toLowerCase()]);
+                  // We don't want the ? if no params are there
+                  if (_.isEmpty(value.params)) {
+                    delete value.params;
+                  }
+
+                  if (config.isSafe(value.method)) {
+
+                      resource[key] = function() {
+                          return $http(_.extend(value, {
+                              url: url
+                          }));
+                      };
+
+                  } else {
+
+                      resource[key] = function(data) {
+                          return $http(_.extend(value, {
+                              url: url,
+                              data: data
+                          }));
+                      };
+
+                  }
+              });
+
+              return resource;
+            }
+
+            BaseCreator.prototype.resource = function(current, $http, localHttpConfig, callHeaders, callParams, what, etag, operation) {
+
+                var params = _.defaults(callParams || {}, this.config.defaultRequestParams.common);
+                var headers = _.defaults(callHeaders || {}, this.config.defaultHeaders);
+
+                if (etag) {
+                    if (!config.isSafe(operation)) {
+                      headers['If-Match'] = etag;
+                    } else {
+                      headers['If-None-Match'] = etag;
+                    }
+                }
+
+                var url = this.base(current);
+
+                if (what) {
+                  var add = '';
+                  if (!/\/$/.test(url)) {
+                    add += '/';
+                  }
+                  add += what;
+                  url += add;
+                }
+
+                if (this.config.suffix
+                  && url.indexOf(this.config.suffix, url.length - this.config.suffix.length) === -1
+                  && !this.config.getUrlFromElem(current)) {
+                    url += this.config.suffix;
+                }
+
+                current[this.config.restangularFields.httpConfig] = undefined;
+
+
+                return RestangularResource(this.config, $http, url, {
+                    getList: this.config.withHttpValues(localHttpConfig,
+                      {method: 'GET',
+                      params: params,
+                      headers: headers}),
+
+                    get: this.config.withHttpValues(localHttpConfig,
+                      {method: 'GET',
+                      params: params,
+                      headers: headers}),
+
+                    jsonp: this.config.withHttpValues(localHttpConfig,
+                      {method: 'jsonp',
+                      params: params,
+                      headers: headers}),
+
+                    put: this.config.withHttpValues(localHttpConfig,
+                      {method: 'PUT',
+                      params: params,
+                      headers: headers}),
+
+                    post: this.config.withHttpValues(localHttpConfig,
+                      {method: 'POST',
+                      params: params,
+                      headers: headers}),
+
+                    remove: this.config.withHttpValues(localHttpConfig,
+                      {method: 'DELETE',
+                      params: params,
+                      headers: headers}),
+
+                    head: this.config.withHttpValues(localHttpConfig,
+                      {method: 'HEAD',
+                      params: params,
+                      headers: headers}),
+
+                    trace: this.config.withHttpValues(localHttpConfig,
+                      {method: 'TRACE',
+                      params: params,
+                      headers: headers}),
+
+                    options: this.config.withHttpValues(localHttpConfig,
+                      {method: 'OPTIONS',
+                      params: params,
+                      headers: headers}),
+
+                    patch: this.config.withHttpValues(localHttpConfig,
+                      {method: 'PATCH',
+                      params: params,
+                      headers: headers})
+                });
+            };
+
+            /**
+             * This is the Path URL creator. It uses Path to show Hierarchy in the Rest API.
+             * This means that if you have an Account that then has a set of Buildings, a URL to a building
+             * would be /accounts/123/buildings/456
+            **/
+            var Path = function() {
+            };
+
+            Path.prototype = new BaseCreator();
+
+            Path.prototype.base = function(current) {
+                var __this = this;
+                return  _.reduce(this.parentsArray(current), function(acum, elem) {
+                    var elemUrl;
+                    var elemSelfLink = __this.config.getUrlFromElem(elem);
+                    if (elemSelfLink) {
+                      if (__this.config.isAbsoluteUrl(elemSelfLink)) {
+                        return elemSelfLink;
+                      } else {
+                        elemUrl = elemSelfLink;
+                      }
+                    } else {
+                      elemUrl = elem[__this.config.restangularFields.route];
+
+                      if (elem[__this.config.restangularFields.restangularCollection]) {
+                        var ids = elem[__this.config.restangularFields.ids];
+                        if (ids) {
+                          elemUrl += "/" + ids.join(",");
+                        }
+                      } else {
+                          var elemId;
+                          if (__this.config.useCannonicalId) {
+                              elemId = __this.config.getCannonicalIdFromElem(elem);
+                          } else {
+                              elemId = __this.config.getIdFromElem(elem);
+                          }
+
+                          if (config.isValidId(elemId)) {
+                              elemUrl += "/" + (__this.config.encodeIds ? encodeURIComponent(elemId) : elemId);
+                          }
+                      }
+                    }
+
+                    return acum.replace(/\/$/, "") + "/" + elemUrl;
+
+                }, this.config.baseUrl);
+            };
+
+
+
+            Path.prototype.fetchUrl = function(current, what) {
+                var baseUrl = this.base(current);
+                if (what) {
+                    baseUrl += "/" + what;
+                }
+                return baseUrl;
+            };
+
+            Path.prototype.fetchRequestedUrl = function(current, what) {
+                var url = this.fetchUrl(current, what);
+                var params = current[config.restangularFields.reqParams];
+
+                // From here on and until the end of fetchRequestedUrl,
+                // the code has been kindly borrowed from angular.js
+                // The reason for such code bloating is coherence:
+                //   If the user were to use this for cache management, the
+                //   serialization of parameters would need to be identical
+                //   to the one done by angular for cache keys to match.
+                function sortedKeys(obj) {
+                  var keys = [];
+                  for (var key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                      keys.push(key);
+                    }
+                  }
+                  return keys.sort();
+                }
+
+                function forEachSorted(obj, iterator, context) {
+                  var keys = sortedKeys(obj);
+                  for ( var i = 0; i < keys.length; i++) {
+                    iterator.call(context, obj[keys[i]], keys[i]);
+                  }
+                  return keys;
+                }
+
+                function encodeUriQuery(val, pctEncodeSpaces) {
+                  return encodeURIComponent(val).
+                             replace(/%40/gi, '@').
+                             replace(/%3A/gi, ':').
+                             replace(/%24/g, '$').
+                             replace(/%2C/gi, ',').
+                             replace(/%20/g, (pctEncodeSpaces ? '%20' : '+'));
+                }
+
+                if (!params) return url;
+                var parts = [];
+                forEachSorted(params, function(value, key) {
+                  if (value == null || value == undefined) return;
+                  if (!angular.isArray(value)) value = [value];
+
+                  angular.forEach(value, function(v) {
+                    if (angular.isObject(v)) {
+                      v = angular.toJson(v);
+                    }
+                    parts.push(encodeUriQuery(key) + '=' +
+                               encodeUriQuery(v));
+                  });
+                });
+                return url + (this.config.suffix || '') + ((url.indexOf('?') === -1) ? '?' : '&') + parts.join('&');
+            };
+
+
+
+            config.urlCreatorFactory.path = Path;
+
+        };
+
+        var globalConfiguration = {};
+
+        Configurer.init(this, globalConfiguration);
+
+
+
+
+       this.$get = ['$http', '$q', function($http, $q) {
+
+          function createServiceForConfiguration(config) {
+              var service = {};
+
+              var urlHandler = new config.urlCreatorFactory[config.urlCreator]();
+              urlHandler.setConfig(config);
+
+              function restangularizeBase(parent, elem, route, reqParams, fromServer) {
+                  elem[config.restangularFields.route] = route;
+                  elem[config.restangularFields.getRestangularUrl] = _.bind(urlHandler.fetchUrl, urlHandler, elem);
+                  elem[config.restangularFields.getRequestedUrl] = _.bind(urlHandler.fetchRequestedUrl, urlHandler, elem);
+                  elem[config.restangularFields.addRestangularMethod] = _.bind(addRestangularMethodFunction, elem);
+                  elem[config.restangularFields.clone] = _.bind(copyRestangularizedElement, elem, elem);
+                  elem[config.restangularFields.reqParams] = _.isEmpty(reqParams) ? null : reqParams;
+                  elem[config.restangularFields.withHttpConfig] = _.bind(withHttpConfig, elem);
+
+                  // RequestLess connection
+                  elem[config.restangularFields.one] = _.bind(one, elem, elem);
+                  elem[config.restangularFields.all] = _.bind(all, elem, elem);
+                  elem[config.restangularFields.several] = _.bind(several, elem, elem);
+                  elem[config.restangularFields.oneUrl] = _.bind(oneUrl, elem, elem);
+                  elem[config.restangularFields.allUrl] = _.bind(allUrl, elem, elem);
+
+                  elem[config.restangularFields.fromServer] = !!fromServer;
+
+                  if (parent && config.shouldSaveParent(route)) {
+                      var parentId = config.getIdFromElem(parent);
+                      var parentUrl = config.getUrlFromElem(parent);
+
+                      var restangularFieldsForParent = _.union(
+                        _.values( _.pick(config.restangularFields, ['route', 'parentResource']) ),
+                        config.extraFields
+                      );
+                      var parentResource = _.pick(parent, restangularFieldsForParent);
+
+                      if (config.isValidId(parentId)) {
+                          config.setIdToElem(parentResource, parentId);
+                      }
+                      if (config.isValidId(parentUrl)) {
+                          config.setUrlToElem(parentResource, parentUrl);
+                      }
+
+                      elem[config.restangularFields.parentResource] = parentResource;
+                  } else {
+                    elem[config.restangularFields.parentResource] = null;
+                  }
+                  return elem;
+              }
+
+
+
+              function one(parent, route, id) {
+                  if (_.isNumber(route) || _.isNumber(parent)) {
+                    var error = "You're creating a Restangular entity with the number "
+                    error += "instead of the route or the parent. You can't call .one(12)";
+                    throw new Error(error);
+                  }
+                  var elem = {};
+                  config.setIdToElem(elem, id);
+                  return restangularizeElem(parent, elem , route, false);
+              }
+
+
+              function all(parent, route) {
+                  return restangularizeCollection(parent, [] , route, false);
+              }
+
+              function several(parent, route, ids) {
+                var collection = [];
+                collection[config.restangularFields.ids] =
+                  Array.prototype.splice.call(arguments, 2);
+                return restangularizeCollection(parent, collection , route, false);
+              }
+
+              function oneUrl(parent, route, url) {
+                  if (!route) {
+                    throw new Error("Route is mandatory when creating new Restangular objects.");
+                  }
+                  var elem = {};
+                  config.setUrlToElem(elem, url);
+                  return restangularizeElem(parent, elem , route, false);
+              }
+
+
+              function allUrl(parent, route, url) {
+                  if (!route) {
+                    throw new Error("Route is mandatory when creating new Restangular objects.");
+                  }
+                  var elem = {};
+                  config.setUrlToElem(elem, url);
+                  return restangularizeCollection(parent, elem , route, false);
+              }
+              // Promises
+              function restangularizePromise(promise, isCollection, valueToFill) {
+                  promise.call = _.bind(promiseCall, promise);
+                  promise.get = _.bind(promiseGet, promise);
+                  promise[config.restangularFields.restangularCollection] = isCollection;
+                  if (isCollection) {
+                      promise.push = _.bind(promiseCall, promise, "push");
+                  }
+                  promise.$object = valueToFill;
+                  return promise;
+              }
+
+              function promiseCall(method) {
+                  var deferred = $q.defer();
+                  var callArgs = arguments;
+                  var filledValue = {};
+                  this.then(function(val) {
+                      var params = Array.prototype.slice.call(callArgs, 1);
+                      var func = val[method];
+                      func.apply(val, params);
+                      filledValue = val;
+                      deferred.resolve(val);
+                  });
+                  return restangularizePromise(deferred.promise, this[config.restangularFields.restangularCollection], filledValue);
+              }
+
+              function promiseGet(what) {
+                  var deferred = $q.defer();
+                  var filledValue = {};
+                  this.then(function(val) {
+                      filledValue = val[what];
+                      deferred.resolve(filledValue);
+                  });
+                  return restangularizePromise(deferred.promise, this[config.restangularFields.restangularCollection], filledValue);
+              }
+
+              function resolvePromise(deferred, response, data, filledValue) {
+
+                _.extend(filledValue, data);
+                
+                // Trigger the full response interceptor.
+                if (config.fullResponse) {
+                  return deferred.resolve(_.extend(response, {
+                    data: data
+                  }));
+                } else {
+                  deferred.resolve(data);
+                }
+              }
+
+
+              // Elements
+
+              function stripRestangular(elem) {
+                if (_.isArray(elem)) {
+                    var array = [];
+                    _.each(elem, function(value) {
+                        array.push(stripRestangular(value));
+                    });
+                    return array;
+                } else {
+                    return _.omit(elem, _.values(_.omit(config.restangularFields, 'id')));
+                }
+                        
+                        
+              }
+
+              function addCustomOperation(elem) {
+                  elem[config.restangularFields.customOperation] = _.bind(customFunction, elem);
+                  _.each(["put", "post", "get", "delete"], function(oper) {
+                      _.each(["do", "custom"], function(alias) {
+                          var callOperation = oper === 'delete' ? 'remove' : oper;
+                          var name = alias + oper.toUpperCase();
+                          var callFunction;
+
+                          if (callOperation !== 'put' && callOperation !== 'post') {
+                              callFunction = customFunction;
+                          } else {
+                              callFunction = function(operation, elem, path, params, headers) {
+                                return _.bind(customFunction, this)(operation, path, params, headers, elem);
+                              };
+                          }
+                          elem[name] = _.bind(callFunction, elem, callOperation);
+                      });
+                  });
+                  elem[config.restangularFields.customGETLIST] = _.bind(fetchFunction, elem);
+                  elem[config.restangularFields.doGETLIST] = elem[config.restangularFields.customGETLIST];
+              }
+
+              function copyRestangularizedElement(fromElement) {
+                  var copiedElement = angular.copy(fromElement);
+                  return restangularizeElem(copiedElement[config.restangularFields.parentResource],
+                          copiedElement, copiedElement[config.restangularFields.route], true);
+              }
+
+              function restangularizeElem(parent, element, route, fromServer, collection, reqParams) {
+                  var elem = config.onBeforeElemRestangularized(element, false, route);
+
+                  var localElem = restangularizeBase(parent, elem, route, reqParams, fromServer);
+
+                  if (config.useCannonicalId) {
+                      localElem[config.restangularFields.cannonicalId] = config.getIdFromElem(localElem);
+                  }
+
+                  if (collection) {
+                      localElem[config.restangularFields.getParentList] = function() {
+                          return collection;
+                      };
+                  }
+
+                  localElem[config.restangularFields.restangularCollection] = false;
+                  localElem[config.restangularFields.get] = _.bind(getFunction, localElem);
+                  localElem[config.restangularFields.getList] = _.bind(fetchFunction, localElem);
+                  localElem[config.restangularFields.put] = _.bind(putFunction, localElem);
+                  localElem[config.restangularFields.post] = _.bind(postFunction, localElem);
+                  localElem[config.restangularFields.remove] = _.bind(deleteFunction, localElem);
+                  localElem[config.restangularFields.head] = _.bind(headFunction, localElem);
+                  localElem[config.restangularFields.trace] = _.bind(traceFunction, localElem);
+                  localElem[config.restangularFields.options] = _.bind(optionsFunction, localElem);
+                  localElem[config.restangularFields.patch] = _.bind(patchFunction, localElem);
+
+                  addCustomOperation(localElem);
+                  return config.transformElem(localElem, false, route, service);
+              }
+
+              function restangularizeCollection(parent, element, route, fromServer, reqParams) {
+                  var elem = config.onBeforeElemRestangularized(element, true, route);
+
+                  var localElem = restangularizeBase(parent, elem, route, reqParams, fromServer);
+                  localElem[config.restangularFields.restangularCollection] = true;
+                  localElem[config.restangularFields.post] = _.bind(postFunction, localElem, null);
+                  localElem[config.restangularFields.remove] = _.bind(deleteFunction, localElem);
+                  localElem[config.restangularFields.head] = _.bind(headFunction, localElem);
+                  localElem[config.restangularFields.trace] = _.bind(traceFunction, localElem);
+                  localElem[config.restangularFields.putElement] = _.bind(putElementFunction, localElem);
+                  localElem[config.restangularFields.options] = _.bind(optionsFunction, localElem);
+                  localElem[config.restangularFields.patch] = _.bind(patchFunction, localElem);
+                  localElem[config.restangularFields.get] = _.bind(getById, localElem);
+                  localElem[config.restangularFields.getList] = _.bind(fetchFunction, localElem, null);
+
+                  addCustomOperation(localElem);
+                  return config.transformElem(localElem, true, route, service);
+              }
+
+              function restangularizeCollectionAndElements(parent, element, route) {
+                var collection = restangularizeCollection(parent, element, route, false);
+                _.each(collection, function(elem) {
+                  restangularizeElem(parent, elem, route, false);
+                });
+                return collection;
+              }
+
+              function getById(id, reqParams, headers){
+                  return this.customGET(id.toString(), reqParams, headers);
+              }
+
+              function putElementFunction(idx, params, headers) {
+                  var __this = this;
+                  var elemToPut = this[idx];
+                  var deferred = $q.defer();
+                  var filledArray = [];
+                  filledArray = config.transformElem(filledArray, true, whatFetched, service)
+                  elemToPut.put(params, headers).then(function(serverElem) {
+                      var newArray = copyRestangularizedElement(__this);
+                      newArray[idx] = serverElem;
+                      filledArray = newArray;
+                      deferred.resolve(newArray);
+                  }, function(response) {
+                      deferred.reject(response);
+                  });
+
+                  return restangularizePromise(deferred.promise, true, filledArray);
+              }
+
+              function parseResponse(resData, operation, route, fetchUrl, response, deferred) {
+                  var data = config.responseExtractor(resData, operation, route, fetchUrl, response, deferred);
+                  var etag = response.headers("ETag");
+                  if (data && etag) {
+                      data[config.restangularFields.etag] = etag;
+                  }
+                  return data;
+              }
+
+
+              function fetchFunction(what, reqParams, headers) {
+                  var __this = this;
+                  var deferred = $q.defer();
+                  var operation = 'getList';
+                  var url = urlHandler.fetchUrl(this, what);
+                  var whatFetched = what || __this[config.restangularFields.route];
+
+                  var request = config.fullRequestInterceptor(null, operation,
+                      whatFetched, url, headers || {}, reqParams || {}, this[config.restangularFields.httpConfig] || {});
+
+                  var filledArray = [];
+                  filledArray = config.transformElem(filledArray, true, whatFetched, service)
+
+                  var method = "getList";
+
+                  if (config.jsonp) {
+                    method = "jsonp";
+                  }
+
+                  urlHandler.resource(this, $http, request.httpConfig, request.headers, request.params, what,
+                          this[config.restangularFields.etag], operation)[method]().then(function(response) {
+                      var resData = response.data;
+                      var fullParams = response.config.params;
+                      var data = parseResponse(resData, operation, whatFetched, url, response, deferred);
+                      if (!_.isArray(data)) {
+                        throw new Error("Response for getList SHOULD be an array and not an object or something else");
+                      }
+                      var processedData = _.map(data, function(elem) {
+                          if (!__this[config.restangularFields.restangularCollection]) {
+                              return restangularizeElem(__this, elem, what, true, data);
+                          } else {
+                              return restangularizeElem(__this[config.restangularFields.parentResource],
+                                elem, __this[config.restangularFields.route], true, data);
+                          }
+
+                      });
+
+                      processedData = _.extend(data, processedData);
+
+                      if (!__this[config.restangularFields.restangularCollection]) {
+                          resolvePromise(deferred, response, restangularizeCollection(__this, processedData, what, true, fullParams), filledArray);
+                      } else {
+                          resolvePromise(deferred, response, restangularizeCollection(__this[config.restangularFields.parentResource], processedData, __this[config.restangularFields.route], true, fullParams), filledArray);
+                      }
+                  }, function error(response) {
+                      if (response.status === 304 && __this[config.restangularFields.restangularCollection]) {
+                        resolvePromise(deferred, response, __this, filledArray);
+                      } else if ( config.errorInterceptor(response, deferred) !== false ) {
+                          deferred.reject(response);
+                      }
+                  });
+
+                  return restangularizePromise(deferred.promise, true, filledArray);
+              }
+
+              function withHttpConfig(httpConfig) {
+                 this[config.restangularFields.httpConfig] = httpConfig;
+                 return this;
+              }
+
+              function elemFunction(operation, what, params, obj, headers) {
+                  var __this = this;
+                  var deferred = $q.defer();
+                  var resParams = params || {};
+                  var route = what || this[config.restangularFields.route];
+                  var fetchUrl = urlHandler.fetchUrl(this, what);
+
+                  var callObj = obj || this;
+                  // fallback to etag on restangular object (since for custom methods we probably don't explicitly specify the etag field)
+                  var etag = callObj[config.restangularFields.etag] || (operation != "post" ? this[config.restangularFields.etag] : null);
+
+                  if (_.isObject(callObj) && config.isRestangularized(callObj)) {
+                      callObj = stripRestangular(callObj);
+                  }
+                  var request = config.fullRequestInterceptor(callObj, operation, route, fetchUrl,
+                    headers || {}, resParams || {}, this[config.restangularFields.httpConfig] || {});
+
+                  var filledObject = {};
+                  filledObject = config.transformElem(filledObject, false, route, service);
+
+                  var okCallback = function(response) {
+                      var resData = response.data;
+                      var fullParams = response.config.params;
+                      var elem = parseResponse(resData, operation, route, fetchUrl, response, deferred);
+                      if (elem) {
+
+                        if (operation === "post" && !__this[config.restangularFields.restangularCollection]) {
+                          resolvePromise(deferred, response, restangularizeElem(__this, elem, what, true, null, fullParams), filledObject);
+                        } else {
+                          resolvePromise(deferred, response, restangularizeElem(__this[config.restangularFields.parentResource], elem, __this[config.restangularFields.route], true, null, fullParams), filledObject);
+                        }
+
+                      } else {
+                        resolvePromise(deferred, response, undefined, filledObject);
+                      }
+                  };
+
+                  var errorCallback = function(response) {
+                      if (response.status === 304 && config.isSafe(operation)) {
+                        resolvePromise(deferred, response, __this, filledObject);
+                      } else if ( config.errorInterceptor(response, deferred) !== false ) {
+                          deferred.reject(response);
+                      }
+                  };
+                  // Overring HTTP Method
+                  var callOperation = operation;
+                  var callHeaders = _.extend({}, request.headers);
+                  var isOverrideOperation = config.isOverridenMethod(operation);
+                  if (isOverrideOperation) {
+                    callOperation = 'post';
+                    callHeaders = _.extend(callHeaders, {'X-HTTP-Method-Override': operation === 'remove' ? 'DELETE' : operation});
+                  } else if (config.jsonp && callOperation === 'get') {
+                    callOperation = 'jsonp';
+                  }
+
+                  if (config.isSafe(operation)) {
+                    if (isOverrideOperation) {
+                      urlHandler.resource(this, $http, request.httpConfig, callHeaders, request.params,
+                        what, etag, callOperation)[callOperation]({}).then(okCallback, errorCallback);
+                    } else {
+                      urlHandler.resource(this, $http, request.httpConfig, callHeaders, request.params,
+                        what, etag, callOperation)[callOperation]().then(okCallback, errorCallback);
+                    }
+                  } else {
+                      urlHandler.resource(this, $http, request.httpConfig, callHeaders, request.params,
+                        what, etag, callOperation)[callOperation](request.element).then(okCallback, errorCallback);
+                  }
+
+                  return restangularizePromise(deferred.promise, false, filledObject);
+              }
+
+              function getFunction(params, headers) {
+                  return _.bind(elemFunction, this)("get", undefined, params, undefined, headers);
+              }
+
+              function deleteFunction(params, headers) {
+                  return _.bind(elemFunction, this)("remove", undefined, params, undefined, headers);
+              }
+
+              function putFunction(params, headers) {
+                  return _.bind(elemFunction, this)("put", undefined, params, undefined, headers);
+              }
+
+              function postFunction(what, elem, params, headers) {
+                  return _.bind(elemFunction, this)("post", what, params, elem, headers);
+              }
+
+             function headFunction(params, headers) {
+               return _.bind(elemFunction, this)("head", undefined, params, undefined, headers);
+             }
+
+             function traceFunction(params, headers) {
+               return _.bind(elemFunction, this)("trace", undefined, params, undefined, headers);
+             }
+
+             function optionsFunction(params, headers) {
+               return _.bind(elemFunction, this)("options", undefined, params, undefined, headers);
+             }
+
+             function patchFunction(elem, params, headers) {
+               return _.bind(elemFunction, this)("patch", undefined, params, elem, headers);
+             }
+
+             function customFunction(operation, path, params, headers, elem) {
+                 return _.bind(elemFunction, this)(operation, path, params, elem, headers);
+             }
+
+             function addRestangularMethodFunction(name, operation, path, defaultParams, defaultHeaders, defaultElem) {
+                 var bindedFunction;
+                 if (operation === 'getList') {
+                     bindedFunction = _.bind(fetchFunction, this, path);
+                 } else {
+                     bindedFunction = _.bind(customFunction, this, operation, path);
+                 }
+
+                 var createdFunction = function(params, headers, elem) {
+                     var callParams = _.defaults({
+                         params: params,
+                         headers: headers,
+                         elem: elem
+                     }, {
+                         params: defaultParams,
+                         headers: defaultHeaders,
+                         elem: defaultElem
+                     });
+                     return bindedFunction(callParams.params, callParams.headers, callParams.elem);
+                 };
+
+                 if (config.isSafe(operation)) {
+                     this[name] = createdFunction;
+                 } else {
+                     this[name] = function(elem, params, headers) {
+                         return createdFunction(params, headers, elem);
+                     };
+                 }
+
+             }
+
+             function withConfigurationFunction(configurer) {
+                 var newConfig = angular.copy(_.omit(config, 'configuration'));
+                 Configurer.init(newConfig, newConfig);
+                 configurer(newConfig);
+                 return createServiceForConfiguration(newConfig);
+             }
+
+
+              Configurer.init(service, config);
+
+              service.copy = _.bind(copyRestangularizedElement, service);
+
+              service.withConfig = _.bind(withConfigurationFunction, service);
+
+              service.one = _.bind(one, service, null);
+
+              service.all = _.bind(all, service, null);
+
+              service.several = _.bind(several, service, null);
+
+              service.oneUrl = _.bind(oneUrl, service, null);
+
+              service.allUrl = _.bind(allUrl, service, null);
+
+              service.stripRestangular = _.bind(stripRestangular, service);
+
+              service.restangularizeElement = _.bind(restangularizeElem, service);
+
+              service.restangularizeCollection = _.bind(restangularizeCollectionAndElements, service);
+
+              return service;
+          }
+
+          return createServiceForConfiguration(globalConfiguration);
+
+        }];
+    }
+);
+
+})();
+;(function() {
+  'use strict';
+
+  angular.module(
+    'scCoreEducation',
+    [
+      'ngRoute',
+      'scCoreEducation.controllers',
+      'scceStudents.controllers',
+      'scceStaff.controllers',
+      'scceUser.directives',
+      'scCoreEducation.templates'
+    ]
+  ).
+
+  config(['$routeProvider',
+    function($routeProvider) {
+      $routeProvider
+        .when('/students', {
+          templateUrl: 'views/sccoreeducation/studentlist.html',
+          controller: 'scceStudentListCtrl'
+        })
+        .when('/staff', {
+          templateUrl: 'views/sccoreeducation/stafflist.html',
+          controller: 'scceStaffListCtrl'
+        })
+        .otherwise({
+          redirectTo: '/students'
+        });
+    }
+  ])
+
+  ;
+
+})();
+(function() {
+  'use strict';
+
+  angular.module('scCoreEducation.config', []).
+
+  constant('SCCE_API_BASE', '/api/v1')
+
+  ;
+})();
+(function() {
+  'use strict';
+
+  var interceptor = function(data, operation, what) {
+    var resp;
+
+    if (operation === 'getList') {
+      resp = data[what] ? data[what] : [];
+      resp.cursor = data.cursor ? data.cursor : null;
+    } else {
+      resp = data;
+    }
+    return resp;
+  };
+
+  angular.module('scCoreEducation.services', ['restangular', 'scCoreEducation.config']).
+
+  service('scceApi', ['Restangular', 'SCCE_API_BASE',
+    function(Restangular, SCCE_API_BASE) {
+      return Restangular.withConfig(function(RestangularConfigurer) {
+        RestangularConfigurer.setBaseUrl(SCCE_API_BASE);
+        RestangularConfigurer.addResponseInterceptor(interceptor);
+      });
+    }
+  ])
+
+  ;
+})();
+(function() {
+  'use strict';
+
+  angular.module('scCoreEducation.controllers', []).
+
+  controller('scceNavBarCtrl', ['$scope', '$location',
+    function($scope, $location) {
+
+      $scope.isActive = function(route) {
+        return route === $location.path();
+      };
+    }
+  ]).
+
+  controller('scceHomeCtrl', ['$scope',
+    function($scope) {
+      $scope.files = {};
+    }
+  ])
+
+  ;
+
+})();
+(function() {
+  'use strict';
+
+  angular.module('scceUser.config', []).
+
+
+  constant('scceUserConfig', {
+    defaultReturnUrl: null, // Should retunr to the current url.
+  })
+
+  ;
+
+})();
+(function() {
+  'use strict';
+  var api;
+
+  angular.module('scceUser.services', ['scCoreEducation.services', 'scceUser.config']).
+
+  /**
+   * scceCurrentUserApi - api to access user info.
+   *
+   * scceCurrentUserApi.get(returnUrl)  Return the user name, id and the
+   * the logout url if the user logged in. Return the login url if the
+   * user logged off.
+   *
+   * Note that it returns a promise that resole in either case. If the promise
+   * fails, there was either a problem with the optional return url, or
+   * there's an unexpected issue with the backend.
+   *
+   * TODO: handle lose of authentication.
+   *
+   */
+  factory('scceCurrentUserApi', ['$location', '$q', 'scceApi', 'scceUserConfig',
+    function($location, $q, scceApi, scceUserConfig) {
+      api = {
+        info: null,
+        loading: null,
+
+        _get: function(returnUrl) {
+          var params = {
+            returnUrl: (
+              returnUrl ||
+              scceUserConfig.defaultReturnUrl ||
+              $location.absUrl()
+            )
+          };
+
+          return scceApi.one('user').get(params).then(function(data) {
+            return data;
+          }).
+          catch (function(resp) {
+            if (resp.status === 401) {
+              return resp.data;
+            } else {
+              return $q.reject(resp);
+            }
+          });
+        },
+
+        auth: function(returnUrl) {
+
+          if (api.info) {
+            return $q.when(api.info);
+          }
+
+          if (api.loading) {
+            return api.loading;
+          }
+
+
+          api.loading = api._get(returnUrl).then(function(user) {
+            api.info = user;
+            return user;
+          })['finally'](function() {
+            api.loading = null;
+          });
+
+          return api.loading;
+        },
+
+        reset: function(loginUrl, msg) {
+          var currentLoginUrl = api.info && api.info.loginUrl || null;
+
+          loginUrl = loginUrl || currentLoginUrl;
+          if (loginUrl) {
+            api.info = {loginUrl: loginUrl, error: msg};
+          } else {
+            api.info = null;
+          }
+        }
+      };
+
+      return api;
+    }
+  ]).
+
+  /**
+   * Intercept http response error to reset scceCurrentUserApi on http
+   * 401 response.
+   *
+   */
+  factory('scceCurrentHttpInterceptor', ['$q', '$location',
+    function($q, $location) {
+      var httpPattern = /https?:\/\//,
+        thisDomainPattern = new RegExp(
+          'https?://' + $location.host().replace('.', '\\.')
+        );
+
+      function isSameDomain(url) {
+        return !httpPattern.test(url) || thisDomainPattern.test(url);
+      }
+
+      return {
+        responseError: function(resp) {
+          if (
+            resp.status === 401 &&
+            isSameDomain(resp.config.url)
+          ) {
+            api.reset(resp.data.loginUrl, resp.data.error);
+          }
+
+          return $q.reject(resp);
+        }
+      };
+    }
+  ]).
+
+  config(['$httpProvider',
+    function($httpProvider) {
+      $httpProvider.interceptors.push('scceCurrentHttpInterceptor');
+    }
+  ])
+
+  ;
+
+})();
+(function() {
+  'use strict';
+
+  angular.module(
+    'scceUser.directives', ['scceUser.services', 'scCoreEducation.templates']
+  ).
+
+  /**
+   * Directive creating a login info link for a boostrap navbar
+   */
+  directive('scceUserLogin', function() {
+    return {
+      restrict: 'E',
+      replace: true,
+      templateUrl: 'views/sccoreeducation/user/login.html',
+      scope: {},
+      controller: ['$scope', 'scceCurrentUserApi',
+        function($scope, scceCurrentUserApi) {
+          $scope.user = scceCurrentUserApi;
+          scceCurrentUserApi.auth();
+        }
+      ]
+    };
+  }).
+
+  /**
+   * Directive displaying a list of user (student or staff)
+   *
+   * usage:
+   *
+   *  <scce-user-grid scce-users="studentList" scce-user-type="students">
+   *  </scce-user-grid>
+   *
+   * Where students `scce-users` should reference a list of students
+   * and `scce-user-type` is type of user ('students' or 'staff').
+   *
+   * Note that `scce-user-type` doesn't reference a scope attribute and
+   * we be evaulated either.
+   *
+   */
+  directive('scceUserGrid', function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'views/sccoreeducation/user/grid.html',
+      scope: {
+        users: '=scceUsers',
+        userType: '@scceUserType'
+      }
+    };
+  }).
+
+  /**
+   * Form to create a new user.
+   *
+   * usage:
+   *
+   *  <scce-user-form
+   *    scce-user-type="student"
+   *    scce-user-handler="submitNewStudent"
+   *   >
+   *  </scce-user-form>
+   *
+   * Where `scce-user-type` is either 'student' or 'staff' and
+   * scce-user-handler reference a function trigger when the form is submitted
+   * .It take a user as argument and returning a promise that should resolve
+   * a truthy value when the form is safe to reset.
+   *
+   * If the handler return a positive value instead of a promise, the form
+   * will be reset right after submission.
+   *
+   */
+  directive('scceUserForm', ['$q',
+    function($q) {
+      return {
+        restrict: 'E',
+        templateUrl: 'views/sccoreeducation/user/form.html',
+        controller: ['$scope',
+          function($scope) {
+            $scope.submitNewUser = function(newUser) {
+              if (!$scope.onSubmit) {
+                $scope.reset();
+                return;
+              }
+
+              $scope.disableForm = true;
+              $q.when($scope.onSubmit(newUser)).then(function(result) {
+                if (result) {
+                  $scope.reset();
+                }
+              });
+            };
+
+            $scope.reset = function() {
+              $scope.disableForm = false;
+              $scope.newUser = {};
+            };
+
+            $scope.reset();
+          }
+        ],
+        scope: {
+          userType: '@scceUserType',
+          onSubmit: '=scceUserHandler'
+        }
+      };
+    }
+  ])
+
+
+  ;
+
+})();
+(function() {
+  'use strict';
+
+
+  angular.module('scceStudents.services', ['scCoreEducation.services']).
+
+  factory('scceStudentsApi', ['scceApi',
+    function(scceApi) {
+      return {
+        all: function() {
+          return scceApi.all('students').getList();
+        },
+        add: function(data) {
+          return scceApi.all('students').post(data);
+        },
+        edit: function(id, data) {
+          scceApi.one('students', id).customPUT(data);
+        }
+      };
+    }
+  ])
+
+  ;
+
+})();
+(function() {
+  'use strict';
+
+  angular.module('scceStudents.controllers', [
+    'scceStudents.services', 'scceUser.directives', 'scCoreEducation.templates'
+  ]).
+
+  controller('scceStudentListCtrl', ['$scope', 'scceStudentsApi',
+    function($scope, scceStudentsApi) {
+      $scope.students = null;
+
+      $scope.submitNewStudent = function(newStudent) {
+        scceStudentsApi.add(newStudent).then(function(student) {
+          $scope.students.push(student);
+          return 'done';
+        });
+      };
+
+      $scope.listStudent = function() {
+        return scceStudentsApi.all().then(function(list) {
+          $scope.students = list;
+          return list;
+        }).
+        catch (function(data) {
+          if (data.status === 401) {
+            $scope.error = 'You need to be logged in to view the list.';
+          } else if (data.status === 403) {
+            $scope.error = 'Only admins or staff can list students.';
+          } else {
+            $scope.error = 'Unexpected error.';
+          }
+        });
+      };
+
+      $scope.listStudent();
+    }
+  ])
+
+  ;
+
+})();
+(function() {
+  'use strict';
+
+
+  angular.module('scceStaff.services', ['scCoreEducation.services']).
+
+  factory('scceStaffApi', ['scceApi',
+    function(scceApi) {
+      return {
+        all: function() {
+          return scceApi.all('staff').getList();
+        },
+        add: function(data) {
+          return scceApi.all('staff').post(data);
+        },
+        edit: function(id, data) {
+          scceApi.one('staff', id).customPUT(data);
+        }
+      };
+    }
+  ])
+
+  ;
+
+})();
+(function() {
+  'use strict';
+
+  angular.module('scceStaff.controllers', [
+    'scceStaff.services', 'scceUser.directives', 'scCoreEducation.templates'
+  ]).
+
+  controller('scceStaffListCtrl', ['$scope', 'scceStaffApi',
+    function($scope, scceStaffApi) {
+      $scope.staff = null;
+
+      $scope.submitNewStaff = function(newStaff) {
+        return scceStaffApi.add(newStaff).then(function(staff) {
+          $scope.staff.push(staff);
+          return 'done';
+        });
+      };
+
+      $scope.listStaff = function() {
+        return scceStaffApi.all().then(function(list) {
+          $scope.staff = list;
+          return list;
+        }).
+        catch (function(data) {
+          if (data.status === 401) {
+            $scope.error = 'You need to be logged in to view the list.';
+          } else if (data.status === 403) {
+            $scope.error = 'Only admins or staff can list staff.';
+          } else {
+            $scope.error = 'Unexpected error.';
+          }
+        });
+      };
+
+      $scope.listStaff();
+    }
+  ])
+
+  ;
+
+})();;angular.module('scCoreEducation.templates', ['views/sccoreeducation/home.html', 'views/sccoreeducation/stafflist.html', 'views/sccoreeducation/studentlist.html', 'views/sccoreeducation/user/form.html', 'views/sccoreeducation/user/grid.html', 'views/sccoreeducation/user/login.html']);
+
+angular.module("views/sccoreeducation/home.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("views/sccoreeducation/home.html",
+    "<h1>Hello world</h1>");
+}]);
+
+angular.module("views/sccoreeducation/stafflist.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("views/sccoreeducation/stafflist.html",
+    "<h1>Staff list</h1>\n" +
+    "\n" +
+    "<scce-user-grid scce-users=\"staff\" scce-user-type=\"staff\"></scce-user-grid>\n" +
+    "\n" +
+    "<scce-user-form scce-user-type=\"staff\" scce-user-handler=\"submitNewStaff\"></scce-user-form>\n" +
+    "");
+}]);
+
+angular.module("views/sccoreeducation/studentlist.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("views/sccoreeducation/studentlist.html",
+    "<h1>Student list</h1>\n" +
+    "\n" +
+    "<scce-user-grid scce-users=\"students\" scce-user-type=\"students\"></scce-user-grid>\n" +
+    "\n" +
+    "<scce-user-form scce-user-type=\"student\" scce-user-handler=\"submitNewStudent\"></scce-user-form>\n" +
+    "");
+}]);
+
+angular.module("views/sccoreeducation/user/form.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("views/sccoreeducation/user/form.html",
+    "<form name=\"newUserForm\" class=\"form-horizontal\">\n" +
+    "  <fieldset>\n" +
+    "    <legend>New {{userType}}</legend>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label for=\"user_id\" class=\"col-sm-2 control-label\">{{userType}} ID</label>\n" +
+    "      <div class=\"col-sm-8\">\n" +
+    "        <input type=\"text\"\n" +
+    "          ng-model=\"newUser.id\"\n" +
+    "          id=\"user_id\"\n" +
+    "          name=\"userId\"\n" +
+    "          required=\"true\"\n" +
+    "          ng-attr-placeholder=\"{{userType}} ID\"\n" +
+    "          class=\"form-control\"\n" +
+    "        />\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label for=\"user_firstname\" class=\"col-sm-2 control-label\">First name</label>\n" +
+    "      <div class=\"col-sm-8\">\n" +
+    "        <input type=\"text\"\n" +
+    "          ng-model=\"newUser.firstName\"\n" +
+    "          id=\"user_firstname\"\n" +
+    "          name=\"userFirstName\"\n" +
+    "          required=\"true\"\n" +
+    "          ng-attr-placeholder=\"{{userType}} first name\"\n" +
+    "          class=\"form-control\"\n" +
+    "        />\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label for=\"user_lastname\" class=\"col-sm-2 control-label\">Last name</label>\n" +
+    "      <div class=\"col-sm-8\">\n" +
+    "        <input type=\"text\"\n" +
+    "          ng-model=\"newUser.lastName\"\n" +
+    "          id=\"user_lastname\"\n" +
+    "          name=\"userLastName\"\n" +
+    "          required=\"true\"\n" +
+    "          ng-attr-placeholder=\"{{userType}} last name\"\n" +
+    "          class=\"form-control\"\n" +
+    "        />\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label for=\"user_email\" class=\"col-sm-2 control-label\">Email</label>\n" +
+    "      <div class=\"col-sm-8\">\n" +
+    "        <input type=\"email\"\n" +
+    "          ng-model=\"newUser.email\"\n" +
+    "          id=\"user_email\"\n" +
+    "          name=\"userEmail\"\n" +
+    "          required=\"true\"\n" +
+    "          ng-attr-placeholder=\"{{userType}} email\"\n" +
+    "          class=\"form-control\"\n" +
+    "        />\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label for=\"user_photo\" class=\"col-sm-2 control-label\">Photo url</label>\n" +
+    "      <div class=\"col-sm-8\">\n" +
+    "        <input type=\"url\"\n" +
+    "          ng-model=\"newUser.photo\"\n" +
+    "          id=\"user_photo\"\n" +
+    "          name=\"userPhoto\"\n" +
+    "          ng-attr-placeholder=\"{{userType}} photo url\"\n" +
+    "          class=\"form-control\"\n" +
+    "        />\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <div class=\"col-sm-offset-2 col-sm-8\">\n" +
+    "        <button type=\"submit\"\n" +
+    "          id=\"submitButton\"\n" +
+    "          ng-click=\"submitNewUser(newUser)\"\n" +
+    "          ng-disabled=\"!newUserForm.$valid || disableForm\"\n" +
+    "          class=\"btn btn-default\"\n" +
+    "        >Add new {{userType}}</button>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "  </fieldset>\n" +
+    "</form>");
+}]);
+
+angular.module("views/sccoreeducation/user/grid.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("views/sccoreeducation/user/grid.html",
+    "<table class=\"table table-striped\">\n" +
+    "  <thead>\n" +
+    "    <tr>\n" +
+    "      <th>id</th>\n" +
+    "      <th>First name</th>\n" +
+    "      <th>Last name</th>\n" +
+    "      <th>Photo</th>\n" +
+    "    </tr>\n" +
+    "  </thead>\n" +
+    "  <tbody>\n" +
+    "    <tr ng-repeat=\"user in users track by user.id\">\n" +
+    "      <td>{{user.id}}</td>\n" +
+    "      <td>{{user.firstName}}</td>\n" +
+    "      <td>{{user.lastName}}</td>\n" +
+    "      <td>{{user.photo}}</td>\n" +
+    "    </tr>\n" +
+    "    <tr ng-if=\"users.length == 0\">\n" +
+    "      <td colspan=\"4\">No {{userType}}</td>\n" +
+    "    </tr>\n" +
+    "    <tr ng-if=\"users == null\">\n" +
+    "      <td colspan=\"4\">Loading {{userType}}</td>\n" +
+    "    </tr>\n" +
+    "  </tbody>\n" +
+    "</table>");
+}]);
+
+angular.module("views/sccoreeducation/user/login.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("views/sccoreeducation/user/login.html",
+    "<ul class=\"nav navbar-nav navbar-right\">\n" +
+    "  <li>\n" +
+    "    <p class=\"navbar-text\" ng-if=\"user.loading\">Loading current user info...</p>\n" +
+    "    <p class=\"navbar-text\" ng-if=\"user.info.name\">Signed in as {{user.info.name}}</p>\n" +
+    "  </li>\n" +
+    "  <li ng-if=\"user.info\">\n" +
+    "    <a ng-href=\"{{user.info.loginUrl}}\" ng-if=\"user.info.loginUrl\">\n" +
+    "      <i class=\"glyphicon glyphicon-off\"></i> login\n" +
+    "    </a>\n" +
+    "    <a ng-href=\"{{user.info.logoutUrl}}\" ng-if=\"user.info.logoutUrl\">\n" +
+    "      <i class=\"glyphicon glyphicon-off\"></i> logout\n" +
+    "    </a>\n" +
+    "  </li>\n" +
+    "</ul>");
+}]);
 ;angular
 .module('app.courses',
   ['ngRoute',
@@ -54521,7 +56429,7 @@ function setInnerText(element, text) {
           return function(topic){
             topic.$update()
             .then(function(){
-              $location.path('/topics/');
+              $location.path('/topics/'+topic.id);
             });
           };
         }
@@ -54534,7 +56442,8 @@ function setInnerText(element, text) {
   'app.homePages',
   'app.topics',
   'app.courses',
-  'ui.bootstrap'
+  'ui.bootstrap',
+  'scceUser.directives'
   ])
 
 .config(function($routeProvider, TPL_PATH) {
@@ -54643,7 +56552,23 @@ function setInnerText(element, text) {
   ;
 
 }());
-;/*global videojs, _*/
+;angular
+.module('myApp')
+.filter('excludeSame',function(){
+  return function(input,collection){
+    if(!input||!angular.isArray(input)){
+      return;
+    }
+    if(!collection||!angular.isArray(collection)){
+      return input;
+    }
+    return input.filter(function(item){
+      return !collection.some(function(coll){
+        return item.id===coll.id;
+      });
+    });
+  };
+});;/*global videojs, _*/
 
 (function() {
   'use strict';
@@ -55090,14 +57015,7 @@ function setInnerText(element, text) {
       if(solved===undefined){
         solved = true;
       }
-      return res.query({solved:solved}).$promise.then(function (result) {
-        return result.filter(function(problem){
-          if(!problem.solved&&!solved){
-            return true;
-          }
-          return problem.solved===solved;
-        });
-      });
+      return res.query({solved:solved}).$promise;
     }
   };
 
@@ -55247,29 +57165,41 @@ function setInnerText(element, text) {
     return angular.extend(api, commonAPIs(res));
   });;angular
 .module('app.topics')
-.controller('TopicsEditCtrl',function($scope,topic,save){
+.controller('TopicsEditCtrl',function($scope,topic,save,videos){
   $scope.topic = topic;
 
   $scope.save = function(topic){
     save(topic);
   };
-});;angular
-.module('app.topics')
-.controller('VideoAssociationCtrl',function($scope,videos){
-  //TODO: should not show already added
-  videos.all().then(function(data){
-    $scope.list = data;
-  });
 
-  //todo: add back to available videos
+  if(videos){
+    if(angular.isArray(videos)){
+      $scope.videos = videos;
+    }
+    else{
+      videos.all().then(function(data){
+        $scope.videos = data;
+      });
+    }
+  }
+
   $scope.removeVideo = function(topic,video){
     topic.videos = topic.videos.filter(function(vid){
       return vid.id!==video.id;
     });
   };
   
-  //todo: remove added from list
   $scope.addVideo = function(topic,video){
+    if(!topic.videos)
+    {
+      topic.videos = [video];
+      return;
+    }
+    if(topic.videos.some(function(vid){
+        return vid.id===video.id;
+      })){
+      return;
+    }
     topic.videos.push(video);
   };
 });
