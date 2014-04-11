@@ -56417,7 +56417,7 @@ module('app.problems',
   })
   .when('/problems/:id/edit',{
     controller: 'ProblemEditCtrl',
-    templateUrl: TPL_PATH + '/problemEdit.html',
+    templateUrl: TPL_PATH + '/problemEdit.html'
   });
 });
 
@@ -56509,12 +56509,12 @@ module('app.problems',
     ;
   })
 .run(function($rootScope) {
-  $rootScope.$on('$routeChangeStart', function(e, curr, prev) { 
+  $rootScope.$on('$routeChangeStart', function(e, curr) {
     if (curr.$$route && curr.$$route.resolve) {
       $rootScope.loadingView = true;
     }
   });
-  $rootScope.$on('$routeChangeSuccess', function(e, curr, prev) { 
+  $rootScope.$on('$routeChangeSuccess', function() {
     $rootScope.loadingView = false;
   });
 });
@@ -56878,7 +56878,36 @@ module('app.problems',
   ;
 
 }());
-;angular
+;angular.module('app.problems')
+.controller('ProblemListCtrl', function($scope, problems) {
+  $scope.problems = null;
+
+  if(angular.isArray(problems)){
+    $scope.problems = problems;
+  }
+  else{
+    problems.all().then(function(res) {
+      $scope.problems = res;
+    });
+  }
+});;angular.module('app.problems')
+.factory('problems', function(API_BASE, commonAPIs,$resource) {
+  var res = $resource(API_BASE + '/problems/:id');
+
+  var api = {
+    create: function createNewProblem(newProblem) {
+      return res.save(newProblem).$promise;
+    },
+    solved: function getSolved(solved){
+      if(solved===undefined){
+        solved = true;
+      }
+      return res.query({solved:solved}).$promise;
+    }
+  };
+
+  return angular.extend(api, commonAPIs(res));
+});;angular
 .module('app.problems')
 .controller('ProblemEditCtrl', function($scope, $routeParams, alerts, videos, problems, questions){
   var id = $routeParams.id;
@@ -56933,35 +56962,6 @@ module('app.problems',
       throw data;
     });
   };
-});;angular.module('app.problems')
-.controller('ProblemListCtrl', function($scope, problems) {
-  $scope.problems = null;
-
-  if(angular.isArray(problems)){
-    $scope.problems = problems;
-  }
-  else{
-    problems.all().then(function(res) {
-      $scope.problems = res;
-    });
-  }
-});;angular.module('app.problems')
-.factory('problems', function(API_BASE, commonAPIs,$resource) {
-  var res = $resource(API_BASE + '/problems/:id');
-
-  var api = {
-    create: function createNewProblem(newProblem) {
-      return res.save(newProblem).$promise;
-    },
-    solved: function getSolved(solved){
-      if(solved===undefined){
-        solved = true;
-      }
-      return res.query({solved:solved}).$promise;
-    }
-  };
-
-  return angular.extend(api, commonAPIs(res));
 });;angular.
 module('app.problems')
 .controller('ProblemCreateCtrl', function($scope, $location, alerts, problems) {
