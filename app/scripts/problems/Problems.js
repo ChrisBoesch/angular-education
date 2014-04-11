@@ -1,4 +1,4 @@
-angular.module('app.homePages')
+angular.module('app.problems')
 .factory('problems', function(API_BASE, commonAPIs,$resource) {
   var res = $resource(API_BASE + '/problems/:id');
 

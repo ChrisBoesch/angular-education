@@ -1,4 +1,4 @@
-angular.module('app.homePages')
+angular.module('app.problems')
 .controller('ProblemListCtrl', function($scope, problems) {
   $scope.problems = null;
 
