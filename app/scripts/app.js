@@ -4,6 +4,7 @@ angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate',
   'app.homePages',
   'app.topics',
   'app.courses',
+  'app.problems',
   'ui.bootstrap',
   'scceUser.directives'
   ])
@@ -14,40 +15,6 @@ angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate',
       controller: 'HomeCtrl',
       templateUrl: TPL_PATH + '/home.html'
     })
-    .when('/problems', {
-      controller: 'ProblemListCtrl',
-      templateUrl: TPL_PATH + '/problemList.html'
-    })
-    .when('/problems/solved',{
-      controller: 'ProblemListCtrl',
-      templateUrl: TPL_PATH + '/problemList.html',
-      resolve:{
-        problems: function(problems){
-          return problems.solved();
-        }
-      }
-    })
-    .when('/problems/unsolved',{
-      controller: 'ProblemListCtrl',
-      templateUrl: TPL_PATH + '/problemList.html',
-      resolve:{
-        problems: function(problems){
-          return problems.solved(false);
-        }
-      }
-    })
-    .when('/problems/create',{
-      controller: 'ProblemCreateCtrl',
-      templateUrl: TPL_PATH + '/problemCreate.html'
-    })
-    .when('/problems/:id', {
-      controller: 'ProblemCtrl',
-      templateUrl: TPL_PATH + '/problem.html'
-    })
-    .when('/problems/:id/edit',{
-      controller: 'ProblemEditCtrl',
-      templateUrl: TPL_PATH + '/problemEdit.html'
-    })
     .when('/videos/create',{
       controller:'CreateVideoCtrl',
       templateUrl: TPL_PATH + '/createVideo.html'
@@ -57,4 +24,14 @@ angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate',
       templateUrl: TPL_PATH + '/video.html'
     })
     ;
+  })
+.run(function($rootScope) {
+  $rootScope.$on('$routeChangeStart', function(e, curr) {
+    if (curr.$$route && curr.$$route.resolve) {
+      $rootScope.loadingView = true;
+    }
   });
+  $rootScope.$on('$routeChangeSuccess', function() {
+    $rootScope.loadingView = false;
+  });
+});
