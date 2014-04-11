@@ -56495,7 +56495,17 @@ angular.module("views/sccoreeducation/user/login.html", []).run(["$templateCache
       templateUrl: TPL_PATH + '/video.html'
     })
     ;
+  })
+.run(function($rootScope) {
+  $rootScope.$on('$routeChangeStart', function(e, curr, prev) { 
+    if (curr.$$route && curr.$$route.resolve) {
+      $rootScope.loadingView = true;
+    }
   });
+  $rootScope.$on('$routeChangeSuccess', function(e, curr, prev) { 
+    $rootScope.loadingView = false;
+  });
+});
 ;angular.module('app.config', [])
 
   .constant('TPL_PATH', 'templates')

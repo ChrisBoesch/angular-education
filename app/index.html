@@ -80,6 +80,9 @@
             <!--/Sidebar-->
             <div class="col-md-9">
                 <edu-alerts></edu-alerts>
+                <div ng-show="loadingView">
+                    <wave-spinner></wave-spinner>
+                </div>
                 <div ng-view></div>
             </div>
         </div>
