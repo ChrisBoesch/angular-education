@@ -57,4 +57,14 @@ angular.module('myApp', ['app.config', 'app.directives', 'ngRoute', 'ngAnimate',
       templateUrl: TPL_PATH + '/video.html'
     })
     ;
+  })
+.run(function($rootScope) {
+  $rootScope.$on('$routeChangeStart', function(e, curr, prev) { 
+    if (curr.$$route && curr.$$route.resolve) {
+      $rootScope.loadingView = true;
+    }
   });
+  $rootScope.$on('$routeChangeSuccess', function(e, curr, prev) { 
+    $rootScope.loadingView = false;
+  });
+});
