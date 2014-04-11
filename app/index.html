@@ -80,10 +80,10 @@
             <!--/Sidebar-->
             <div class="col-md-9">
                 <edu-alerts></edu-alerts>
-                <div ng-show="loadingView">
+                <div ng-if="loadingView">
                     <wave-spinner></wave-spinner>
                 </div>
-                <div ng-view></div>
+                <div ng-view ng-if="!loadingView"></div>
             </div>
         </div>
     </div>
