@@ -4,6 +4,10 @@
   </div>
 
   <form role="form" name="newCourseForm">
+    <p ng-if="authError" class="alert alert-danger">
+      You need to be logged in as admin to edit a problem.
+    </p>
+
     <div ng-class="{'form-group': true, 'has-error': !newCourseForm.CourseTitle.$valid, 'has-feedback': true}">
       <label for="Title" >
         Title

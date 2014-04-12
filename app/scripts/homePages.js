@@ -273,12 +273,22 @@
       });
     })
 
-    .controller("CreateVideoCtrl",function($scope, $location, videos){
+    .controller("CreateVideoCtrl",function($scope, $location, $q, $log, videos){
       $scope.title = "Create video";
+      $scope.authError = false;
 
       $scope.create = function(video){
+        $scope.authError = false;
+
         videos.create(video).then(function(){
           $location.path('');
+        }).catch(function(resp) {
+          if (resp.status === 401 || resp.status === 403) {
+            $scope.authError = true;
+          } else {
+            $log.error(resp);
+          }
+          return $q.reject(resp);
         });
       };
     })

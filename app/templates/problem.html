@@ -28,6 +28,9 @@
         </div>
         <div class="panel-body">
             <form role="form">
+                <p ng-if="authError" class="alert alert-danger">
+                    You need to log in to solve problems.
+                </p>
                 <div class="radio" ng-repeat="option in question.options">
                     <label>
                         <input ng-model="question.answer" name="question-{{question.id}}"

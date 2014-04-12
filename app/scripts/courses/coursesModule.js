@@ -21,7 +21,7 @@ angular
       resolve:{
         create:function($location,courses){
           return function(course){
-            courses.create(course).then(function(){
+            return courses.create(course).then(function(){
               $location.path('/courses/');
             });
           };
@@ -48,10 +48,10 @@ angular
         },
         save:function($location){
           return function(course){
-            course.$save()
-            .then(function(){
-              $location.path('/courses/');
-            });
+            return course.$save()
+              .then(function(){
+                $location.path('/courses/');
+              });
           };
         }
       }

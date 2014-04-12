@@ -4,6 +4,11 @@
   </div>
 
   <form role="form" name="newProblemForm">
+
+    <p ng-if="authError" class="alert alert-danger">
+      You need to be logged in as admin to edit a problem.
+    </p>
+
     <div ng-class="{'form-group': true, 'has-error': !newProblemForm.problemTitle.$valid, 'has-feedback': true}">
       <label for="Title" >
         Title
