@@ -22,7 +22,7 @@ angular
       resolve:{
         create:function($location,topics){
           return function(newData){
-            topics.create(newData).then(function(){
+            return topics.create(newData).then(function(){
               $location.path('/topics/');
             });
           };
@@ -49,10 +49,10 @@ angular
         },
         save:function($location){
           return function(topic){
-            topic.$update()
-            .then(function(){
-              $location.path('/topics/'+topic.id);
-            });
+            return topic.$update()
+              .then(function(){
+                $location.path('/topics/'+topic.id);
+              });
           };
         }
       }

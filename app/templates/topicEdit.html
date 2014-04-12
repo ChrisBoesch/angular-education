@@ -4,6 +4,11 @@
   </div>
 
   <form role="form" name="newTopicForm">
+
+    <p ng-if="authError" class="alert alert-danger">
+      You need to be logged in as admin to edit a problem.
+    </p>
+
     <div ng-class="{'form-group': true, 'has-error': !newTopicForm.TopicTitle.$valid, 'has-feedback': true}">
       <label for="Title" >
         Title
@@ -31,7 +36,7 @@
             <td>{{$index+1}}</td>
             <td>{{video.title}}</td>
             <td>{{video.description}}</td>
-            <td>                
+            <td>
               <a title="Remove" ng-click="removeVideo(topic,video)"tooltip><span class="glyphicon glyphicon-remove"></span></a>
             </td>
           </tr>
@@ -50,7 +55,7 @@
 
       <div class="form-group">
         <button name="EditBtn" ng-disabled="newTopicForm.$invalid || savingTopic" ng-click="save(topic)" class="btn btn-primary">Save</button>
-        <a href="#/topics/{{topic.id}}">Cancel edit and go to topic</a>        
+        <a href="#/topics/{{topic.id}}">Cancel edit and go to topic</a>
       </div>
     </form>
   </div>

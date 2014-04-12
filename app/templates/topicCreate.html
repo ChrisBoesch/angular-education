@@ -4,6 +4,10 @@
   </div>
 
   <form role="form" name="newTopicForm">
+    <p ng-if="authError" class="alert alert-danger">
+      You need to be logged in as admin to edit a problem.
+    </p>
+
     <div ng-class="{'form-group': true, 'has-error': !newTopicForm.TopicTitle.$valid, 'has-feedback': true}">
       <label for="Title" >
         Title
@@ -16,7 +20,7 @@
       <label for="description">Description</label>
       <textarea type="text" ng-model="newTopic.description" class="form-control"></textarea>
     </div>
-    <button name="CreateBtn" ng-disabled="newTopicForm.$invalid || savingTopic" ng-click="create(newTopic)" class="btn btn-default">
+    <button name="CreateBtn" ng-disabled="newTopicForm.$invalid || saving" ng-click="create(newTopic)" class="btn btn-default">
       Create
     </button>
   </form>

@@ -1,11 +1,12 @@
 angular
 .module('app.problems')
-.controller('ProblemEditCtrl', function($scope, $routeParams, alerts, videos, problems, questions){
+.controller('ProblemEditCtrl', function($scope, $routeParams, $q, $log, videos, problems, questions){
   var id = $routeParams.id;
 
   $scope.show = {
     attachForm: false
   };
+  $scope.authError = false;
 
   problems.getById(id).then(function (problemData) {
     $scope.problem = problemData;
@@ -22,13 +23,22 @@ angular
     $scope.videos = videoList;
   });
 
+  function onError(resp) {
+    if (resp.status === 401 || resp.status === 403) {
+      $scope.authError = true;
+    } else {
+      $log.error(resp);
+    }
+    return $q.reject(resp);
+  }
+
   $scope.attachVideo = function(video, problem) {
+    $scope.authError = false;
+
     return videos.attach(video, problem).then(function() {
       $scope.video = video;
       $scope.show.attachForm = false;
-    }).catch(function() {
-      alerts.warning("Error: could not attached problem to video.");
-    });
+    }).catch(onError);
   };
 
   $scope.resetAttachForm = function () {
@@ -40,6 +50,8 @@ angular
 
   $scope.showNewQuestionForm = false;
   $scope.addQuestion = function(problem, question) {
+    $scope.authError = false;
+
     if (!question) {
       $scope.showNewQuestionForm = false;
     }
@@ -48,9 +60,6 @@ angular
       $scope.showNewQuestionForm = false;
       $scope.problem.questions.push(data);
       return data;
-    }).catch(function(data) {
-      alerts.warning("Error: could not save the question");
-      throw data;
-    });
+    }).catch(onError);
   };
 });

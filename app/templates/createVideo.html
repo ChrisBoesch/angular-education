@@ -2,8 +2,12 @@
     <div class="page-header edu-top-header">
         <h2>{{title}}</h2>
     </div>
-    
-    <form name="form" role="form">   
+
+    <form name="form" role="form">
+        <p ng-if="authError" class="alert alert-danger">
+            You need to be logged in as admin to edit a problem.
+        </p>
+
         <div class="form-group">
             <label for="Title" >Title</label>
             <input type="text" required ng-model="video.title" class="form-control">

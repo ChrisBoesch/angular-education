@@ -19,27 +19,32 @@
 		</p>
 		<div ng-show="show.attachForm">
 			<form name="attachForm" class="form-inline" role="form">
+
+				<p ng-if="authError" class="alert alert-danger">
+					You need to be logged in as admin to edit a problem.
+				</p>
+
 				<div class="form-group">
-			    <label for="videoToAttach">video :</label>
-			    <select
-			    	class="form-control" id="videoToAttach"
-			    	ng-model="attach.video"
-			    	ng-options="v.title for v in videos"
-			    >
-			    	<option value="">-- select a video --</option>
-			    </select>
-					<button
-			      type="submit"
-			      class="btn btn-default question-submit"
-			      ng-click="attachVideo(attach.video, problem)"
-			      ng-disabled="!attach.video"
-			    >
-			      Attach
-			    </button>
-			    <button type="reset" class="btn btn-default question-cancel" ng-click="resetAttachForm()">
-			      Cancel
-			    </button>
-			  </div>
+				    <label for="videoToAttach">video :</label>
+				    <select
+				    	class="form-control" id="videoToAttach"
+				    	ng-model="attach.video"
+				    	ng-options="v.title for v in videos"
+				    >
+				    	<option value="">-- select a video --</option>
+				    </select>
+						<button
+				      type="submit"
+				      class="btn btn-default question-submit"
+				      ng-click="attachVideo(attach.video, problem)"
+				      ng-disabled="!attach.video"
+				    >
+				      Attach
+				    </button>
+				    <button type="reset" class="btn btn-default question-cancel" ng-click="resetAttachForm()">
+				      Cancel
+				    </button>
+			  	</div>
 			</form>
 		</div>
 	</div>
@@ -58,5 +63,9 @@
 	</div>
 
 	<a href="" ng-click="showNewQuestionForm = true" ng-hide="showNewQuestionForm">Add a question</a>
+
+	<p ng-if="authError" class="alert alert-danger">
+		You need to be logged in as admin to edit a problem.
+	</p>
 	<question-form problem="problem" on-submit="addQuestion" ng-show="showNewQuestionForm"></question-form>
 </div>

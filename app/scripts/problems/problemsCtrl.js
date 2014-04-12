@@ -4,6 +4,7 @@ module('app.problems')
   $scope.id = $routeParams.id;
   $scope.title = null;
   $scope.canProceed = false;
+  $scope.authError = false;
 
   $scope.$watch(question.current, function(newVal) {
     if (newVal) {
@@ -25,6 +26,11 @@ module('app.problems')
   //TODO: implement as a filter
   $scope.currentClass = function(prefix, question) {
     var q = angular.isDefined(question) ? question : $scope.question;
+
+    if ($scope.authError) {
+      return prefix + '-danger';
+    }
+
     if (q) {
       switch (q.isCorrect) {
         case undefined:
@@ -45,6 +51,7 @@ module('app.problems')
     if (angular.isDefined($scope.question.answer)) {
       $scope.isAnswered = true;
       $scope.canProceed = true;
+      $scope.authError = false;
       questions.answer({
         // Question ID
         problemId: $scope.id,
@@ -57,9 +64,10 @@ module('app.problems')
           $scope.canProceed = false;
         },
         // Error
-        function() {
+        function(resp) {
           $scope.isAnswered = false;
           $scope.canProceed = false;
+          $scope.authError = resp.status === 401;
         });
     }
   };
