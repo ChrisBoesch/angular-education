@@ -33,8 +33,11 @@ app.get('/user', function(req, res){
     res.send(
       {
         "isAdmin": true,
+        "isLoggedIn": true,
+        "studentId": "x3",
+        "staffId": "s1",
         "logoutUrl": "/",
-        "name": "Admin"
+        "name": "Chris Coder"
       }
     );
   }, 1000);

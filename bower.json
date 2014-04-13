@@ -15,7 +15,7 @@
     "videojs-youtube": "655203a97fe0efdd66963c9fa16ec007a8f4aad5",
     "lodash": "~2.4.1",
     "angular-bootstrap": "~0.10.0",
-    "core-education": "https://github.com/ChrisBoesch/core-education.git#~0.1.1"
+    "core-education": "https://github.com/ChrisBoesch/core-education.git#~0.3.0"
   },
   "devDependencies": {
     "angular-mocks": "~1.2.10"
